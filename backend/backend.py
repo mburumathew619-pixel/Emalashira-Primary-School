@@ -11,7 +11,8 @@ import traceback
 # ───────────────────────────────────────────────
 # Create Flask app
 # ───────────────────────────────────────────────
-app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # project root (one level up from backend/)
+app = Flask(__name__, template_folder=os.path.join(BASE_DIR, 'templates'), static_folder=os.path.join(BASE_DIR, 'static'), static_url_path='/static')
 CORS(app, origins=["http://localhost:5500", "http://127.0.0.1:5500", "*"])
 
 DB_PATH = "system.db"
