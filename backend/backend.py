@@ -11,7 +11,13 @@ import traceback
 # ───────────────────────────────────────────────
 # Create Flask app
 # ───────────────────────────────────────────────
-app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
+# backend.py lives in <project_root>/backend/
+# templates/ and static/ live in <project_root>/
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+app = Flask(__name__,
+            template_folder=os.path.join(BASE_DIR, 'templates'),
+            static_folder=os.path.join(BASE_DIR, 'static'),
+            static_url_path='/static')
 CORS(app, origins=["http://localhost:5500", "http://127.0.0.1:5500", "*"])
 
 DB_PATH = "system.db"
@@ -386,71 +392,6 @@ init_db()
 @app.route('/')
 def home():
     return render_template('index.html')
-
-@app.route('/login.html')
-@app.route('/login')
-def login_page():
-    return render_template('login.html')
-
-@app.route('/dashboard.html')
-@app.route('/dashboard')
-def dashboard_page():
-    return render_template('dashboard.html')
-
-@app.route('/manage-users.html')
-@app.route('/manage-users')
-def manage_users_page():
-    return render_template('manage-users.html')
-
-@app.route('/roles-permissions.html')
-@app.route('/roles-permissions')
-def roles_permissions_page():
-    return render_template('roles-permissions.html')
-
-@app.route('/settings.html')
-@app.route('/settings')
-def settings_page():
-    return render_template('settings.html')
-
-@app.route('/backup-restore.html')
-@app.route('/backup-restore')
-def backup_restore_page():
-    return render_template('backup-restore.html')
-
-@app.route('/reports.html')
-@app.route('/reports')
-def reports_page():
-    return render_template('reports.html')
-
-@app.route('/students.html')
-@app.route('/students')
-def students_page():
-    return render_template('students.html')
-
-@app.route('/teacher-records.html')
-@app.route('/teacher-records')
-def teacher_records_page():
-    return render_template('teacher-records.html')
-
-@app.route('/finance.html')
-@app.route('/finance')
-def finance_page():
-    return render_template('finance.html')
-
-@app.route('/grades.html')
-@app.route('/grades')
-def grades_page():
-    return render_template('grades.html')
-
-@app.route('/attendance.html')
-@app.route('/attendance')
-def attendance_page():
-    return render_template('attendance.html')
-
-@app.route('/announcements.html')
-@app.route('/announcements')
-def announcements_page():
-    return render_template('announcements.html')
 
 
 @app.route('/api/signup', methods=['POST'])
