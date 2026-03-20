@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>System Settings - Emalashira Primary School</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/static/css/settings.css" />
+  <script src="/static/js/settings.js"></script>
+</head>
+<body>
+
+  <!-- Sidebar - Matching dashboard -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>EMALASHIRA</h2>
+      <p>Primary School</p>
+    </div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+      <a href="manage-users.html"><i class="fas fa-users"></i> <span>Manage Users</span></a>
+      <a href="roles-permissions.html"><i class="fas fa-user-shield"></i> <span>Roles & Permissions</span></a>
+      <a href="backup-restore.html"><i class="fas fa-database"></i> <span>Backup & Restore</span></a>
+      <a href="reports.html"><i class="fas fa-chart-bar"></i> <span>Reports</span></a>
+      <a href="settings.html" class="active"><i class="fas fa-cog"></i> <span>Settings</span></a>
+      <a href="#" class="logout-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+  </aside>
+
+  <!-- Main Content - Matching dashboard -->
+  <main class="main-content">
+    <div class="header">
+      <div>
+        <h1>System Settings</h1>
+        <p class="header-subtitle">Configure and customize your school management system</p>
+      </div>
+      <div class="user-info">
+        <strong id="userName">Administrator</strong>
+        <span id="roleBadge" class="role-badge">Admin</span>
+        <i class="fas fa-user-circle"></i>
+        <a href="profile.html">Profile</a>
+        <a href="#" onclick="logout()" style="color:#c62828;">Logout</a>
+      </div>
+    </div>
+    <div class="settings-container">
+      <!-- Settings Sidebar -->
+      <div class="settings-sidebar">
+        <div class="settings-nav">
+          <a href="#" class="settings-nav-item active" data-tab="general">
+            <i class="fas fa-cog"></i> General Settings
+          </a>
+          <a href="#" class="settings-nav-item" data-tab="academic">
+            <i class="fas fa-graduation-cap"></i> Academic Settings
+          </a>
+          <a href="#" class="settings-nav-item" data-tab="users">
+            <i class="fas fa-users-cog"></i> User & Security
+          </a>
+          <a href="#" class="settings-nav-item" data-tab="finance">
+            <i class="fas fa-money-bill-wave"></i> Financial Settings
+          </a>
+          <a href="#" class="settings-nav-item" data-tab="communication">
+            <i class="fas fa-comments"></i> Communication
+          </a>
+          <a href="#" class="settings-nav-item" data-tab="appearance">
+            <i class="fas fa-palette"></i> Appearance
+          </a>
+          <a href="#" class="settings-nav-item" data-tab="permissions">
+            <i class="fas fa-user-lock"></i> Permissions
+            <span class="nav-badge">5</span>
+          </a>
+          <a href="#" class="settings-nav-item" data-tab="data">
+            <i class="fas fa-database"></i> Data Management
+          </a>
+          <a href="#" class="settings-nav-item" data-tab="integrations">
+            <i class="fas fa-plug"></i> Integrations
+          </a>
+          <a href="#" class="settings-nav-item" data-tab="maintenance">
+            <i class="fas fa-tools"></i> System Maintenance
+          </a>
+          <a href="#" class="settings-nav-item" data-tab="danger">
+            <i class="fas fa-exclamation-triangle"></i> Danger Zone
+          </a>
+        </div>
+      </div>
+
+      <!-- Settings Content -->
+      <div class="settings-content">
+        <!-- General Settings -->
+        <div class="tab-content active" id="general-tab">
+          <div class="settings-header">
+            <h2><i class="fas fa-cog"></i> General Settings</h2>
+            <p>Configure basic system information and operational parameters</p>
+          </div>
+          <div class="settings-body">
+            <form id="generalForm">
+              <div class="form-section">
+                <h3><i class="fas fa-school"></i> School Information</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label class="required">School Name</label>
+                    <input type="text" class="form-control" id="schoolName" value="Emalashira Primary School" required>
+                  </div>
+                  <div class="form-group">
+                    <label>School Code</label>
+                    <input type="text" class="form-control" id="schoolCode" value="EML/PS/001">
+                  </div>
+                  <div class="form-group">
+                    <label class="required">Academic Year</label>
+                    <select class="form-control select" id="academicYear" required>
+                      <option value="2025-2026" selected>2025-2026</option>
+                      <option value="2026-2027">2026-2027</option>
+                      <option value="2024-2025">2024-2025</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Current Term</label>
+                    <select class="form-control select" id="currentTerm">
+                      <option value="1" selected>Term 1</option>
+                      <option value="2">Term 2</option>
+                      <option value="3">Term 3</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3><i class="fas fa-calendar-alt"></i> Academic Calendar</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Term Start Date</label>
+                    <input type="date" class="form-control" id="termStart" value="2026-01-10">
+                  </div>
+                  <div class="form-group">
+                    <label>Term End Date</label>
+                    <input type="date" class="form-control" id="termEnd" value="2026-04-05">
+                  </div>
+                  <div class="form-group">
+                    <label>School Working Hours</label>
+                    <div style="display: flex; gap: 1rem;">
+                      <input type="time" class="form-control" id="startTime" value="08:00">
+                      <span style="align-self: center;">to</span>
+                      <input type="time" class="form-control" id="endTime" value="15:30">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3><i class="fas fa-building"></i> Contact Information</h3>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>School Address</label>
+                    <textarea class="form-control" id="schoolAddress" rows="3">123 School Road, Emalashira, Nairobi</textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" class="form-control" id="schoolPhone" value="+254 20 123 4567">
+                  </div>
+                  <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" id="schoolEmail" value="info@emalashira.edu">
+                  </div>
+                  <div class="form-group">
+                    <label>Website</label>
+                    <input type="url" class="form-control" id="schoolWebsite" value="https://emalashira.edu">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="resetForm('generalForm')">Reset</button>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Academic Settings -->
+            <!-- Content Area -->
+             <!-- Academic Settings Tab Content -->
+        <!-- Academic Settings Tab Content -->
+<div class="tab-content" id="academic-tab">
+  <div class="settings-header">
+    <h2><i class="fas fa-graduation-cap"></i> Academic Settings</h2>
+    <p>Configure grading, attendance, and academic policies</p>
+  </div>
+
+  <div class="settings-body" style="padding: 2rem 2.5rem;">
+    <!-- Success Message -->
+    <div id="successMessage" class="success-message" style="margin-bottom: 2rem;">
+      ✓ Settings saved successfully!
+    </div>
+
+    <!-- Important Notice -->
+    <div class="info-box" style="margin-bottom: 2.5rem; padding: 1.5rem;">
+      <i class="fas fa-info-circle" style="font-size: 1.6rem;"></i>
+      <div class="info-box-content">
+        <h4 style="font-size: 1.1rem;">Important Notice</h4>
+        <p style="font-size: 1rem; line-height: 1.6;">
+          Changes to grading scales and promotion criteria will only apply to future academic terms. 
+          Current term data will remain unchanged.
+        </p>
+      </div>
+    </div>
+
+    <!-- Settings Grid - Larger cards -->
+    <div class="settings-grid" style="grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
+      
+      <!-- Grading System -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem; margin-bottom: 1rem;">
+          <i class="fas fa-trophy"></i> Grading System
+        </h3>
+        <p style="font-size: 1rem; margin-bottom: 1.8rem; color: var(--text-secondary);">
+          Configure your school's grading scale and calculation method
+        </p>
+
+        <div class="form-group" style="margin-bottom: 1.8rem;">
+          <label for="gradingType" style="font-size: 1rem;">Grading Type</label>
+          <select id="gradingType" class="form-control select" style="font-size: 1rem; height: 50px;" onchange="updateGradingType()">
+            <option value="letter">Letter Grades (A-F)</option>
+            <option value="percentage">Percentage System (0-100%)</option>
+            <option value="gpa">GPA System (0.0-4.0)</option>
+            <option value="points">Points System</option>
+          </select>
+        </div>
+
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="form-group">
+            <label for="passingGrade" style="font-size: 1rem;">Passing Grade (%)</label>
+            <input type="number" id="passingGrade" class="form-control" value="60" min="0" max="100" style="font-size: 1.1rem; height: 50px;">
+          </div>
+          <div class="form-group">
+            <label for="maxScore" style="font-size: 1rem;">Maximum Score</label>
+            <input type="number" id="maxScore" class="form-control" value="100" min="1" style="font-size: 1.1rem; height: 50px;">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1.5rem;">
+          <label for="decimalPlaces" style="font-size: 1rem;">Decimal Places</label>
+          <select id="decimalPlaces" class="form-control select" style="font-size: 1rem; height: 50px;">
+            <option value="0">No decimals (90)</option>
+            <option value="1" selected>One decimal (90.5)</option>
+            <option value="2">Two decimals (90.53)</option>
+          </select>
+        </div>
+
+        <div class="checkbox-group" style="margin: 1.5rem 0; font-size: 1rem;">
+          <input type="checkbox" id="showGPA" checked style="width: 20px; height: 20px;">
+          <label for="showGPA">Calculate and show GPA</label>
+        </div>
+
+        <div class="checkbox-group" style="font-size: 1rem;">
+          <input type="checkbox" id="showRank" style="width: 20px; height: 20px;">
+          <label for="showRank">Calculate student ranking</label>
+        </div>
+      </div>
+
+      <!-- Grade Scale -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem; margin-bottom: 1rem;">
+          <i class="fas fa-chart-line"></i> Grade Scale
+        </h3>
+        <p style="font-size: 1rem; margin-bottom: 1.8rem; color: var(--text-secondary);">
+          Define grade boundaries and corresponding GPA values
+        </p>
+
+        <table class="grade-scale-table" style="font-size: 1rem;">
+          <thead>
+            <tr>
+              <th style="width: 15%;">Grade</th>
+              <th style="width: 20%;">Min %</th>
+              <th style="width: 20%;">Max %</th>
+              <th style="width: 20%;">GPA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>A</strong></td>
+              <td><input type="number" value="90" min="0" max="100" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+              <td><input type="number" value="100" min="0" max="100" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+              <td><input type="number" value="4.0" step="0.1" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+            </tr>
+            <tr>
+              <td><strong>B</strong></td>
+              <td><input type="number" value="80" min="0" max="100" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+              <td><input type="number" value="89" min="0" max="100" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+              <td><input type="number" value="3.0" step="0.1" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+            </tr>
+            <tr>
+              <td><strong>C</strong></td>
+              <td><input type="number" value="70" min="0" max="100" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+              <td><input type="number" value="79" min="0" max="100" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+              <td><input type="number" value="2.0" step="0.1" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+            </tr>
+            <tr>
+              <td><strong>D</strong></td>
+              <td><input type="number" value="60" min="0" max="100" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+              <td><input type="number" value="69" min="0" max="100" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+              <td><input type="number" value="1.0" step="0.1" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+            </tr>
+            <tr>
+              <td><strong>F</strong></td>
+              <td><input type="number" value="0" min="0" max="100" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+              <td><input type="number" value="59" min="0" max="100" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+              <td><input type="number" value="0.0" step="0.1" style="width: 100%; font-size: 1.1rem; height: 48px;"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Attendance Policy -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem; margin-bottom: 1rem;">
+          <i class="fas fa-calendar-check"></i> Attendance Policy
+        </h3>
+        <p style="font-size: 1rem; margin-bottom: 1.8rem; color: var(--text-secondary);">
+          Set attendance requirements and tracking rules
+        </p>
+
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="form-group">
+            <label for="minAttendance" style="font-size: 1rem;">Minimum Required Attendance (%)</label>
+            <input type="number" id="minAttendance" class="form-control" value="75" min="0" max="100" style="height: 50px; font-size: 1.1rem;">
+          </div>
+          <div class="form-group">
+            <label for="tardyLimit" style="font-size: 1rem;">Tardiness Limit (per term)</label>
+            <input type="number" id="tardyLimit" class="form-control" value="5" min="0" style="height: 50px; font-size: 1.1rem;">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1.8rem;">
+          <label style="font-size: 1rem; display: block; margin-bottom: 1rem;">Absence Categories</label>
+          <div class="checkbox-group" style="margin-bottom: 1rem; font-size: 1rem;">
+            <input type="checkbox" id="absExcused" checked style="width: 22px; height: 22px;">
+            <label for="absExcused">Excused Absence</label>
+          </div>
+          <div class="checkbox-group" style="margin-bottom: 1rem; font-size: 1rem;">
+            <input type="checkbox" id="absUnexcused" checked style="width: 22px; height: 22px;">
+            <label for="absUnexcused">Unexcused Absence</label>
+          </div>
+          <div class="checkbox-group" style="margin-bottom: 1rem; font-size: 1rem;">
+            <input type="checkbox" id="absMedical" checked style="width: 22px; height: 22px;">
+            <label for="absMedical">Medical Absence</label>
+          </div>
+          <div class="checkbox-group" style="font-size: 1rem;">
+            <input type="checkbox" id="absLate" checked style="width: 22px; height: 22px;">
+            <label for="absLate">Late Arrival</label>
+          </div>
+        </div>
+
+        <div class="checkbox-group" style="margin-top: 1.5rem; font-size: 1rem;">
+          <input type="checkbox" id="autoNotify" checked style="width: 22px; height: 22px;">
+          <label for="autoNotify">Auto-notify parents on absence</label>
+        </div>
+      </div>
+
+      <!-- Academic Terms -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem; margin-bottom: 1rem;">
+          <i class="fas fa-calendar-alt"></i> Academic Terms
+        </h3>
+        <p style="font-size: 1rem; margin-bottom: 1.8rem; color: var(--text-secondary);">
+          Configure academic year and term schedules
+        </p>
+
+        <div class="form-grid" style="gap: 1.5rem;">
+          <div class="form-group">
+            <label for="academicYear" style="font-size: 1rem;">Current Academic Year</label>
+            <input type="text" id="academicYear" class="form-control" value="2024-2025" style="height: 50px; font-size: 1.1rem;">
+          </div>
+
+          <div class="form-group">
+            <label for="termsPerYear" style="font-size: 1rem;">Terms per Year</label>
+            <select id="termsPerYear" class="form-control select" style="height: 50px; font-size: 1rem;">
+              <option value="2">2 Semesters</option>
+              <option value="3" selected>3 Terms</option>
+              <option value="4">4 Quarters</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="currentTerm" style="font-size: 1rem;">Current Term</label>
+            <select id="currentTerm" class="form-control select" style="height: 50px; font-size: 1rem;">
+              <option value="1" selected>Term 1 (Jan - Apr)</option>
+              <option value="2">Term 2 (May - Aug)</option>
+              <option value="3">Term 3 (Sep - Dec)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="termStart" style="font-size: 1rem;">Term Start Date</label>
+            <input type="date" id="termStart" class="form-control" value="2024-01-15" style="height: 50px; font-size: 1.1rem;">
+          </div>
+
+          <div class="form-group">
+            <label for="termEnd" style="font-size: 1rem;">Term End Date</label>
+            <input type="date" id="termEnd" class="form-control" value="2024-04-30" style="height: 50px; font-size: 1.1rem;">
+          </div>
+        </div>
+
+        <div class="checkbox-group" style="margin-top: 1.8rem; font-size: 1rem;">
+          <input type="checkbox" id="allowMidterm" checked style="width: 22px; height: 22px;">
+          <label for="allowMidterm">Include midterm exams</label>
+        </div>
+      </div>
+
+      <!-- Assessment Weights -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem; margin-bottom: 1rem;">
+          <i class="fas fa-tasks"></i> Assessment Weights
+        </h3>
+        <p style="font-size: 1rem; margin-bottom: 1.8rem; color: var(--text-secondary);">
+          Define how different assessments contribute to final grade
+        </p>
+
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="form-group">
+            <label for="examWeight" style="font-size: 1rem;">Exams (%)</label>
+            <input type="number" id="examWeight" class="form-control" value="40" min="0" max="100" style="height: 50px; font-size: 1.1rem;">
+          </div>
+          <div class="form-group">
+            <label for="assignmentWeight" style="font-size: 1rem;">Assignments (%)</label>
+            <input type="number" id="assignmentWeight" class="form-control" value="30" min="0" max="100" style="height: 50px; font-size: 1.1rem;">
+          </div>
+          <div class="form-group">
+            <label for="participationWeight" style="font-size: 1rem;">Class Participation (%)</label>
+            <input type="number" id="participationWeight" class="form-control" value="15" min="0" max="100" style="height: 50px; font-size: 1.1rem;">
+          </div>
+          <div class="form-group">
+            <label for="projectWeight" style="font-size: 1rem;">Projects (%)</label>
+            <input type="number" id="projectWeight" class="form-control" value="15" min="0" max="100" style="height: 50px; font-size: 1.1rem;">
+          </div>
+        </div>
+
+        <div style="padding: 1.25rem; background: #f0f9ff; border-radius: 10px; margin-top: 2rem; text-align: center; font-size: 1.1rem;">
+          <strong>Total: <span id="totalWeight">100</span>%</strong>
+          <span id="weightWarning" style="color: #dc2626; font-weight: 600; margin-left: 1.5rem; display: none;">
+            ⚠ Must equal 100%
+          </span>
+        </div>
+      </div>
+
+      <!-- Promotion Criteria -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem; margin-bottom: 1rem;">
+          <i class="fas fa-user-graduate"></i> Promotion Criteria
+        </h3>
+        <p style="font-size: 1rem; margin-bottom: 1.8rem; color: var(--text-secondary);">
+          Set requirements for student promotion to next grade
+        </p>
+
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="form-group">
+            <label for="promotionGrade" style="font-size: 1rem;">Minimum Grade for Promotion (%)</label>
+            <input type="number" id="promotionGrade" class="form-control" value="60" min="0" max="100" style="height: 50px; font-size: 1.1rem;">
+          </div>
+
+          <div class="form-group">
+            <label for="maxFails" style="font-size: 1rem;">Maximum Failed Subjects Allowed</label>
+            <input type="number" id="maxFails" class="form-control" value="2" min="0" style="height: 50px; font-size: 1.1rem;">
+          </div>
+
+          <div class="form-group">
+            <label for="attendanceReq" style="font-size: 1rem;">Attendance Requirement (%)</label>
+            <input type="number" id="attendanceReq" class="form-control" value="75" min="0" max="100" style="height: 50px; font-size: 1.1rem;">
+          </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+          <div class="checkbox-group" style="margin-bottom: 1.2rem; font-size: 1.05rem;">
+            <input type="checkbox" id="conditionalPromo" style="width: 22px; height: 22px;">
+            <label for="conditionalPromo">Allow conditional promotion</label>
+          </div>
+          <div class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" id="summerSchool" style="width: 22px; height: 22px;">
+            <label for="summerSchool">Offer summer school for failed students</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons - Larger and centered -->
+    <div class="action-buttons" style="justify-content: center; gap: 1.5rem; margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--border-color);">
+      <button class="btn btn-primary" onclick="saveSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-save"></i> Save Settings
+      </button>
+      <button class="btn btn-secondary" onclick="resetSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-undo"></i> Reset to Default
+      </button>
+      <button class="btn btn-outline" onclick="previewSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-eye"></i> Preview Changes
+      </button>
+    </div>
+  </div>
+</div>
+        <!-- User & Security -->
+        <div class="tab-content" id="users-tab">
+          <div class="settings-header">
+            <h2><i class="fas fa-users-cog"></i> User & Security Settings</h2>
+            <p>Manage user accounts, passwords, and security policies</p>
+          </div>
+          <div class="settings-body">
+            <div class="form-section">
+              <h3><i class="fas fa-key"></i> Password Policies</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Minimum Password Length</label>
+                  <input type="number" class="form-control" id="minPasswordLength" value="8" min="6" max="32">
+                  <span class="form-hint">Minimum characters required (6-32)</span>
+                </div>
+                <div class="form-group">
+                  <label>Password Expiration</label>
+                  <select class="form-control select" id="passwordExpiry">
+                    <option value="0">Never</option>
+                    <option value="30" selected>30 days</option>
+                    <option value="60">60 days</option>
+                    <option value="90">90 days</option>
+                    <option value="180">180 days</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Failed Login Attempts</label>
+                  <input type="number" class="form-control" id="maxLoginAttempts" value="5" min="1" max="10">
+                  <span class="form-hint">Lock account after this many failed attempts</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3><i class="fas fa-shield-alt"></i> Security Features</h3>
+              <div class="checkbox-group">
+                <div class="checkbox-item">
+                  <input type="checkbox" id="enable2FA" checked>
+                  <label for="enable2FA">Enable Two-Factor Authentication for Admins</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="forceLogout" checked>
+                  <label for="forceLogout">Force logout inactive users after 30 minutes</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="ipRestrictions">
+                  <label for="ipRestrictions">Enable IP Address Restrictions</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" id="auditLog" checked>
+                  <label for="auditLog">Enable Detailed Audit Logging</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Settings Tab Content -->
+<div class="tab-content" id="finance-tab">
+  <div class="settings-header">
+    <h2><i class="fas fa-money-bill-wave"></i> Financial Settings</h2>
+    <p>Configure fees, payment methods, budgets, and financial policies</p>
+  </div>
+
+  <div class="settings-body" style="padding: 2rem 2.5rem;">
+    <!-- Important Notice -->
+    <div class="info-box" style="margin-bottom: 2.5rem; padding: 1.5rem;">
+      <i class="fas fa-info-circle" style="font-size: 1.6rem;"></i>
+      <div class="info-box-content">
+        <h4 style="font-size: 1.1rem;">Important Notice</h4>
+        <p style="font-size: 1rem; line-height: 1.6;">
+          Changes to fee structures, payment gateways, and budgets will only affect future transactions. 
+          Existing records and paid invoices will remain unchanged.
+        </p>
+      </div>
+    </div>
+
+    <!-- Financial Sections Grid -->
+    <div class="settings-grid" style="grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
+
+      <!-- Fee Structure -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-file-invoice-dollar"></i> Fee Structure</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Define tuition, activity, and other fees per class/term</p>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tuition Fee (per term)</label>
+            <input type="number" class="form-control" value="15000" min="0" style="height: 50px; font-size: 1.1rem;">
+          </div>
+          <div class="form-group">
+            <label>Activity Fee</label>
+            <input type="number" class="form-control" value="2500" min="0" style="height: 50px; font-size: 1.1rem;">
+          </div>
+          <div class="form-group">
+            <label>Uniform Fee (one-time)</label>
+            <input type="number" class="form-control" value="4500" min="0" style="height: 50px; font-size: 1.1rem;">
+          </div>
+          <div class="form-group">
+            <label>Late Payment Penalty (% per week)</label>
+            <input type="number" class="form-control" value="5" min="0" max="20" style="height: 50px; font-size: 1.1rem;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-credit-card"></i> Payment Methods</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Enable/disable accepted payment channels</p>
+
+        <div style="display: grid; gap: 1.2rem;">
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> M-Pesa / Mobile Money
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Bank Transfer
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" style="width: 22px; height: 22px;"> Cash Payment (at school office)
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Card Payment (Visa/Mastercard)
+          </label>
+        </div>
+      </div>
+
+      <!-- Budget & Accounting -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-chart-pie"></i> Budget & Accounting</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Set financial year and budget alerts</p>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Financial Year Start</label>
+            <input type="date" class="form-control" value="2026-01-01" style="height: 50px; font-size: 1.1rem;">
+          </div>
+          <div class="form-group">
+            <label>Low Balance Alert Threshold (KES)</label>
+            <input type="number" class="form-control" value="50000" min="0" style="height: 50px; font-size: 1.1rem;">
+          </div>
+        </div>
+
+        <div style="margin-top: 1.8rem;">
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Enable automatic receipt generation
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem; margin-top: 1rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Send payment reminders 7 days before due date
+          </label>
+        </div>
+      </div>
+
+      <!-- Tax & Compliance -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-balance-scale"></i> Tax & Compliance</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Configure VAT, exemptions, and reporting</p>
+
+        <div class="form-group">
+          <label>VAT Rate (%)</label>
+          <input type="number" class="form-control" value="16" min="0" max="30" step="0.5" style="height: 50px; font-size: 1.1rem;">
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" style="width: 22px; height: 22px;"> Apply VAT on tuition fees
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem; margin-top: 1rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Exempt uniform & activity fees from VAT
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons" style="justify-content: center; gap: 1.5rem; margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--border-color);">
+      <button class="btn btn-primary" onclick="saveSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-save"></i> Save Settings
+      </button>
+      <button class="btn btn-secondary" onclick="resetSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-undo"></i> Reset to Default
+      </button>
+      <button class="btn btn-outline" onclick="previewSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-eye"></i> Preview Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+        <!-- Communication Tab Content -->
+<div class="tab-content" id="communication-tab">
+  <div class="settings-header">
+    <h2><i class="fas fa-comments"></i> Communication Settings</h2>
+    <p>Configure notifications, SMS, email, parent portals, and messaging policies</p>
+  </div>
+
+  <div class="settings-body" style="padding: 2rem 2.5rem;">
+    <!-- Important Notice -->
+    <div class="info-box" style="margin-bottom: 2.5rem; padding: 1.5rem;">
+      <i class="fas fa-info-circle" style="font-size: 1.6rem;"></i>
+      <div class="info-box-content">
+        <h4 style="font-size: 1.1rem;">Important Notice</h4>
+        <p style="font-size: 1rem; line-height: 1.6;">
+          Changes to notification templates, SMS/email gateways, and messaging rules will only affect future messages. 
+          Already sent messages and communication logs will remain unchanged.
+        </p>
+      </div>
+    </div>
+
+    <!-- Communication Sections Grid -->
+    <div class="settings-grid" style="grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
+
+      <!-- Notification Preferences -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-bell"></i> Notification Preferences</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Choose which events trigger notifications</p>
+
+        <div style="display: grid; gap: 1.2rem;">
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Fee payment received
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Student attendance below 75%
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Exam results published
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" style="width: 22px; height: 22px;"> Teacher assignment posted
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem; margin-top: 0.8rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Urgent school announcement
+          </label>
+        </div>
+      </div>
+
+      <!-- Messaging Channels -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-sms"></i> Messaging Channels</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Enable/disable SMS, email, and in-app messaging</p>
+
+        <div class="form-grid" style="gap: 1.5rem;">
+          <div class="form-group">
+            <label>SMS Provider</label>
+            <select class="form-control select" style="height: 50px; font-size: 1rem;">
+              <option selected>Africastalking</option>
+              <option>Twilio</option>
+              <option>Infobip</option>
+              <option>None (disable SMS)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Email Provider</label>
+            <select class="form-control select" style="height: 50px; font-size: 1rem;">
+              <option selected>SendGrid</option>
+              <option>Mailgun</option>
+              <option>Gmail SMTP</option>
+              <option>None (disable email)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Enable in-app parent portal messages
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem; margin-top: 1rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Allow teachers to send bulk class messages
+          </label>
+        </div>
+      </div>
+
+      <!-- Message Templates -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-file-alt"></i> Message Templates</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Customize default messages for common events</p>
+
+        <div class="form-group">
+          <label>Fee Reminder Template</label>
+          <textarea class="form-control" rows="4" style="font-size: 1rem; resize: vertical;">
+Dear {parent_name},
+
+This is a reminder that {student_name}'s school fees of KES {amount} for {term} is due on {due_date}. 
+Please make payment to avoid late penalties.
+
+Thank you,
+Emalashira Primary School
+          </textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 1.8rem;">
+          <label>Exam Results Published Template</label>
+          <textarea class="form-control" rows="3" style="font-size: 1rem;">
+{student_name} ({class}) - {term} Results are now available in the parent portal.
+View detailed performance and teacher comments.
+          </textarea>
+        </div>
+      </div>
+
+      <!-- Communication Rules & Limits -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-shield-alt"></i> Rules & Limits</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Set restrictions and approval workflows</p>
+
+        <div class="form-grid" style="gap: 1.5rem;">
+          <div class="form-group">
+            <label>Max SMS per parent per month</label>
+            <input type="number" class="form-control" value="30" min="5" max="100" style="height: 50px; font-size: 1.1rem;">
+          </div>
+          <div class="form-group">
+            <label>Require approval for bulk messages</label>
+            <select class="form-control select" style="height: 50px; font-size: 1rem;">
+              <option>Admin only</option>
+              <option>Admin + Headteacher</option>
+              <option selected>No approval needed</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Log all sent messages for audit
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem; margin-top: 1rem;">
+            <input type="checkbox" style="width: 22px; height: 22px;"> Allow parents to reply to SMS (two-way)
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons" style="justify-content: center; gap: 1.5rem; margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--border-color);">
+      <button class="btn btn-primary" onclick="saveSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-save"></i> Save Settings
+      </button>
+      <button class="btn btn-secondary" onclick="resetSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-undo"></i> Reset to Default
+      </button>
+      <button class="btn btn-outline" onclick="previewSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-eye"></i> Preview Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+        <!-- Appearance Tab Content -->
+<div class="tab-content" id="appearance-tab">
+  <div class="settings-header">
+    <h2><i class="fas fa-palette"></i> Appearance Settings</h2>
+    <p>Customize the look and feel of the school management system</p>
+  </div>
+
+  <div class="settings-body" style="padding: 2rem 2.5rem;">
+    <!-- Important Notice -->
+    <div class="info-box" style="margin-bottom: 2.5rem; padding: 1.5rem;">
+      <i class="fas fa-info-circle" style="font-size: 1.6rem;"></i>
+      <div class="info-box-content">
+        <h4 style="font-size: 1.1rem;">Important Notice</h4>
+        <p style="font-size: 1rem; line-height: 1.6;">
+          Changes to theme, colors, logo, and layout will apply immediately to all users after saving. 
+          Some customizations may require a page refresh or cache clear.
+        </p>
+      </div>
+    </div>
+
+    <!-- Appearance Sections Grid -->
+    <div class="settings-grid" style="grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
+
+      <!-- Theme & Mode -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-adjust"></i> Theme & Mode</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Choose light/dark mode and default theme</p>
+
+        <div class="form-group">
+          <label>Default Theme Mode</label>
+          <select class="form-control select" style="height: 50px; font-size: 1.1rem;">
+            <option selected>Light (default)</option>
+            <option>Dark</option>
+            <option>Auto (follow system preference)</option>
+          </select>
+        </div>
+
+        <div style="margin-top: 1.8rem;">
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Allow users to toggle dark mode
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem; margin-top: 1rem;">
+            <input type="checkbox" style="width: 22px; height: 22px;"> Force dark mode for night sessions
+          </label>
+        </div>
+      </div>
+
+      <!-- Primary Colors -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-fill-drip"></i> Primary Colors</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Customize the main brand colors</p>
+
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="form-group">
+            <label>Primary Color</label>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <input type="color" value="#065f46" style="width: 80px; height: 50px; border: none; border-radius: 8px; cursor: pointer;">
+              <span style="font-family: monospace; font-size: 1.1rem;">#065f46</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Secondary Color</label>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <input type="color" value="#0f766e" style="width: 80px; height: 50px; border: none; border-radius: 8px; cursor: pointer;">
+              <span style="font-family: monospace; font-size: 1.1rem;">#0f766e</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Use gradient header (primary → secondary)
+          </label>
+        </div>
+      </div>
+
+      <!-- Logo & Branding -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-image"></i> Logo & Branding</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Upload school logo and favicon</p>
+
+        <div class="form-group">
+          <label>School Logo (recommended 200×60 px)</label>
+          <input type="file" accept="image/*" class="form-control" style="height: 50px; padding: 0.8rem;">
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.5rem;">
+            Current: Emalashira Primary School logo
+          </p>
+        </div>
+
+        <div class="form-group" style="margin-top: 1.8rem;">
+          <label>Favicon (16×16 or 32×32 px)</label>
+          <input type="file" accept="image/*" class="form-control" style="height: 50px; padding: 0.8rem;">
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Show logo in sidebar header
+          </label>
+        </div>
+      </div>
+
+      <!-- Layout & Typography -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-columns"></i> Layout & Typography</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Adjust sidebar, font size, and spacing</p>
+
+        <div class="form-grid" style="gap: 1.5rem;">
+          <div class="form-group">
+            <label>Sidebar Width</label>
+            <select class="form-control select" style="height: 50px; font-size: 1rem;">
+              <option selected>260px (default)</option>
+              <option>220px (compact)</option>
+              <option>300px (wide)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Base Font Size</label>
+            <select class="form-control select" style="height: 50px; font-size: 1rem;">
+              <option>14px</option>
+              <option selected>16px (default)</option>
+              <option>18px (large)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+          <label class="checkbox-group" style="font-size: 1.05rem;">
+            <input type="checkbox" checked style="width: 22px; height: 22px;"> Rounded corners on cards/buttons
+          </label>
+          <label class="checkbox-group" style="font-size: 1.05rem; margin-top: 1rem;">
+            <input type="checkbox" style="width: 22px; height: 22px;"> Enable subtle animations
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons" style="justify-content: center; gap: 1.5rem; margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--border-color);">
+      <button class="btn btn-primary" onclick="saveSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-save"></i> Save Settings
+      </button>
+      <button class="btn btn-secondary" onclick="resetSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-undo"></i> Reset to Default
+      </button>
+      <button class="btn btn-outline" onclick="previewSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-eye"></i> Preview Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+        <!-- Permissions Tab Content -->
+<div class="tab-content" id="permissions-tab">
+  <div class="settings-header">
+    <h2><i class="fas fa-user-lock"></i> Permissions</h2>
+    <p>Manage roles, access levels, and granular permissions across the system</p>
+  </div>
+
+  <div class="settings-body" style="padding: 2rem 2.5rem;">
+    <!-- Important Notice + Pending Badge -->
+    <div class="info-box" style="margin-bottom: 2.5rem; padding: 1.5rem; position: relative;">
+      <i class="fas fa-info-circle" style="font-size: 1.6rem;"></i>
+      <div class="info-box-content">
+        <h4 style="font-size: 1.1rem;">Important Notice</h4>
+        <p style="font-size: 1rem; line-height: 1.6;">
+          Permission changes take effect immediately for active sessions. 
+          Some users may need to log out and back in to see updates.
+        </p>
+      </div>
+      <!-- Pending Reviews Badge -->
+      <div style="position: absolute; top: 1rem; right: 1rem; background: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 999px; font-weight: 600; font-size: 1rem;">
+        5 Pending Reviews
+      </div>
+    </div>
+
+    <!-- Permissions Sections Grid -->
+    <div class="settings-grid" style="grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
+
+      <!-- Role Management -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-user-shield"></i> Role Management</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Create, edit, and assign roles</p>
+
+        <div style="margin-bottom: 1.5rem;">
+          <button class="btn btn-primary" style="padding: 0.9rem 1.8rem; font-size: 1rem;">
+            <i class="fas fa-plus"></i> Create New Role
+          </button>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 1rem;">
+          <thead>
+            <tr style="background: #f8fafc;">
+              <th style="padding: 1rem; text-align: left;">Role</th>
+              <th style="padding: 1rem; text-align: left;">Users</th>
+              <th style="padding: 1rem; text-align: left;">Last Modified</th>
+              <th style="padding: 1rem; text-align: center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Admin</strong></td>
+              <td>3</td>
+              <td>Today</td>
+              <td style="text-align: center;">
+                <button class="btn btn-sm btn-outline" style="font-size: 0.9rem;">Edit</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Teacher</strong></td>
+              <td>18</td>
+              <td>2 days ago</td>
+              <td style="text-align: center;">
+                <button class="btn btn-sm btn-outline" style="font-size: 0.9rem;">Edit</button>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Parent</strong></td>
+              <td>245</td>
+              <td>1 week ago</td>
+              <td style="text-align: center;">
+                <button class="btn btn-sm btn-outline" style="font-size: 0.9rem;">Edit</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Permission Matrix -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-key"></i> Permission Matrix</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Granular control over features and modules</p>
+
+        <div style="overflow-x: auto;">
+          <table class="grade-scale-table" style="min-width: 100%; font-size: 0.95rem;">
+            <thead>
+              <tr>
+                <th style="width: 25%;">Feature / Module</th>
+                <th style="text-align: center;">Admin</th>
+                <th style="text-align: center;">Teacher</th>
+                <th style="text-align: center;">Parent</th>
+                <th style="text-align: center;">Accountant</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>View Student Records</td>
+                <td style="text-align: center;">✔</td>
+                <td style="text-align: center;">✔ (own class)</td>
+                <td style="text-align: center;">✔ (own child)</td>
+                <td style="text-align: center;">✔ (fees only)</td>
+              </tr>
+              <tr>
+                <td>Edit Grades & Results</td>
+                <td style="text-align: center;">✔</td>
+                <td style="text-align: center;">✔</td>
+                <td style="text-align: center;">✘</td>
+                <td style="text-align: center;">✘</td>
+              </tr>
+              <tr>
+                <td>Manage Fee Payments</td>
+                <td style="text-align: center;">✔</td>
+                <td style="text-align: center;">✘</td>
+                <td style="text-align: center;">✘</td>
+                <td style="text-align: center;">✔</td>
+              </tr>
+              <tr>
+                <td>Send Bulk Messages</td>
+                <td style="text-align: center;">✔</td>
+                <td style="text-align: center;">✔ (class only)</td>
+                <td style="text-align: center;">✘</td>
+                <td style="text-align: center;">✘</td>
+              </tr>
+              <!-- Add more rows as needed -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pending Access Requests -->
+      <div class="settings-card" style="padding: 2rem; border: 2px solid #dc2626; background: #fff5f5;">
+        <h3 style="font-size: 1.4rem; color: #dc2626;">
+          <i class="fas fa-clock"></i> Pending Reviews (5)
+        </h3>
+        <p style="margin: 1rem 0 1.8rem; color: #7f1d1d;">
+          These users/roles have requested access changes
+        </p>
+
+        <ul style="list-style: none; padding: 0; font-size: 1rem;">
+          <li style="padding: 1rem; border-bottom: 1px solid #fee2e2;">
+            <strong>Jane Muthoni (Teacher)</strong> — requested access to Grade 4 results
+            <div style="margin-top: 0.5rem;">
+              <button class="btn btn-success btn-sm" style="margin-right: 0.5rem;">Approve</button>
+              <button class="btn btn-danger btn-sm">Deny</button>
+            </div>
+          </li>
+          <!-- Repeat for 4 more pending items -->
+        </ul>
+      </div>
+
+      <!-- Audit & Security Log -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-history"></i> Recent Permission Changes</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Last 10 permission modifications</p>
+
+        <ul style="list-style: none; padding: 0; font-size: 0.95rem;">
+          <li style="padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
+            Admin granted "Bulk Messaging" to all Teachers — 2 hours ago
+          </li>
+          <li style="padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
+            Headteacher requested access to Finance module — pending
+          </li>
+          <!-- More log entries -->
+        </ul>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons" style="justify-content: center; gap: 1.5rem; margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--border-color);">
+      <button class="btn btn-primary" onclick="saveSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-save"></i> Save Settings
+      </button>
+      <button class="btn btn-secondary" onclick="resetSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-undo"></i> Reset to Default
+      </button>
+      <button class="btn btn-outline" onclick="previewSettings()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+        <i class="fas fa-eye"></i> Preview Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+        <!-- Data Management Tab Content -->
+<div class="tab-content" id="data-tab">
+  <div class="settings-header">
+    <h2><i class="fas fa-database"></i> Data Management</h2>
+    <p>Backup, restore, export, import, and maintain system data</p>
+  </div>
+
+  <div class="settings-body" style="padding: 2rem 2.5rem;">
+    <!-- Critical Warning -->
+    <div class="info-box" style="margin-bottom: 2.5rem; padding: 1.5rem; background: #fee2e2; border-left: 6px solid #dc2626;">
+      <i class="fas fa-exclamation-triangle" style="font-size: 1.8rem; color: #dc2626;"></i>
+      <div class="info-box-content">
+        <h4 style="font-size: 1.2rem; color: #991b1b;">Critical Warning</h4>
+        <p style="font-size: 1rem; line-height: 1.6; color: #7f1d1d;">
+          Operations in this section can result in permanent data loss. Always create a full backup before proceeding.
+        </p>
+      </div>
+    </div>
+
+    <!-- Main Data Tools Grid -->
+    <div class="settings-grid" style="grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
+
+      <!-- Backup System -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-download"></i> Backup System</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Create a complete backup of all school data</p>
+
+        <div style="text-align: center; margin: 2rem 0;">
+          <button class="btn btn-success" style="padding: 1.2rem 3rem; font-size: 1.2rem; min-width: 280px;">
+            <i class="fas fa-download"></i> Create Full Backup Now
+          </button>
+        </div>
+
+        <div style="font-size: 0.95rem; color: var(--text-secondary);">
+          Last backup: <strong>Never</strong><br>
+          Backup size: —<br>
+          Next automatic backup: Disabled
+        </div>
+      </div>
+
+      <!-- Restore from Backup -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-upload"></i> Restore from Backup</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Restore the system from a previous backup file</p>
+
+        <div class="form-group">
+          <label>Upload Backup File (.json or .zip)</label>
+          <input type="file" accept=".json,.zip" class="form-control" style="height: 50px; padding: 0.8rem;">
+        </div>
+
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <button class="btn btn-warning" style="padding: 1rem 2.5rem; font-size: 1.1rem;" disabled>
+            <i class="fas fa-upload"></i> Restore Selected Backup
+          </button>
+          <p style="font-size: 0.9rem; color: #d97706; margin-top: 0.8rem;">
+            This action will overwrite current data
+          </p>
+        </div>
+      </div>
+
+      <!-- Export Data -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-file-export"></i> Export Data</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Download selected data in CSV/Excel/JSON</p>
+
+        <div style="display: grid; gap: 1.2rem;">
+          <button class="btn btn-outline" style="text-align: left; justify-content: flex-start; padding: 1rem;">
+            <i class="fas fa-users"></i> Export All Users & Roles
+          </button>
+          <button class="btn btn-outline" style="text-align: left; justify-content: flex-start; padding: 1rem;">
+            <i class="fas fa-user-graduate"></i> Export All Students
+          </button>
+          <button class="btn btn-outline" style="text-align: left; justify-content: flex-start; padding: 1rem;">
+            <i class="fas fa-chalkboard-teacher"></i> Export All Teachers
+          </button>
+          <button class="btn btn-outline" style="text-align: left; justify-content: flex-start; padding: 1rem;">
+            <i class="fas fa-dollar-sign"></i> Export Financial Transactions
+          </button>
+        </div>
+      </div>
+
+      <!-- Import Data -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-file-import"></i> Import Data</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Bulk upload users, students, or fees</p>
+
+        <div class="form-group">
+          <label>Upload CSV/Excel File</label>
+          <input type="file" accept=".csv,.xlsx" class="form-control" style="height: 50px; padding: 0.8rem;">
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <select class="form-control select" style="height: 50px; font-size: 1rem;">
+            <option selected>Import Students</option>
+            <option>Import Parents</option>
+            <option>Import Teachers</option>
+            <option>Import Fee Payments</option>
+          </select>
+        </div>
+
+        <div style="margin-top: 2rem; text-align: center;">
+          <button class="btn btn-primary" style="padding: 1rem 2.5rem; font-size: 1.1rem;" disabled>
+            <i class="fas fa-file-import"></i> Start Import
+          </button>
+        </div>
+      </div>
+
+      <!-- Data Cleanup & Maintenance -->
+      <div class="settings-card" style="padding: 2rem;">
+        <h3 style="font-size: 1.4rem;"><i class="fas fa-broom"></i> Data Cleanup & Maintenance</h3>
+        <p style="margin: 1rem 0 1.8rem; color: var(--text-secondary);">Remove old records and optimize database</p>
+
+        <div style="display: grid; gap: 1.2rem;">
+          <button class="btn btn-outline" style="text-align: left; justify-content: flex-start; padding: 1rem;">
+            Clear old communication logs (> 2 years)
+          </button>
+          <button class="btn btn-outline" style="text-align: left; justify-content: flex-start; padding: 1rem;">
+            Archive inactive student records
+          </button>
+          <button class="btn btn-outline" style="text-align: left; justify-content: flex-start; padding: 1rem;">
+            Optimize database (VACUUM)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Integrations -->
+<div class="tab-content" id="integrations-tab">
+  <div class="settings-header">
+    <h2><i class="fas fa-plug"></i> Integrations</h2>
+    <p>Connect external services, APIs, payment gateways, SMS providers, and third-party tools</p>
+  </div>
+
+  <div class="settings-body" style="padding: 2rem 2.5rem;">
+
+    <!-- Security Notice -->
+    <div class="info-box" style="margin-bottom: 2.5rem; padding: 1.5rem; background:#fffbeb; border-left:5px solid #d97706;">
+      <i class="fas fa-shield-alt" style="font-size:1.6rem; color:#d97706; flex-shrink:0;"></i>
+      <div class="info-box-content">
+        <h4 style="font-size:1.05rem; color:#92400e;">Security Notice</h4>
+        <p style="font-size:0.95rem; line-height:1.6; color:#78350f;">
+          Never share API keys or credentials publicly. All connections use secure OAuth or encrypted tokens.
+          Review connected services regularly and revoke access for unused integrations.
+        </p>
+      </div>
+    </div>
+
+    <div class="settings-grid" style="grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 2rem;">
+
+      <!-- ── M-Pesa / Payment Gateway ── -->
+      <div class="settings-card" style="padding:2rem;">
+        <h3 style="margin-bottom:0.4rem;"><i class="fas fa-mobile-alt" style="color:#059669;"></i> M-Pesa (Daraja API)</h3>
+        <p style="font-size:0.85rem; color:#6b7280; margin-bottom:1.5rem;">Accept school fee payments via M-Pesa STK Push</p>
+
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1.25rem;">
+          <span style="width:10px;height:10px;border-radius:50%;background:#059669;display:inline-block;"></span>
+          <span style="font-size:0.85rem; font-weight:600; color:#059669;">Connected</span>
+        </div>
+
+        <form id="mpesaForm">
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">Consumer Key</label>
+            <input type="password" class="form-control" id="mpesaConsumerKey" placeholder="Enter Consumer Key" value="••••••••••••••••">
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">Consumer Secret</label>
+            <input type="password" class="form-control" id="mpesaConsumerSecret" placeholder="Enter Consumer Secret" value="••••••••••••••••">
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">Shortcode (Paybill / Till)</label>
+            <input type="text" class="form-control" id="mpesaShortcode" placeholder="e.g. 174379">
+          </div>
+          <div class="form-group" style="margin-bottom:1.25rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">Environment</label>
+            <select class="form-control select" id="mpesaEnv">
+              <option value="sandbox">Sandbox (Testing)</option>
+              <option value="production" selected>Production (Live)</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:0.75rem;">
+            <button type="button" class="btn btn-primary" onclick="testIntegration('mpesa')" style="flex:1;">
+              <i class="fas fa-vial"></i> Test Connection
+            </button>
+            <button type="submit" class="btn btn-primary" style="flex:1; background:#065f46;">
+              <i class="fas fa-save"></i> Save
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ── SMS Provider ── -->
+      <div class="settings-card" style="padding:2rem;">
+        <h3 style="margin-bottom:0.4rem;"><i class="fas fa-sms" style="color:#2563eb;"></i> SMS Notifications</h3>
+        <p style="font-size:0.85rem; color:#6b7280; margin-bottom:1.5rem;">Send attendance alerts, fee reminders, and report notifications to parents via SMS</p>
+
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1.25rem;">
+          <span style="width:10px;height:10px;border-radius:50%;background:#9ca3af;display:inline-block;"></span>
+          <span style="font-size:0.85rem; font-weight:600; color:#9ca3af;">Not Connected</span>
+        </div>
+
+        <form id="smsForm">
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">SMS Provider</label>
+            <select class="form-control select" id="smsProvider">
+              <option value="">Select Provider</option>
+              <option value="africastalking">Africa's Talking</option>
+              <option value="twilio">Twilio</option>
+              <option value="vonage">Vonage (Nexmo)</option>
+              <option value="inhouse">In-House Gateway</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">API Key</label>
+            <input type="password" class="form-control" id="smsApiKey" placeholder="Enter API Key">
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">Sender ID</label>
+            <input type="text" class="form-control" id="smsSenderId" placeholder="e.g. EMALASHIRA">
+          </div>
+          <div style="background:#f0fdf4; border-radius:8px; padding:0.85rem; margin-bottom:1.25rem; font-size:0.82rem; color:#065f46;">
+            <i class="fas fa-info-circle"></i> SMS credits remaining: <strong id="smsCredits">—</strong>
+          </div>
+          <div style="display:flex; gap:0.75rem;">
+            <button type="button" class="btn btn-outline" onclick="testIntegration('sms')" style="flex:1;">
+              <i class="fas fa-paper-plane"></i> Send Test SMS
+            </button>
+            <button type="submit" class="btn btn-primary" style="flex:1; background:#2563eb;">
+              <i class="fas fa-plug"></i> Connect
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ── Email (SMTP) ── -->
+      <div class="settings-card" style="padding:2rem;">
+        <h3 style="margin-bottom:0.4rem;"><i class="fas fa-envelope" style="color:#7c3aed;"></i> Email (SMTP)</h3>
+        <p style="font-size:0.85rem; color:#6b7280; margin-bottom:1.5rem;">Send report cards, notices, and newsletters via email to parents and staff</p>
+
+        <form id="smtpForm">
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">SMTP Host</label>
+            <input type="text" class="form-control" id="smtpHost" placeholder="e.g. smtp.gmail.com" value="smtp.emalashira.sc.ke">
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <div class="form-group">
+              <label style="font-size:0.82rem; font-weight:600; color:#374151;">Port</label>
+              <input type="number" class="form-control" id="smtpPort" value="587">
+            </div>
+            <div class="form-group">
+              <label style="font-size:0.82rem; font-weight:600; color:#374151;">Encryption</label>
+              <select class="form-control select" id="smtpEncryption">
+                <option value="tls" selected>TLS</option>
+                <option value="ssl">SSL</option>
+                <option value="none">None</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">From Email</label>
+            <input type="email" class="form-control" id="smtpFrom" value="noreply@emalashira.sc.ke">
+          </div>
+          <div class="form-group" style="margin-bottom:1.25rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">SMTP Password</label>
+            <input type="password" class="form-control" id="smtpPassword" placeholder="SMTP password or app token">
+          </div>
+          <div style="display:flex; gap:0.75rem;">
+            <button type="button" class="btn btn-outline" onclick="testIntegration('smtp')" style="flex:1;">
+              <i class="fas fa-vial"></i> Send Test Email
+            </button>
+            <button type="submit" class="btn btn-primary" style="flex:1; background:#7c3aed;">
+              <i class="fas fa-save"></i> Save
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ── Google Workspace ── -->
+      <div class="settings-card" style="padding:2rem;">
+        <h3 style="margin-bottom:0.4rem;"><i class="fab fa-google" style="color:#dc2626;"></i> Google Workspace</h3>
+        <p style="font-size:0.85rem; color:#6b7280; margin-bottom:1.5rem;">Sync with Google Classroom, Calendar, and Drive for homework and timetable management</p>
+
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1.5rem;">
+          <span style="width:10px;height:10px;border-radius:50%;background:#9ca3af;display:inline-block;"></span>
+          <span style="font-size:0.85rem; font-weight:600; color:#9ca3af;">Not Connected</span>
+        </div>
+
+        <div style="background:#f8fafc; border-radius:10px; padding:1.25rem; margin-bottom:1.25rem; font-size:0.88rem; color:#374151; line-height:1.6;">
+          <p><i class="fas fa-check-circle" style="color:#059669; margin-right:6px;"></i> Sync timetables to Google Calendar</p>
+          <p><i class="fas fa-check-circle" style="color:#059669; margin-right:6px;"></i> Push homework to Google Classroom</p>
+          <p><i class="fas fa-check-circle" style="color:#059669; margin-right:6px;"></i> Store report cards on Google Drive</p>
+          <p><i class="fas fa-check-circle" style="color:#059669; margin-right:6px;"></i> Single Sign-On for staff and students</p>
+        </div>
+
+        <div class="form-group" style="margin-bottom:1.25rem;">
+          <label style="font-size:0.82rem; font-weight:600; color:#374151;">Google Client ID</label>
+          <input type="text" class="form-control" id="googleClientId" placeholder="Paste OAuth 2.0 Client ID">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="connectGoogle()" style="width:100%; background:#dc2626;">
+          <i class="fab fa-google"></i> Connect with Google
+        </button>
+      </div>
+
+      <!-- ── WhatsApp Business ── -->
+      <div class="settings-card" style="padding:2rem;">
+        <h3 style="margin-bottom:0.4rem;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> WhatsApp Business</h3>
+        <p style="font-size:0.85rem; color:#6b7280; margin-bottom:1.5rem;">Send instant notifications, reports, and alerts to parents via WhatsApp</p>
+
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1.25rem;">
+          <span style="width:10px;height:10px;border-radius:50%;background:#9ca3af;display:inline-block;"></span>
+          <span style="font-size:0.85rem; font-weight:600; color:#9ca3af;">Not Connected</span>
+        </div>
+
+        <form id="whatsappForm">
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">WhatsApp Business Phone Number ID</label>
+            <input type="text" class="form-control" id="waPhoneId" placeholder="e.g. 123456789012345">
+          </div>
+          <div class="form-group" style="margin-bottom:1.25rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">Access Token (Meta Cloud API)</label>
+            <input type="password" class="form-control" id="waToken" placeholder="Paste access token">
+          </div>
+          <div style="display:flex; gap:0.75rem;">
+            <button type="button" class="btn btn-outline" onclick="testIntegration('whatsapp')" style="flex:1;">
+              <i class="fas fa-vial"></i> Test
+            </button>
+            <button type="submit" class="btn btn-primary" style="flex:1; background:#25d366; color:#fff;">
+              <i class="fab fa-whatsapp"></i> Connect
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ── Webhook / Custom API ── -->
+      <div class="settings-card" style="padding:2rem;">
+        <h3 style="margin-bottom:0.4rem;"><i class="fas fa-code" style="color:#0891b2;"></i> Custom Webhook / API</h3>
+        <p style="font-size:0.85rem; color:#6b7280; margin-bottom:1.5rem;">Push events (new student, payment received, attendance marked) to any external system</p>
+
+        <form id="webhookForm">
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">Webhook URL</label>
+            <input type="url" class="form-control" id="webhookUrl" placeholder="https://your-system.com/webhook">
+          </div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151;">Secret Key (HMAC)</label>
+            <input type="password" class="form-control" id="webhookSecret" placeholder="Secret for signature verification">
+          </div>
+          <div class="form-group" style="margin-bottom:1.25rem;">
+            <label style="font-size:0.82rem; font-weight:600; color:#374151; display:block; margin-bottom:0.5rem;">Trigger on Events</label>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; font-size:0.85rem;">
+              <label style="display:flex; align-items:center; gap:0.5rem;"><input type="checkbox" checked> New student enrolled</label>
+              <label style="display:flex; align-items:center; gap:0.5rem;"><input type="checkbox" checked> Payment received</label>
+              <label style="display:flex; align-items:center; gap:0.5rem;"><input type="checkbox"> Attendance marked</label>
+              <label style="display:flex; align-items:center; gap:0.5rem;"><input type="checkbox"> Grade posted</label>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.75rem;">
+            <button type="button" class="btn btn-outline" onclick="testIntegration('webhook')" style="flex:1;">
+              <i class="fas fa-paper-plane"></i> Send Test Payload
+            </button>
+            <button type="submit" class="btn btn-primary" style="flex:1; background:#0891b2;">
+              <i class="fas fa-save"></i> Save
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div><!-- /grid -->
+
+    <div style="text-align:center; margin-top:2.5rem; font-size:0.85rem; color:#9ca3af;">
+      <i class="fas fa-lock" style="margin-right:5px;"></i>
+      All credentials are stored encrypted. Connections are verified immediately after saving.
+    </div>
+  </div>
+</div>
+
+<!-- System Maintenance -->
+<div class="tab-content" id="maintenance-tab">
+  <div class="settings-header">
+    <h2><i class="fas fa-tools"></i> System Maintenance</h2>
+    <p>Perform updates, clear cache, run diagnostics, schedule tasks, and manage system health</p>
+  </div>
+
+  <div class="settings-body" style="padding:2rem 2.5rem;">
+
+    <!-- Caution banner -->
+    <div class="info-box" style="margin-bottom:2.5rem; padding:1.5rem; background:#fefce8; border-left:6px solid #d97706;">
+      <i class="fas fa-exclamation-triangle" style="font-size:1.8rem; color:#d97706; flex-shrink:0;"></i>
+      <div class="info-box-content">
+        <h4 style="font-size:1.1rem; color:#92400e;">Caution</h4>
+        <p style="font-size:0.92rem; line-height:1.6; color:#78350f;">
+          Some tasks below may cause temporary downtime or data loss.
+          Always <strong>create a full backup</strong> before running maintenance operations.
+          Scheduled tasks run automatically in the background.
+        </p>
+      </div>
+    </div>
+
+    <!-- System Status Grid -->
+    <div class="settings-card" style="padding:2rem; background:linear-gradient(135deg,#f0fdf4,#ecfdf5); margin-bottom:2rem;">
+      <h3 style="font-size:1.2rem; margin-bottom:1.25rem;"><i class="fas fa-heartbeat" style="color:#059669;"></i> Live System Status</h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem;">
+        <div style="background:#fff; border-radius:10px; padding:1.1rem; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+          <i class="fas fa-database" style="font-size:1.5rem; color:#059669; margin-bottom:0.5rem; display:block;"></i>
+          <div style="font-weight:700; font-size:0.9rem;">Database</div>
+          <div style="font-size:0.78rem; color:#059669; margin-top:2px;"><i class="fas fa-circle" style="font-size:0.55rem;"></i> Healthy</div>
+        </div>
+        <div style="background:#fff; border-radius:10px; padding:1.1rem; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+          <i class="fas fa-server" style="font-size:1.5rem; color:#059669; margin-bottom:0.5rem; display:block;"></i>
+          <div style="font-weight:700; font-size:0.9rem;">Server</div>
+          <div style="font-size:0.78rem; color:#059669; margin-top:2px;"><i class="fas fa-circle" style="font-size:0.55rem;"></i> Online</div>
+        </div>
+        <div style="background:#fff; border-radius:10px; padding:1.1rem; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+          <i class="fas fa-memory" style="font-size:1.5rem; color:#d97706; margin-bottom:0.5rem; display:block;"></i>
+          <div style="font-weight:700; font-size:0.9rem;">Cache</div>
+          <div style="font-size:0.78rem; color:#d97706; margin-top:2px;"><i class="fas fa-circle" style="font-size:0.55rem;"></i> High Usage</div>
+        </div>
+        <div style="background:#fff; border-radius:10px; padding:1.1rem; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+          <i class="fas fa-clock" style="font-size:1.5rem; color:#059669; margin-bottom:0.5rem; display:block;"></i>
+          <div style="font-weight:700; font-size:0.9rem;">Uptime</div>
+          <div id="uptimeDisplay" style="font-size:0.78rem; color:#059669; margin-top:2px;">Calculating…</div>
+        </div>
+        <div style="background:#fff; border-radius:10px; padding:1.1rem; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+          <i class="fas fa-hdd" style="font-size:1.5rem; color:#2563eb; margin-bottom:0.5rem; display:block;"></i>
+          <div style="font-weight:700; font-size:0.9rem;">Storage</div>
+          <div id="storageDisplay" style="font-size:0.78rem; color:#2563eb; margin-top:2px;">— KB used</div>
+        </div>
+        <div style="background:#fff; border-radius:10px; padding:1.1rem; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+          <i class="fas fa-code-branch" style="font-size:1.5rem; color:#7c3aed; margin-bottom:0.5rem; display:block;"></i>
+          <div style="font-weight:700; font-size:0.9rem;">Version</div>
+          <div style="font-size:0.78rem; color:#7c3aed; margin-top:2px;">v2.0.0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maintenance Actions Grid -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem; margin-bottom:2rem;">
+
+      <!-- Clear Cache -->
+      <div class="settings-card" style="padding:1.5rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+          <div style="width:42px;height:42px;border-radius:10px;background:#fef3c7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-broom" style="color:#d97706;font-size:1.1rem;"></i>
+          </div>
+          <h3 style="font-size:0.98rem; margin:0;">Clear Cache</h3>
+        </div>
+        <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1.25rem; line-height:1.5;">
+          Remove temporary files, session data, and cached assets. Frees up space and can resolve display issues.
+        </p>
+        <div style="font-size:0.8rem; color:#9ca3af; margin-bottom:0.85rem;">
+          <i class="fas fa-info-circle"></i> Cache size: <strong id="cacheSize">Calculating…</strong>
+        </div>
+        <button class="btn btn-warning" style="width:100%; padding:0.75rem;" onclick="runMaintenance('clearCache')">
+          <i class="fas fa-broom"></i> Clear Cache Now
+        </button>
+      </div>
+
+      <!-- Check for Updates -->
+      <div class="settings-card" style="padding:1.5rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+          <div style="width:42px;height:42px;border-radius:10px;background:#dbeafe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-sync-alt" style="color:#2563eb;font-size:1.1rem;"></i>
+          </div>
+          <h3 style="font-size:0.98rem; margin:0;">Check for Updates</h3>
+        </div>
+        <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1.25rem; line-height:1.5;">
+          Check for system updates, security patches, and new features from the update server.
+        </p>
+        <div style="font-size:0.8rem; color:#9ca3af; margin-bottom:0.85rem;">
+          <i class="fas fa-check-circle" style="color:#059669;"></i> Last checked: <strong id="lastUpdateCheck">Never</strong>
+        </div>
+        <button class="btn btn-primary" style="width:100%; padding:0.75rem;" onclick="runMaintenance('checkUpdates')">
+          <i class="fas fa-sync-alt"></i> Check Updates
+        </button>
+      </div>
+
+      <!-- Run Diagnostics -->
+      <div class="settings-card" style="padding:1.5rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+          <div style="width:42px;height:42px;border-radius:10px;background:#ede9fe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-stethoscope" style="color:#7c3aed;font-size:1.1rem;"></i>
+          </div>
+          <h3 style="font-size:0.98rem; margin:0;">Run Diagnostics</h3>
+        </div>
+        <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1.25rem; line-height:1.5;">
+          Test database connectivity, API endpoints, file permissions, and overall system performance.
+        </p>
+        <div id="diagnosticsResult" style="font-size:0.8rem; color:#9ca3af; margin-bottom:0.85rem;">
+          <i class="fas fa-info-circle"></i> No diagnostics run yet.
+        </div>
+        <button class="btn btn-outline" style="width:100%; padding:0.75rem;" onclick="runMaintenance('diagnostics')">
+          <i class="fas fa-stethoscope"></i> Start Diagnostics
+        </button>
+      </div>
+
+      <!-- View Logs -->
+      <div class="settings-card" style="padding:1.5rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+          <div style="width:42px;height:42px;border-radius:10px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-file-alt" style="color:#059669;font-size:1.1rem;"></i>
+          </div>
+          <h3 style="font-size:0.98rem; margin:0;">System Logs</h3>
+        </div>
+        <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1.25rem; line-height:1.5;">
+          View system activity, error logs, login history, and admin action audit trail.
+        </p>
+        <div style="font-size:0.8rem; color:#9ca3af; margin-bottom:0.85rem;">
+          <i class="fas fa-info-circle"></i> Log entries today: <strong id="logCount">—</strong>
+        </div>
+        <button class="btn btn-outline" style="width:100%; padding:0.75rem;" onclick="runMaintenance('viewLogs')">
+          <i class="fas fa-file-alt"></i> Open Log Viewer
+        </button>
+      </div>
+
+      <!-- Optimise Database -->
+      <div class="settings-card" style="padding:1.5rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+          <div style="width:42px;height:42px;border-radius:10px;background:#fce7f3;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-database" style="color:#9d174d;font-size:1.1rem;"></i>
+          </div>
+          <h3 style="font-size:0.98rem; margin:0;">Optimise Database</h3>
+        </div>
+        <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1.25rem; line-height:1.5;">
+          Run VACUUM and ANALYZE on the SQLite database to reclaim space and improve query performance.
+        </p>
+        <div style="font-size:0.8rem; color:#9ca3af; margin-bottom:0.85rem;">
+          <i class="fas fa-info-circle"></i> Last optimised: <strong id="lastOptimised">Never</strong>
+        </div>
+        <button class="btn btn-outline" style="width:100%; padding:0.75rem;" onclick="runMaintenance('optimiseDB')">
+          <i class="fas fa-magic"></i> Optimise Now
+        </button>
+      </div>
+
+      <!-- Scheduled Tasks -->
+      <div class="settings-card" style="padding:1.5rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+          <div style="width:42px;height:42px;border-radius:10px;background:#f0f9ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-calendar-alt" style="color:#0891b2;font-size:1.1rem;"></i>
+          </div>
+          <h3 style="font-size:0.98rem; margin:0;">Scheduled Tasks</h3>
+        </div>
+        <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1rem; line-height:1.5;">
+          Configure automatic backups, report generation, and attendance reminders.
+        </p>
+        <div style="font-size:0.84rem; color:#374151;">
+          <label style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+            <input type="checkbox" id="schedAutoBackup" checked> Daily automatic backup (midnight)
+          </label>
+          <label style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+            <input type="checkbox" id="schedAttReminder" checked> Attendance reminder (7:30 AM)
+          </label>
+          <label style="display:flex; align-items:center; gap:0.5rem;">
+            <input type="checkbox" id="schedFeeReminder"> Fee due reminder (monthly)
+          </label>
+        </div>
+        <button class="btn btn-primary" style="width:100%; padding:0.7rem; margin-top:1rem;" onclick="saveScheduledTasks()">
+          <i class="fas fa-save"></i> Save Schedule
+        </button>
+      </div>
+
+    </div><!-- /grid -->
+
+    <!-- Maintenance Log Output -->
+    <div class="settings-card" style="padding:1.5rem;">
+      <h3 style="font-size:0.98rem; margin-bottom:0.85rem;"><i class="fas fa-terminal" style="color:#059669;"></i> Maintenance Output</h3>
+      <div id="maintenanceLog" style="background:#0f172a; color:#86efac; font-family:monospace; font-size:0.82rem;
+           border-radius:8px; padding:1rem; min-height:100px; max-height:200px; overflow-y:auto; line-height:1.7;">
+        <div style="color:#6b7280;">— No tasks run yet. Output will appear here. —</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+        <!-- Danger Zone -->
+        <div class="tab-content" id="danger-tab">
+          <div class="settings-header" style="background:linear-gradient(90deg,#dc2626,#b91c1c);">
+            <h2><i class="fas fa-exclamation-triangle"></i> Danger Zone</h2>
+            <p>Critical operations that are irreversible — always backup before proceeding</p>
+          </div>
+          <div class="settings-body" style="padding:2rem 2.5rem;">
+
+            <!-- Top Warning -->
+            <div style="background:#fee2e2; border:2px solid #fca5a5; border-radius:12px; padding:1.25rem 1.5rem; margin-bottom:2rem; display:flex; gap:1rem; align-items:flex-start;">
+              <i class="fas fa-radiation-alt" style="color:#dc2626; font-size:1.8rem; flex-shrink:0; margin-top:2px;"></i>
+              <div>
+                <h4 style="color:#991b1b; font-size:1rem; margin-bottom:0.35rem;">You are in the Danger Zone</h4>
+                <p style="color:#7f1d1d; font-size:0.88rem; line-height:1.6;">
+                  Every action on this page is <strong>permanent and cannot be undone</strong>.
+                  These operations will affect the live database immediately.
+                  Before proceeding, navigate to <a href="backup-restore.html" style="color:#dc2626; font-weight:700;">Backup &amp; Restore</a> and download a full system backup.
+                </p>
+              </div>
+            </div>
+
+            <!-- Live System Stats -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:2rem;">
+              <div style="background:#fff; border-radius:10px; padding:1.1rem; text-align:center; box-shadow:0 1px 5px rgba(0,0,0,0.07);">
+                <i class="fas fa-check-circle" style="color:#059669; font-size:1.4rem; display:block; margin-bottom:0.4rem;"></i>
+                <div style="font-weight:700; font-size:0.88rem;">System Status</div>
+                <div style="font-size:0.78rem; color:#059669;">Healthy</div>
+              </div>
+              <div style="background:#fff; border-radius:10px; padding:1.1rem; text-align:center; box-shadow:0 1px 5px rgba(0,0,0,0.07);">
+                <i class="fas fa-hdd" style="color:#2563eb; font-size:1.4rem; display:block; margin-bottom:0.4rem;"></i>
+                <div style="font-weight:700; font-size:0.88rem;">Storage Used</div>
+                <div id="dangerStorageUsed" style="font-size:0.78rem; color:#2563eb;">Calculating…</div>
+              </div>
+              <div style="background:#fff; border-radius:10px; padding:1.1rem; text-align:center; box-shadow:0 1px 5px rgba(0,0,0,0.07);">
+                <i class="fas fa-users" style="color:#7c3aed; font-size:1.4rem; display:block; margin-bottom:0.4rem;"></i>
+                <div style="font-weight:700; font-size:0.88rem;">Total Users</div>
+                <div id="totalUsersCount" style="font-size:0.78rem; color:#7c3aed;">0</div>
+              </div>
+              <div style="background:#fff; border-radius:10px; padding:1.1rem; text-align:center; box-shadow:0 1px 5px rgba(0,0,0,0.07);">
+                <i class="fas fa-history" style="color:#d97706; font-size:1.4rem; display:block; margin-bottom:0.4rem;"></i>
+                <div style="font-weight:700; font-size:0.88rem;">Last Backup</div>
+                <div id="lastBackup" style="font-size:0.78rem; color:#d97706;">Never</div>
+              </div>
+            </div>
+
+            <!-- Danger Actions Grid -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem;">
+
+              <!-- Clear All System Data -->
+              <div style="background:#fff; border:2px solid #fca5a5; border-radius:12px; padding:1.5rem;">
+                <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+                  <div style="width:42px;height:42px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-trash" style="color:#dc2626;font-size:1.1rem;"></i>
+                  </div>
+                  <h3 style="font-size:0.98rem; color:#991b1b; margin:0;">Clear All System Data</h3>
+                </div>
+                <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1.1rem; line-height:1.5;">
+                  Permanently deletes ALL records: students, grades, attendance, fees, announcements, and assignments.
+                  User accounts are preserved. <strong>This cannot be undone.</strong>
+                </p>
+                <button class="btn btn-danger" style="width:100%;" onclick="clearAllData()">
+                  <i class="fas fa-trash-alt"></i> Clear All Data
+                </button>
+              </div>
+
+              <!-- Delete Non-Admin Users -->
+              <div style="background:#fff; border:2px solid #fca5a5; border-radius:12px; padding:1.5rem;">
+                <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+                  <div style="width:42px;height:42px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-user-times" style="color:#dc2626;font-size:1.1rem;"></i>
+                  </div>
+                  <h3 style="font-size:0.98rem; color:#991b1b; margin:0;">Delete Non-Admin Users</h3>
+                </div>
+                <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1.1rem; line-height:1.5;">
+                  Removes all Teachers, Parents, Accountants, and student-linked users.
+                  Admin accounts are kept. All related records (grades, attendance) are also removed.
+                </p>
+                <button class="btn btn-danger" style="width:100%;" onclick="deleteNonAdminUsers()">
+                  <i class="fas fa-users-slash"></i> Delete Non-Admin Users
+                </button>
+              </div>
+
+              <!-- Delete Inactive Users -->
+              <div style="background:#fff; border:2px solid #fca5a5; border-radius:12px; padding:1.5rem;">
+                <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+                  <div style="width:42px;height:42px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-user-slash" style="color:#dc2626;font-size:1.1rem;"></i>
+                  </div>
+                  <h3 style="font-size:0.98rem; color:#991b1b; margin:0;">Delete Inactive Users</h3>
+                </div>
+                <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1.1rem; line-height:1.5;">
+                  Removes all user accounts marked as <strong>Inactive</strong> or <strong>Suspended</strong> from all role tables.
+                  Active accounts are not affected.
+                </p>
+                <button class="btn btn-danger" style="width:100%;" onclick="deleteInactiveUsers()">
+                  <i class="fas fa-user-slash"></i> Delete Inactive Users
+                </button>
+              </div>
+
+              <!-- Reset System to Default -->
+              <div style="background:#fff; border:2px solid #fca5a5; border-radius:12px; padding:1.5rem;">
+                <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+                  <div style="width:42px;height:42px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-redo" style="color:#dc2626;font-size:1.1rem;"></i>
+                  </div>
+                  <h3 style="font-size:0.98rem; color:#991b1b; margin:0;">Reset System to Default</h3>
+                </div>
+                <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1.1rem; line-height:1.5;">
+                  Wipes ALL settings, user data, and records. Restores factory defaults. System will reload.
+                  <strong>Equivalent to a fresh installation.</strong>
+                </p>
+                <button class="btn btn-danger" style="width:100%;" onclick="resetSystem()">
+                  <i class="fas fa-skull-crossbones"></i> Reset System to Default
+                </button>
+              </div>
+
+              <!-- Export All Data -->
+              <div style="background:#fff; border:2px solid #d1d5db; border-radius:12px; padding:1.5rem;">
+                <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+                  <div style="width:42px;height:42px;border-radius:10px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-file-export" style="color:#059669;font-size:1.1rem;"></i>
+                  </div>
+                  <h3 style="font-size:0.98rem; color:#065f46; margin:0;">Export All Data</h3>
+                </div>
+                <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1.1rem; line-height:1.5;">
+                  Downloads a complete JSON dump of all settings and data from localStorage.
+                  Use this before performing any destructive operation below.
+                </p>
+                <button class="btn btn-primary" style="width:100%; background:#065f46;" onclick="exportAllData()">
+                  <i class="fas fa-download"></i> Export All Data
+                </button>
+              </div>
+
+              <!-- Debug Information -->
+              <div style="background:#fff; border:2px solid #d1d5db; border-radius:12px; padding:1.5rem;">
+                <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+                  <div style="width:42px;height:42px;border-radius:10px;background:#ede9fe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-bug" style="color:#7c3aed;font-size:1.1rem;"></i>
+                  </div>
+                  <h3 style="font-size:0.98rem; color:#5b21b6; margin:0;">Debug Information</h3>
+                </div>
+                <p style="font-size:0.84rem; color:#6b7280; margin-bottom:1.1rem; line-height:1.5;">
+                  Logs browser details, screen resolution, localStorage contents, and system settings to the browser console for troubleshooting.
+                </p>
+                <button class="btn btn-outline" style="width:100%;" onclick="showDebugInfo()">
+                  <i class="fas fa-terminal"></i> Show Debug Info
+                </button>
+              </div>
+
+            </div><!-- /grid -->
+
+            <!-- Type-to-confirm for most destructive action -->
+            <div style="background:#fff; border:2px solid #fca5a5; border-radius:12px; padding:1.5rem; margin-top:1.5rem;">
+              <h3 style="color:#991b1b; font-size:1rem; margin-bottom:0.75rem;">
+                <i class="fas fa-database"></i> Purge Entire Database
+              </h3>
+              <p style="font-size:0.85rem; color:#7f1d1d; margin-bottom:1rem; line-height:1.5;">
+                This will send a <code>DELETE</code> command to the backend that drops and recreates all tables.
+                Every student, teacher, fee record, grade, and attendance record is permanently gone.
+                Type <strong>PURGE EMALASHIRA</strong> to enable this button.
+              </p>
+              <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                <input type="text" id="purgeConfirmInput" class="form-control"
+                  placeholder='Type "PURGE EMALASHIRA" to confirm'
+                  style="flex:1; min-width:220px; border-color:#fca5a5;"
+                  oninput="checkPurgeInput()">
+                <button id="purgeBtn" class="btn btn-danger" disabled onclick="purgeDatabase()"
+                  style="white-space:nowrap; opacity:0.5;">
+                  <i class="fas fa-skull-crossbones"></i> Purge Database
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Other tabs would have similar structure -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <div>
+      <strong id="toastTitle">Success</strong>
+      <p id="toastMessage">Settings saved successfully!</p>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal" id="confirmModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Confirm Action</h3>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="modalMessage">Are you sure you want to perform this action?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize settings
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUserInfo();
+      loadSystemStats();
+      setupTabNavigation();
+      setupFormSubmissions();
+    });
+
+    // Load user information
+    function loadUserInfo() {
+      const userData = localStorage.getItem('currentUser');
+      if (userData) {
+        const user = JSON.parse(userData);
+        document.getElementById('userName').textContent = user.fullName || 'Administrator';
+        document.getElementById('roleBadge').textContent = user.role || 'Admin';
+      }
+    }
+
+    // Load system statistics
+    function loadSystemStats() {
+      // Count total users
+      const users = JSON.parse(localStorage.getItem('schoolUsers') || '[]');
+      document.getElementById('totalUsersCount').textContent = users.length;
+      
+      // Check last backup
+      const lastBackup = localStorage.getItem('lastBackup');
+      if (lastBackup) {
+        document.getElementById('lastBackup').textContent = new Date(lastBackup).toLocaleDateString();
+      }
+    }
+
+    // Tab navigation
+    function setupTabNavigation() {
+      const navItems = document.querySelectorAll('.settings-nav-item');
+      const tabContents = document.querySelectorAll('.tab-content');
+      
+      navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Remove active class from all items
+          navItems.forEach(i => i.classList.remove('active'));
+          tabContents.forEach(t => t.classList.remove('active'));
+          
+          // Add active class to clicked item
+          this.classList.add('active');
+          
+          // Show corresponding tab content
+          const tabId = this.getAttribute('data-tab');
+          document.getElementById(`${tabId}-tab`).classList.add('active');
+        });
+      });
+    }
+
+    // Form submissions
+    function setupFormSubmissions() {
+      const forms = document.querySelectorAll('form');
+      forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          saveSettings(this.id);
+        });
+      });
+    }
+
+    // Save settings
+    function saveSettings(formId) {
+      const form = document.getElementById(formId);
+      const formData = new FormData(form);
+      const settings = {};
+      
+      for (let [key, value] of formData.entries()) {
+        settings[key] = value;
+      }
+      
+      // Save to localStorage
+      localStorage.setItem(`settings_${formId}`, JSON.stringify(settings));
+      
+      // Show success message
+      showToast('Settings Saved', 'Your changes have been saved successfully.', 'success');
+      
+      // Update system stats
+      loadSystemStats();
+    }
+
+    // Reset form
+    function resetForm(formId) {
+      if (confirm('Reset all fields in this form to their default values?')) {
+        document.getElementById(formId).reset();
+        showToast('Form Reset', 'All fields have been reset.', 'warning');
+      }
+    }
+
+    // Show toast notification
+    function showToast(title, message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastTitle = document.getElementById('toastTitle');
+      const toastMessage = document.getElementById('toastMessage');
+      
+      toastTitle.textContent = title;
+      toastMessage.textContent = message;
+      
+      // Set icon based on type
+      const icon = toast.querySelector('i');
+      switch(type) {
+        case 'success':
+          icon.className = 'fas fa-check-circle';
+          toast.className = 'toast success';
+          break;
+        case 'error':
+          icon.className = 'fas fa-exclamation-circle';
+          toast.className = 'toast error';
+          break;
+        case 'warning':
+          icon.className = 'fas fa-exclamation-triangle';
+          toast.className = 'toast warning';
+          break;
+      }
+      
+      toast.classList.add('show');
+      
+      // Hide after 5 seconds
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 5000);
+    }
+
+    // Danger zone operations
+    function clearAllData() {
+      showConfirmModal(
+        'Clear All System Data',
+        'This will delete ALL data including users, students, teachers, and financial records. This action cannot be undone.',
+        () => {
+          // Clear all localStorage items except settings
+          const keysToKeep = ['currentUser', 'settings_generalForm', 'settings_users'];
+          const allKeys = Object.keys(localStorage);
+          
+          allKeys.forEach(key => {
+            if (!keysToKeep.includes(key)) {
+              localStorage.removeItem(key);
+            }
+          });
+          
+          showToast('Data Cleared', 'All system data has been cleared.', 'success');
+          loadSystemStats();
+        }
+      );
+    }
+
+    function resetSystem() {
+      showConfirmModal(
+        'Reset System to Default',
+        'This will restore all settings to factory defaults and clear all user data.',
+        () => {
+          localStorage.clear();
+          showToast('System Reset', 'System has been reset to factory defaults.', 'success');
+          setTimeout(() => location.reload(), 2000);
+        }
+      );
+    }
+
+    function exportAllData() {
+      const data = {};
+      const keys = Object.keys(localStorage);
+      
+      keys.forEach(key => {
+        try {
+          data[key] = JSON.parse(localStorage.getItem(key));
+        } catch {
+          data[key] = localStorage.getItem(key);
+        }
+      });
+      
+      const dataStr = JSON.stringify(data, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `emalashira-backup-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showToast('Data Exported', 'All system data has been exported.', 'success');
+    }
+
+    function showDebugInfo() {
+      const debugInfo = {
+        userAgent: navigator.userAgent,
+        localStorageSize: JSON.stringify(localStorage).length + ' bytes',
+        screenResolution: `${window.screen.width}x${window.screen.height}`,
+        timestamp: new Date().toISOString(),
+        settings: {}
+      };
+      
+      // Collect all settings
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('settings_')) {
+          debugInfo.settings[key] = localStorage.getItem(key);
+        }
+      });
+      
+      console.log('Debug Information:', debugInfo);
+      alert('Debug information logged to console. Press F12 to view.');
+    }
+
+    function deleteNonAdminUsers() {
+      showConfirmModal(
+        'Delete Non-Admin Users',
+        'This will delete all users except administrators. Teachers, parents, accountants, and students will be removed.',
+        () => {
+          let users = JSON.parse(localStorage.getItem('schoolUsers') || '[]');
+          const adminUsers = users.filter(user => user.role === 'Admin');
+          localStorage.setItem('schoolUsers', JSON.stringify(adminUsers));
+          
+          // Also clear students and teachers
+          localStorage.removeItem('students');
+          localStorage.removeItem('teachers');
+          
+          showToast('Users Deleted', 'All non-admin users have been removed.', 'success');
+          loadSystemStats();
+        }
+      );
+    }
+
+    // Modal functions
+    let currentCallback = null;
+
+    function showConfirmModal(title, message, callback) {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalMessage').textContent = message;
+      currentCallback = callback;
+      document.getElementById('confirmModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('confirmModal').classList.remove('active');
+      currentCallback = null;
+    }
+
+    // Setup confirm button
+    document.getElementById('confirmActionBtn').addEventListener('click', function() {
+      if (currentCallback) {
+        currentCallback();
+        closeModal();
+      }
+    });
+
+    // Close modal on outside click
+    window.addEventListener('click', function(event) {
+      const modal = document.getElementById('confirmModal');
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        const activeForm = document.querySelector('.tab-content.active form');
+        if (activeForm) {
+          activeForm.requestSubmit();
+        }
+      }
+      
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

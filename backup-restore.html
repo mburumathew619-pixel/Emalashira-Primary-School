@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Backup & Restore - EMALASHIRA Primary School</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/static/css/backup-restore.css">
+  <style>
+    .br-wrap     { max-width:900px; margin:2rem auto; padding:0 1.25rem 3rem; }
+    .br-section  { background:#fff; border-radius:14px; box-shadow:0 2px 14px rgba(0,0,0,.07);
+                   overflow:hidden; margin-bottom:2rem; }
+    .br-sec-head { display:flex; align-items:center; gap:.65rem; padding:1rem 1.5rem;
+                   color:#fff; font-size:1rem; font-weight:700; }
+    .br-sec-head.green { background:linear-gradient(90deg,#065f46,#0f766e); }
+    .br-sec-head.red   { background:linear-gradient(90deg,#991b1b,#dc2626); }
+    .br-sec-head.blue  { background:linear-gradient(90deg,#1e3a8a,#2563eb); }
+    .br-sec-body { padding:1.5rem; }
+    .br-desc     { font-size:.9rem; color:#4b5563; margin-bottom:1.4rem; line-height:1.6; }
+
+    /* Category tiles */
+    .categories-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+                       gap:.85rem; margin-bottom:1.5rem; }
+    .cat-tile { border:1.5px solid #e5e7eb; border-radius:10px; padding:.85rem 1rem;
+                display:flex; flex-direction:column; gap:.3rem; background:#f9fafb;
+                transition:border-color .15s,box-shadow .15s; }
+    .cat-tile:hover { border-color:#065f46; box-shadow:0 2px 8px rgba(6,95,70,.1); }
+    .cat-icon  { width:32px; height:32px; border-radius:8px; display:flex;
+                 align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; }
+    .cat-label { font-size:.82rem; font-weight:700; color:#374151; }
+    .cat-count { font-size:.75rem; color:#9ca3af; }
+    .cat-tile.ct-loading .cat-count { color:#d97706; }
+    .cat-tile.ct-done    .cat-count { color:#065f46; font-weight:600; }
+    .cat-tile.ct-error   .cat-count { color:#dc2626; }
+
+    /* Progress */
+    .progress-wrap { display:none; margin-bottom:1.25rem; }
+    .prog-label    { font-size:.82rem; font-weight:600; color:#374151; margin-bottom:.4rem; }
+    .prog-bg       { height:10px; background:#e5e7eb; border-radius:99px; overflow:hidden; }
+    .prog-fill     { height:100%; width:0%; background:linear-gradient(90deg,#065f46,#10b981);
+                     border-radius:99px; transition:width .35s ease; }
+
+    /* Buttons */
+    .btn-green { background:linear-gradient(135deg,#065f46,#0f766e); color:#fff; border:none;
+                 padding:.75rem 1.6rem; border-radius:9px; font-size:.95rem; font-weight:700;
+                 cursor:pointer; display:inline-flex; align-items:center; gap:.5rem; transition:opacity .2s; }
+    .btn-green:hover    { opacity:.88; }
+    .btn-green:disabled { opacity:.5; cursor:not-allowed; }
+    .btn-red   { background:linear-gradient(135deg,#991b1b,#dc2626); color:#fff; border:none;
+                 padding:.75rem 1.6rem; border-radius:9px; font-size:.95rem; font-weight:700;
+                 cursor:pointer; display:inline-flex; align-items:center; gap:.5rem; transition:opacity .2s; }
+    .btn-red:hover    { opacity:.88; }
+    .btn-red:disabled { opacity:.5; cursor:not-allowed; }
+
+    /* File drop zone */
+    .drop-zone { border:2px dashed #d1d5db; border-radius:10px; padding:1.5rem;
+                 text-align:center; cursor:pointer; transition:border-color .2s,background .2s; }
+    .drop-zone:hover, .drop-zone.drag-over { border-color:#065f46; background:#f0fdf4; }
+    .drop-zone input { display:none; }
+    .dz-icon  { font-size:1.75rem; color:#9ca3af; margin-bottom:.5rem; }
+    .dz-label { font-size:.88rem; color:#6b7280; }
+    .dz-file  { font-size:.88rem; font-weight:700; color:#065f46; margin-top:.5rem; display:none; }
+
+    /* Restore preview */
+    .restore-preview { display:none; background:#f0fdf4; border:1px solid #a7f3d0;
+                       border-radius:10px; padding:1rem 1.25rem; margin:1rem 0; }
+    .rp-title { font-size:.88rem; font-weight:700; color:#065f46; margin:0 0 .65rem; }
+    .rp-grid  { display:grid; grid-template-columns:repeat(auto-fill,minmax(145px,1fr)); gap:.45rem; }
+    .rp-item  { font-size:.8rem; color:#374151; display:flex; align-items:center; gap:.4rem; }
+    .rp-item i { color:#065f46; width:14px; }
+    .rp-meta  { font-size:.78rem; color:#6b7280; margin-top:.65rem; }
+
+    /* Warn / Info boxes */
+    .warn-box { background:#fef3c7; border:1px solid #fcd34d; border-radius:9px;
+                padding:.85rem 1.1rem; font-size:.85rem; color:#92400e;
+                display:flex; gap:.6rem; align-items:flex-start; margin-bottom:1.25rem; }
+    .info-box { background:#eff6ff; border:1px solid #bfdbfe; border-radius:9px;
+                padding:.85rem 1.1rem; font-size:.85rem; color:#1e40af;
+                display:flex; gap:.6rem; align-items:flex-start; margin-bottom:1.5rem; }
+    .warn-box i, .info-box i { flex-shrink:0; margin-top:2px; }
+
+    /* History */
+    .hist-item { display:flex; align-items:center; justify-content:space-between;
+                 padding:.75rem 1rem; border:1px solid #e5e7eb; border-radius:8px;
+                 margin-bottom:.55rem; gap:1rem; flex-wrap:wrap; }
+    .hist-name { font-weight:600; color:#1f2937; font-size:.85rem; flex:1; }
+    .hist-meta { color:#9ca3af; font-size:.78rem; }
+
+    /* Status messages */
+    .status-msg { margin-top:1.25rem; padding:1rem 1.25rem; border-radius:10px;
+                  font-size:.9rem; font-weight:600; display:none;
+                  align-items:center; gap:.65rem; }
+
+    @media(max-width:580px) {
+      .categories-grid { grid-template-columns:repeat(2,1fr); }
+      .br-sec-body { padding:1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>EMALASHIRA</h2>
+      <p>Primary School</p>
+    </div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+      <a href="manage-users.html"><i class="fas fa-users"></i> <span>Manage Users</span></a>
+      <a href="roles-permissions.html"><i class="fas fa-user-shield"></i> <span>Roles & Permissions</span></a>
+      <a href="backup-restore.html" class="active"><i class="fas fa-database"></i> <span>Backup & Restore</span></a>
+      <a href="reports.html"><i class="fas fa-chart-bar"></i> <span>Reports</span></a>
+      <a href="settings.html"><i class="fas fa-cog"></i> <span>Settings</span></a>
+      <a href="#" class="logout-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <h1><i class="fas fa-database" style="color:#065f46;margin-right:.5rem;"></i>Backup &amp; Restore</h1>
+      <div class="user-menu">
+        <strong id="userNameDisplay">Loading...</strong>
+        <span id="roleBadge" class="role-badge"></span>
+        <i class="fas fa-user-circle"></i>
+        <a href="profile.html">Profile</a>
+        <a href="#" onclick="logout()" style="color:#c62828;">Logout</a>
+      </div>
+    </div>
+
+    <div class="br-wrap">
+
+      <!-- Info banner -->
+      <div class="info-box">
+        <i class="fas fa-info-circle fa-lg"></i>
+        <div>
+          <strong>Full System Backup</strong> — Backs up <em>everything</em> in the system:
+          Admins, Teachers, Parents, Accountants, Students, Roles &amp; Permissions,
+          Fee Structures, Fee Payments, Grades, Attendance Records, Announcements,
+          and Teacher Assignments. The resulting <code>.json</code> file can fully
+          restore the system to this exact state at any time.
+        </div>
+      </div>
+
+      <!-- ═══ CREATE BACKUP ═══ -->
+      <div class="br-section">
+        <div class="br-sec-head green">
+          <i class="fas fa-download"></i> Create Full System Backup
+        </div>
+        <div class="br-sec-body">
+          <p class="br-desc">
+            The backup collects all data from the server and packages it into a single
+            <strong>JSON file</strong> named with today's date. Store it safely — it contains
+            sensitive school data.
+          </p>
+
+          <!-- Live data count tiles -->
+          <div class="categories-grid" id="categoryGrid">
+            <div class="cat-tile" id="cat-admins">
+              <div class="cat-icon" style="background:#dbeafe;color:#1e40af;"><i class="fas fa-user-shield"></i></div>
+              <div class="cat-label">Admins</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+            <div class="cat-tile" id="cat-teachers">
+              <div class="cat-icon" style="background:#d1fae5;color:#065f46;"><i class="fas fa-chalkboard-teacher"></i></div>
+              <div class="cat-label">Teachers</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+            <div class="cat-tile" id="cat-parents">
+              <div class="cat-icon" style="background:#fce7f3;color:#9d174d;"><i class="fas fa-user-friends"></i></div>
+              <div class="cat-label">Parents</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+            <div class="cat-tile" id="cat-accountants">
+              <div class="cat-icon" style="background:#fef3c7;color:#92400e;"><i class="fas fa-calculator"></i></div>
+              <div class="cat-label">Accountants</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+            <div class="cat-tile" id="cat-students">
+              <div class="cat-icon" style="background:#ede9fe;color:#5b21b6;"><i class="fas fa-user-graduate"></i></div>
+              <div class="cat-label">Students</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+            <div class="cat-tile" id="cat-roles">
+              <div class="cat-icon" style="background:#d1fae5;color:#065f46;"><i class="fas fa-key"></i></div>
+              <div class="cat-label">Roles &amp; Perms</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+            <div class="cat-tile" id="cat-fees">
+              <div class="cat-icon" style="background:#fee2e2;color:#991b1b;"><i class="fas fa-money-bill-wave"></i></div>
+              <div class="cat-label">Fee Structures</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+            <div class="cat-tile" id="cat-payments">
+              <div class="cat-icon" style="background:#d1fae5;color:#065f46;"><i class="fas fa-receipt"></i></div>
+              <div class="cat-label">Fee Payments</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+            <div class="cat-tile" id="cat-grades">
+              <div class="cat-icon" style="background:#dbeafe;color:#1e40af;"><i class="fas fa-clipboard-list"></i></div>
+              <div class="cat-label">Grades</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+            <div class="cat-tile" id="cat-attendance">
+              <div class="cat-icon" style="background:#fef3c7;color:#92400e;"><i class="fas fa-calendar-check"></i></div>
+              <div class="cat-label">Attendance</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+            <div class="cat-tile" id="cat-announcements">
+              <div class="cat-icon" style="background:#ede9fe;color:#5b21b6;"><i class="fas fa-bullhorn"></i></div>
+              <div class="cat-label">Announcements</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+            <div class="cat-tile" id="cat-assignments">
+              <div class="cat-icon" style="background:#d1fae5;color:#065f46;"><i class="fas fa-tasks"></i></div>
+              <div class="cat-label">Teacher Assigns</div>
+              <div class="cat-count">Click to load</div>
+            </div>
+          </div>
+
+          <!-- Progress bar (shown during backup) -->
+          <div class="progress-wrap" id="progressWrap">
+            <div class="prog-label" id="progressLabel">Preparing…</div>
+            <div class="prog-bg"><div class="prog-fill" id="progressFill"></div></div>
+          </div>
+
+          <button id="createBackupBtn" class="btn-green">
+            <i class="fas fa-download"></i> Create &amp; Download Full Backup
+          </button>
+
+          <div class="status-msg" id="backupStatus"></div>
+        </div>
+      </div>
+
+      <!-- ═══ RESTORE ═══ -->
+      <div class="br-section">
+        <div class="br-sec-head red">
+          <i class="fas fa-upload"></i> Restore from Backup
+        </div>
+        <div class="br-sec-body">
+          <div class="warn-box">
+            <i class="fas fa-exclamation-triangle fa-lg"></i>
+            <div>
+              <strong>Irreversible action.</strong> Restoring will <strong>overwrite</strong> all
+              current users, students, fees, grades, attendance, and announcements with the data
+              from the selected backup file. <strong>Create a fresh backup first</strong> if you
+              want to preserve the current state.
+            </div>
+          </div>
+
+          <!-- Drop zone -->
+          <div class="drop-zone" id="dropZone" onclick="document.getElementById('restoreFileInput').click()">
+            <input type="file" id="restoreFileInput" accept=".json" />
+            <div class="dz-icon"><i class="fas fa-file-import"></i></div>
+            <div class="dz-label">Click to choose a <strong>.json</strong> backup file, or drag &amp; drop here</div>
+            <div class="dz-file" id="selectedFileName"></div>
+          </div>
+
+          <!-- Preview of backup contents -->
+          <div class="restore-preview" id="restorePreview">
+            <div class="rp-title"><i class="fas fa-eye" style="margin-right:.4rem;"></i>Backup File Contents Preview</div>
+            <div class="rp-grid" id="restorePreviewGrid"></div>
+            <div class="rp-meta" id="restoreMetaInfo"></div>
+          </div>
+
+          <button id="restoreBackupBtn" class="btn-red" disabled>
+            <i class="fas fa-upload"></i> Restore System from Backup
+          </button>
+
+          <div class="status-msg" id="restoreStatus"></div>
+        </div>
+      </div>
+
+      <!-- ═══ BACKUP HISTORY ═══ -->
+      <div class="br-section">
+        <div class="br-sec-head blue">
+          <i class="fas fa-history"></i> Session Backup History
+        </div>
+        <div class="br-sec-body">
+          <p class="br-desc" style="margin-bottom:1rem;">
+            Backups downloaded in this browser session are listed below.
+          </p>
+          <div id="backupHistory">
+            <div style="text-align:center;color:#9ca3af;font-size:.88rem;padding:1.25rem 0;">
+              No backups created yet in this session.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/static/js/backup-restore.js"></script>
+</body>
+</html>

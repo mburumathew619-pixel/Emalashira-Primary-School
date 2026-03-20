@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Roles & Permissions - EMALASHIRA Primary School</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/static/css/roles-permissions.css" />
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>EMALASHIRA</h2>
+      <p>Primary School</p>
+    </div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+      <a href="manage-users.html"><i class="fas fa-users"></i> <span>Manage Users</span></a>
+      <a href="roles-permissions.html" class="active"><i class="fas fa-user-shield"></i> <span>Roles & Permissions</span></a>
+      <a href="backup-restore.html"><i class="fas fa-database"></i> <span>Backup & Restore</span></a>
+      <a href="reports.html"><i class="fas fa-chart-bar"></i> <span>Reports</span></a>
+      <a href="settings.html"><i class="fas fa-cog"></i> <span>Settings</span></a>
+      <a href="#" class="logout-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <h1>Roles & Permissions</h1>
+      <div class="user-menu">
+        <strong id="userNameDisplay">Loading...</strong>
+        <span>(Admin)</span>
+        <i class="fas fa-user-circle"></i>
+        <a href="profile.html">Profile</a>
+        <a href="#" onclick="logout()" style="color: #c62828;">Logout</a>
+      </div>
+    </div>
+
+    <div id="alertSuccess" class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      <span id="alertSuccessMessage"></span>
+    </div>
+
+    <div id="alertDanger" class="alert alert-danger">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="alertDangerMessage"></span>
+    </div>
+
+    <!-- Horizontal Roles Bar -->
+    <div class="roles-bar">
+      <div class="roles-bar-header">
+        <h2>Roles</h2>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button id="syncRolesBtn" onclick="syncRoleCounts()" style="
+            background:#f0fdf4;color:#065f46;border:1.5px solid #6ee7b7;
+            border-radius:8px;padding:8px 16px;font-size:.88rem;font-weight:600;
+            cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .2s;">
+            <i class="fas fa-sync-alt"></i> Sync Counts
+          </button>
+          <button class="btn-add-role" onclick="openCreateRoleModal()">
+            <i class="fas fa-plus"></i>
+            Add Role
+          </button>
+        </div>
+      </div>
+      <div class="roles-grid" id="rolesGrid">
+        <!-- Roles will be populated here -->
+      </div>
+    </div>
+
+    <!-- Permissions Panel -->
+    <div class="permissions-panel">
+      <div class="permissions-header">
+        <h2 id="selectedRoleName">Select a Role</h2>
+        <p id="selectedRoleDescription">Choose a role to configure permissions</p>
+      </div>
+      <div class="permissions-body">
+        <div id="noSelectionMessage" class="no-selection">
+          <i class="fas fa-user-shield"></i>
+          <p>Select a role from above to manage its permissions</p>
+        </div>
+
+        <div id="permissionsContent" style="display: none;">
+          <div class="permissions-table-wrapper">
+            <table class="permissions-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Module</th>
+                  <th>Permissions</th>
+                </tr>
+              </thead>
+              <tbody id="permissionsTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="role-actions">
+            <button class="btn btn-danger" onclick="deleteRole()">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+            <div>
+              <button class="btn btn-secondary" onclick="resetPermissions()">Reset</button>
+              <button class="btn btn-primary" onclick="savePermissions()" style="margin-left: 0.75rem;">
+                <i class="fas fa-save"></i> Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="createRoleModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Create New Role</h3>
+      <form onsubmit="createRole(event)">
+        <div class="form-group">
+          <label>Role Name *</label>
+          <input type="text" id="newRoleName" required placeholder="e.g., Department Head">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="newRoleDescription" rows="3" placeholder="Role purpose"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeCreateRoleModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <script src="/static/js/auth-check-clean.js"></script>
+  <script src="/static/js/roles-permissions.js"></script>
+</body>
+</html>

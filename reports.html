@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reports - EMALASHIRA Primary School</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/static/css/reports.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>EMALASHIRA</h2>
+      <p>Primary School</p>
+    </div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+      <a href="manage-users.html"><i class="fas fa-users"></i> <span>Manage Users</span></a>
+      <a href="roles-permissions.html"><i class="fas fa-user-shield"></i> <span>Roles & Permissions</span></a>
+      <a href="backup-restore.html"><i class="fas fa-database"></i> <span>Backup & Restore</span></a>
+      <a href="reports.html" class="active"><i class="fas fa-chart-bar"></i> <span>Reports</span></a>
+      <a href="settings.html"><i class="fas fa-cog"></i> <span>Settings</span></a>
+      <a href="#" class="logout-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <h1>Reports Center</h1>
+      <div class="user-menu">
+        <strong id="userNameDisplay">Loading...</strong>
+        <span id="roleBadge" class="role-badge"></span>
+        <i class="fas fa-user-circle"></i>
+        <a href="profile.html">Profile</a>
+        <a href="#" onclick="logout()" style="color:#c62828;">Logout</a>
+      </div>
+    </div>
+
+    <div class="reports-header">
+      <div class="section-title">
+        <i class="fas fa-chart-pie"></i> Generate & Manage Reports
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="openReportBuilder()">
+          <i class="fas fa-plus"></i> Create Custom Report
+        </button>
+        <button class="btn btn-outline" onclick="scheduleReport()">
+          <i class="fas fa-calendar-alt"></i> Schedule Report
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="stat-content">
+          <h3>156</h3>
+          <p>Reports Generated</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+          <h3>8</h3>
+          <p>Scheduled Reports</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+          <h3>24</h3>
+          <p>Report Templates</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-content">
+          <h3>12</h3>
+          <p>Active Dashboards</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Categories -->
+    <div class="section-title">
+      <i class="fas fa-folder"></i> Report Categories
+    </div>
+    <div class="report-categories">
+      <!-- Academic Reports -->
+      <div class="category-card">
+        <div class="category-header">
+          <div class="category-icon academic">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <h3>Academic Reports</h3>
+        </div>
+        <div class="report-list">
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Student Report Cards</h4>
+              <p>Term grades & teacher comments</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('report-card')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('report-card')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Examination Results</h4>
+              <p>Class-wise exam performance</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('exam-results')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('exam-results')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Progress Reports</h4>
+              <p>Subject-wise student progress</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('progress')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('progress')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="report-item" style="background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border:1.5px solid #6ee7b7;border-radius:8px;margin-top:0.5rem;">
+            <div class="report-info">
+              <h4 style="color:#065f46;display:flex;align-items:center;gap:0.5rem;">
+                <i class="fas fa-calendar-week"></i> Class Timetables
+              </h4>
+              <p style="color:#047857;">Termly · auto-balanced · class teacher attached</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="openTimetableModal()" style="background:#065f46;color:#fff;border:none;font-weight:600;">
+                <i class="fas fa-magic"></i> Generate
+              </button>
+              <button class="action-btn" onclick="window.open('timetable-generator.html','_blank')" title="Open full timetable builder">
+                <i class="fas fa-external-link-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Reports -->
+      <div class="category-card">
+        <div class="category-header">
+          <div class="category-icon financial">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
+          <h3>Financial Reports</h3>
+        </div>
+        <div class="report-list">
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Fee Collection Summary</h4>
+              <p>Paid, pending & outstanding fees</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('fee-summary')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('fee-summary')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Expense Breakdown</h4>
+              <p>Monthly expense analysis</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('expenses')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('expenses')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Budget vs Actual</h4>
+              <p>Financial performance tracking</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('budget')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('budget')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Administrative Reports -->
+      <div class="category-card">
+        <div class="category-header">
+          <div class="category-icon administrative">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3>Administrative Reports</h3>
+        </div>
+        <div class="report-list">
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Attendance Summary</h4>
+              <p>Student & staff attendance</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('attendance')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('attendance')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Staff Performance</h4>
+              <p>Teacher evaluation reports</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('staff-performance')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('staff-performance')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Enrollment Statistics</h4>
+              <p>Student demographics & trends</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('enrollment')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('enrollment')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operational Reports -->
+      <div class="category-card">
+        <div class="category-header">
+          <div class="category-icon operational">
+            <i class="fas fa-cogs"></i>
+          </div>
+          <h3>Operational Reports</h3>
+        </div>
+        <div class="report-list">
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Inventory Status</h4>
+              <p>Stock levels & requirements</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('inventory')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('inventory')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Resource Utilization</h4>
+              <p>Facility & equipment usage</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('resources')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('resources')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="report-item">
+            <div class="report-info">
+              <h4>Maintenance Reports</h4>
+              <p>Facility maintenance tracking</p>
+            </div>
+            <div class="report-actions">
+              <button class="action-btn" onclick="generateReport('maintenance')">
+                <i class="fas fa-play"></i> Generate
+              </button>
+              <button class="action-btn" onclick="previewReport('maintenance')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Reports -->
+    <div class="section-title">
+      <i class="fas fa-bolt"></i> Quick Reports
+    </div>
+    <div class="quick-reports">
+      <div class="quick-report-card" onclick="generateQuickReport('today-attendance')">
+        <div class="quick-icon">
+          <i class="fas fa-clipboard-check"></i>
+        </div>
+        <div class="quick-title">Today's Attendance</div>
+        <div class="quick-desc">Daily attendance summary</div>
+        <button class="btn btn-outline">Generate</button>
+      </div>
+      <div class="quick-report-card" onclick="generateQuickReport('weekly-fees')">
+        <div class="quick-icon">
+          <i class="fas fa-money-bill-wave"></i>
+        </div>
+        <div class="quick-title">Weekly Fee Collection</div>
+        <div class="quick-desc">This week's payment summary</div>
+        <button class="btn btn-outline">Generate</button>
+      </div>
+      <div class="quick-report-card" onclick="generateQuickReport('monthly-performance')">
+        <div class="quick-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="quick-title">Monthly Performance</div>
+        <div class="quick-desc">Student performance overview</div>
+        <button class="btn btn-outline">Generate</button>
+      </div>
+      <div class="quick-report-card" onclick="generateQuickReport('term-report')">
+        <div class="quick-icon">
+          <i class="fas fa-file-pdf"></i>
+        </div>
+        <div class="quick-title">Term Report Cards</div>
+        <div class="quick-desc">Batch generate report cards</div>
+        <button class="btn btn-outline">Generate</button>
+      </div>
+    </div>
+
+    <!-- Analytics Dashboard -->
+    <div class="section-title">
+      <i class="fas fa-chart-bar"></i> Analytics Dashboard
+      <span id="analyticsLastUpdated" style="font-size:0.75rem;color:#9ca3af;font-weight:400;margin-left:1rem;"></span>
+    </div>
+
+    <!-- Live summary pills -->
+    <div id="analyticsPills" style="display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;"></div>
+
+    <div class="analytics-grid">
+      <div class="chart-container">
+        <div class="section-title" style="margin-bottom:0.75rem;">
+          <i class="fas fa-chart-line"></i> Report Generation Trends
+          <span style="font-size:0.75rem;color:#9ca3af;font-weight:400;margin-left:0.5rem;">— by category, last 6 months</span>
+        </div>
+        <div class="chart-wrapper" style="position:relative;min-height:260px;">
+          <div id="trendsLoading" style="position:absolute;inset:0;display:flex;align-items:center;
+               justify-content:center;color:#9ca3af;font-size:0.9rem;gap:0.5rem;">
+            <i class="fas fa-spinner fa-spin"></i> Loading live data…
+          </div>
+          <canvas id="reportTrendsChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-container">
+        <div class="section-title" style="margin-bottom:0.75rem;">
+          <i class="fas fa-chart-pie"></i> Report Category Distribution
+          <span style="font-size:0.75rem;color:#9ca3af;font-weight:400;margin-left:0.5rem;">— based on live system data</span>
+        </div>
+        <div class="chart-wrapper" style="position:relative;min-height:260px;">
+          <div id="distLoading" style="position:absolute;inset:0;display:flex;align-items:center;
+               justify-content:center;color:#9ca3af;font-size:0.9rem;gap:0.5rem;">
+            <i class="fas fa-spinner fa-spin"></i> Loading live data…
+          </div>
+          <canvas id="reportCategoriesChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Reports -->
+    <div class="recent-reports">
+      <div class="section-title">
+        <i class="fas fa-history"></i> Recently Generated Reports
+      </div>
+      <table class="reports-table">
+        <thead>
+          <tr>
+            <th>Report Name</th>
+            <th>Type</th>
+            <th>Generated By</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Term 1 Report Cards - Grade 5</td>
+            <td><span class="report-type type-academic">Academic</span></td>
+            <td>Mr. Johnson</td>
+            <td>Feb 6, 2026</td>
+            <td><span class="status-badge status-completed">Completed</span></td>
+            <td>
+              <button class="action-btn" onclick="downloadReport(1)">
+                <i class="fas fa-download"></i>
+              </button>
+              <button class="action-btn" onclick="emailReport(1)">
+                <i class="fas fa-envelope"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>January Fee Collection Summary</td>
+            <td><span class="report-type type-financial">Financial</span></td>
+            <td>Finance Dept</td>
+            <td>Feb 5, 2026</td>
+            <td><span class="status-badge status-completed">Completed</span></td>
+            <td>
+              <button class="action-btn" onclick="downloadReport(2)">
+                <i class="fas fa-download"></i>
+              </button>
+              <button class="action-btn" onclick="emailReport(2)">
+                <i class="fas fa-envelope"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>Staff Attendance - January 2026</td>
+            <td><span class="report-type type-administrative">Administrative</span></td>
+            <td>Admin Office</td>
+            <td>Feb 4, 2026</td>
+            <td><span class="status-badge status-pending">Pending Review</span></td>
+            <td>
+              <button class="action-btn" onclick="previewReport(3)">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="action-btn" onclick="approveReport(3)">
+                <i class="fas fa-check"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Scheduled Reports -->
+    <div class="scheduled-reports">
+      <div class="section-title">
+        <i class="fas fa-calendar-alt"></i> Scheduled Reports
+      </div>
+      <div class="scheduled-list">
+        <div class="schedule-item">
+          <div class="schedule-info">
+            <h4>Weekly Attendance Summary</h4>
+            <p>Every Monday at 9:00 AM | Sent to: Head Teacher</p>
+          </div>
+          <div class="schedule-actions">
+            <button class="action-btn" onclick="editSchedule(1)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn" onclick="deleteSchedule(1)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-info">
+            <h4>Monthly Financial Report</h4>
+            <p>First day of every month | Sent to: Finance Dept</p>
+          </div>
+          <div class="schedule-actions">
+            <button class="action-btn" onclick="editSchedule(2)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn" onclick="deleteSchedule(2)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-info">
+            <h4>Termly Academic Reports</h4>
+            <p>Last day of term | Sent to: All Teachers</p>
+          </div>
+          <div class="schedule-actions">
+            <button class="action-btn" onclick="editSchedule(3)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn" onclick="deleteSchedule(3)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ REPORT VIEWER MODAL ══ -->
+    <div id="reportViewerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+        z-index:2000;align-items:flex-start;justify-content:center;overflow-y:auto;padding:1.5rem;">
+      <div style="background:#fff;border-radius:14px;width:min(900px,96vw);
+          box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;margin:auto;">
+        <!-- Viewer Header -->
+        <div id="reportViewerHeader" style="background:linear-gradient(90deg,#065f46,#0f766e);
+            color:#fff;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div id="reportViewerTitle" style="font-size:1.05rem;font-weight:700;"></div>
+            <div id="reportViewerMeta" style="font-size:0.78rem;opacity:0.8;margin-top:2px;"></div>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <button id="reportDownloadBtn" onclick="downloadCurrentReport()"
+              style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.35);
+              color:#fff;padding:0.4rem 1rem;border-radius:6px;cursor:pointer;font-size:0.82rem;font-weight:600;">
+              <i class="fas fa-download"></i> Download CSV
+            </button>
+            <button onclick="closeModal('reportViewerModal')"
+              style="background:rgba(255,255,255,0.15);border:none;color:#fff;
+              width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <!-- Viewer Body -->
+        <div id="reportViewerBody" style="padding:1.5rem;max-height:75vh;overflow-y:auto;">
+          <div style="text-align:center;padding:3rem;color:#9ca3af;">
+            <i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i>
+            <p style="margin-top:0.75rem;">Loading report data…</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ GENERATE PARAMS MODAL ══ -->
+    <div id="generateParamsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+        z-index:2000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:14px;width:min(520px,94vw);
+          box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden;">
+        <div id="generateParamsHeader" style="background:linear-gradient(90deg,#065f46,#0f766e);
+            color:#fff;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;">
+          <h3 id="generateParamsTitle" style="margin:0;font-size:1rem;font-weight:700;"></h3>
+          <button onclick="closeModal('generateParamsModal')"
+            style="background:rgba(255,255,255,0.15);border:none;color:#fff;
+            width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;">×</button>
+        </div>
+        <div style="padding:1.5rem;">
+          <div id="generateParamsFields" style="display:flex;flex-direction:column;gap:1rem;"></div>
+          <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem;">
+            <button onclick="closeModal('generateParamsModal')"
+              style="padding:0.6rem 1.2rem;border-radius:8px;border:1px solid #d1d5db;
+              background:#fff;cursor:pointer;font-size:0.9rem;">Cancel</button>
+            <button id="generateParamsRunBtn"
+              style="padding:0.6rem 1.5rem;border-radius:8px;border:none;
+              background:#065f46;color:#fff;font-weight:600;cursor:pointer;font-size:0.9rem;">
+              <i class="fas fa-play"></i> Generate Report
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ REPORT BUILDER MODAL (enhanced) ══ -->
+    <div class="modal" id="reportBuilderModal">
+      <div class="modal-content" style="max-width:580px;">
+        <div class="modal-header">
+          <h2><i class="fas fa-plus-circle"></i> Create Custom Report</h2>
+          <button class="close-btn" onclick="closeModal('reportBuilderModal')">×</button>
+        </div>
+        <div class="modal-body">
+          <form id="reportBuilderForm">
+            <div class="form-group">
+              <label for="reportName">Report Name *</label>
+              <input type="text" id="reportName" name="reportName" placeholder="e.g. Term 1 Grade 7 Summary" required />
+            </div>
+            <div class="form-group">
+              <label for="reportType">Report Category *</label>
+              <select id="reportType" name="reportType" required>
+                <option value="">Select category</option>
+                <option value="academic">Academic</option>
+                <option value="financial">Financial</option>
+                <option value="administrative">Administrative</option>
+                <option value="operational">Operational</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reportClass">Class / Scope</label>
+              <select id="reportClass" name="reportClass">
+                <option value="all">All Classes</option>
+                <option value="PP1">PP1</option><option value="PP2">PP2</option>
+                <option value="Grade 1">Grade 1</option><option value="Grade 2">Grade 2</option>
+                <option value="Grade 3">Grade 3</option><option value="Grade 4">Grade 4</option>
+                <option value="Grade 5">Grade 5</option><option value="Grade 6">Grade 6</option>
+                <option value="Grade 7">Grade 7</option><option value="Grade 8">Grade 8</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reportPeriod">Reporting Period *</label>
+              <select id="reportPeriod" name="reportPeriod" required>
+                <option value="">Select period</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="Term 1">Term 1</option>
+                <option value="Term 2">Term 2</option>
+                <option value="Term 3">Term 3</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reportFormat">Output Format *</label>
+              <select id="reportFormat" name="reportFormat" required>
+                <option value="">Select format</option>
+                <option value="csv">CSV (Download)</option>
+                <option value="preview">Preview on Screen</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reportNotes">Notes / Description</label>
+              <textarea id="reportNotes" name="reportNotes" rows="2"
+                placeholder="Optional description of this report" style="width:100%;padding:0.55rem 0.75rem;border-radius:8px;border:1.5px solid #e5e7eb;font-size:0.9rem;resize:vertical;"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-play"></i> Generate Now
+              </button>
+              <button type="button" class="btn btn-outline" onclick="closeModal('reportBuilderModal')">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SCHEDULE REPORT MODAL (enhanced) ══ -->
+    <div class="modal" id="scheduleReportModal">
+      <div class="modal-content" style="max-width:560px;">
+        <div class="modal-header">
+          <h2><i class="fas fa-calendar-alt"></i> Schedule Report</h2>
+          <button class="close-btn" onclick="closeModal('scheduleReportModal')">×</button>
+        </div>
+        <div class="modal-body">
+          <form id="scheduleReportForm">
+            <div class="form-group">
+              <label for="scheduleName">Schedule Name *</label>
+              <input type="text" id="scheduleName" name="scheduleName"
+                placeholder="e.g. Weekly Attendance – Every Monday" required />
+            </div>
+            <div class="form-group">
+              <label for="scheduleReportType">Report Type *</label>
+              <select id="scheduleReportType" name="scheduleReportType" required>
+                <option value="">Select report type</option>
+                <option value="report-card">Student Report Cards</option>
+                <option value="exam-results">Examination Results</option>
+                <option value="progress">Progress Reports</option>
+                <option value="attendance">Attendance Summary</option>
+                <option value="fee-summary">Fee Collection Summary</option>
+                <option value="staff-performance">Staff Performance</option>
+                <option value="enrollment">Enrollment Statistics</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="scheduleFrequency">Frequency *</label>
+              <select id="scheduleFrequency" name="scheduleFrequency" required>
+                <option value="">Select frequency</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly (1st of month)</option>
+                <option value="termly">End of Term</option>
+              </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+              <div class="form-group">
+                <label for="scheduleDay">Day (for weekly)</label>
+                <select id="scheduleDay" name="scheduleDay">
+                  <option value="">Any</option>
+                  <option value="Monday">Monday</option><option value="Tuesday">Tuesday</option>
+                  <option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option>
+                  <option value="Friday">Friday</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="scheduleTime">Time *</label>
+                <input type="time" id="scheduleTime" name="scheduleTime" value="09:00" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="recipients">Send To (emails, comma-separated) *</label>
+              <input type="text" id="recipients" name="recipients"
+                placeholder="admin@emalashira.sc.ke, teacher@emalashira.sc.ke" required />
+            </div>
+            <div class="form-group">
+              <label for="scheduleFormat">Format</label>
+              <select id="scheduleFormat" name="scheduleFormat">
+                <option value="csv">CSV Attachment</option>
+                <option value="email">Inline Email</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Save Schedule
+              </button>
+              <button type="button" class="btn btn-outline" onclick="closeModal('scheduleReportModal')">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal" id="logoutModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Confirm Logout</h2>
+          <button class="close-btn" onclick="closeModal('logoutModal')">×</button>
+        </div>
+        <div class="modal-body"><p>Are you sure you want to logout?</p></div>
+        <div class="modal-actions">
+          <button class="btn btn-danger" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+          <button class="btn btn-outline" onclick="closeModal('logoutModal')">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══ TIMETABLE GENERATOR MODAL ══ -->
+  <div id="timetableModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+      z-index:2000;align-items:flex-start;justify-content:center;overflow-y:auto;padding:1.5rem;">
+    <div style="background:#fff;border-radius:14px;width:min(540px,96vw);
+        box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;margin:auto;">
+      <div style="background:linear-gradient(90deg,#065f46,#0f766e);color:#fff;
+          padding:1.1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:0.5rem;">
+            <i class="fas fa-calendar-week"></i> Generate Class Timetables
+          </div>
+          <div style="font-size:0.78rem;opacity:0.8;margin-top:3px;">
+            Balanced termly timetables for all classes with teacher names
+          </div>
+        </div>
+        <button onclick="closeTimetableModal()"
+          style="background:rgba(255,255,255,0.15);border:none;color:#fff;
+          width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;">×</button>
+      </div>
+      <div style="padding:1.5rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label style="font-size:0.8rem;font-weight:700;color:#374151;display:block;margin-bottom:0.4rem;">TERM</label>
+            <select id="ttTerm" style="width:100%;padding:0.6rem 0.85rem;border-radius:8px;border:1.5px solid #e5e7eb;font-size:0.9rem;">
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.8rem;font-weight:700;color:#374151;display:block;margin-bottom:0.4rem;">YEAR</label>
+            <input type="number" id="ttYear" value="2026" min="2024" max="2030"
+              style="width:100%;padding:0.6rem 0.85rem;border-radius:8px;border:1.5px solid #e5e7eb;font-size:0.9rem;">
+          </div>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label style="font-size:0.8rem;font-weight:700;color:#374151;display:block;margin-bottom:0.4rem;">CLASSES TO INCLUDE</label>
+          <div id="ttClassList" style="display:flex;flex-wrap:wrap;gap:0.5rem;padding:0.75rem;
+              border:1.5px solid #e5e7eb;border-radius:8px;background:#f9fafb;">
+            <span style="color:#9ca3af;font-size:0.85rem;font-style:italic;">Loading classes from database…</span>
+          </div>
+        </div>
+        <div style="margin-bottom:1.25rem;">
+          <label style="font-size:0.8rem;font-weight:700;color:#374151;display:block;margin-bottom:0.4rem;">PERIODS PER DAY</label>
+          <div style="display:flex;align-items:center;gap:1rem;">
+            <input type="range" id="ttPeriods" min="6" max="10" value="8"
+              style="flex:1;" oninput="document.getElementById('ttPeriodsVal').textContent=this.value">
+            <span id="ttPeriodsVal" style="font-weight:700;color:#065f46;min-width:20px;">8</span>
+          </div>
+        </div>
+        <div style="background:#f0fdf4;border:1px solid #a7f3d0;border-radius:8px;padding:0.85rem 1rem;
+            font-size:0.82rem;color:#065f46;margin-bottom:1.25rem;display:flex;gap:0.5rem;align-items:flex-start;">
+          <i class="fas fa-info-circle" style="margin-top:2px;flex-shrink:0;"></i>
+          <span>Timetables are auto-balanced so each teacher is not overloaded. Class teacher name is stamped on every timetable. All subjects from teacher assignments are distributed evenly across the week.</span>
+        </div>
+        <div id="ttError" style="display:none;background:#fee2e2;color:#991b1b;border-radius:8px;padding:0.7rem 1rem;font-size:0.85rem;margin-bottom:1rem;"></div>
+        <div style="display:flex;gap:0.75rem;justify-content:flex-end;">
+          <button onclick="closeTimetableModal()"
+            style="padding:0.65rem 1.25rem;border-radius:8px;border:1px solid #d1d5db;background:#fff;cursor:pointer;font-size:0.9rem;">
+            Cancel
+          </button>
+          <button onclick="runTimetableGeneration()"
+            style="padding:0.65rem 1.5rem;border-radius:8px;border:none;background:#065f46;color:#fff;font-weight:600;cursor:pointer;font-size:0.9rem;display:inline-flex;align-items:center;gap:0.5rem;">
+            <i class="fas fa-magic"></i> Generate Timetables
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // ── Timetable modal helpers ──────────────────────────────────────
+  async function openTimetableModal() {
+    document.getElementById('timetableModal').style.display = 'flex';
+    document.getElementById('ttError').style.display = 'none';
+    // Load classes from DB
+    const listEl = document.getElementById('ttClassList');
+    listEl.innerHTML = '<span style="color:#9ca3af;font-size:0.85rem;font-style:italic;">Loading…</span>';
+    try {
+      const [studRes, assignRes] = await Promise.all([
+        fetch('http://localhost:5000/api/students'),
+        fetch('http://localhost:5000/api/teacher-assignments/summary')
+      ]);
+      const students = studRes.ok ? await studRes.json() : [];
+      const teachers = assignRes.ok ? await assignRes.json() : [];
+      const classesWithTeachers = new Set(teachers.flatMap(t=>(t.assignments||[]).map(a=>a.class_name)));
+      const allClasses = [...new Set(students.map(s=>s.studentClass).filter(Boolean))].sort((a,b)=>{
+        const order = {Kindergarten:0,PlayGroup:0,PP1:1,PP2:2,'Pre-Primary 1':1,'Pre-Primary 2':2,'Grade 1':3,'Grade 2':4,'Grade 3':5,'Grade 4':6,'Grade 5':7,'Grade 6':8,'Grade 7':9,'Grade 8':10,'Grade 9':11};
+        return (order[a]??50)-(order[b]??50);
+      });
+      if (!allClasses.length) {
+        listEl.innerHTML = '<span style="color:#9ca3af;font-size:0.85rem;">No classes found. Add students first.</span>';
+        return;
+      }
+      listEl.innerHTML = '';
+      allClasses.forEach(cls => {
+        const hasTeacher = classesWithTeachers.has(cls);
+        const label = document.createElement('label');
+        label.style.cssText = 'display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer;background:' + (hasTeacher?'#d1fae5':'#f3f4f6') + ';color:' + (hasTeacher?'#065f46':'#6b7280') + ';padding:0.3rem 0.75rem;border-radius:999px;font-size:0.82rem;font-weight:600;';
+        label.title = hasTeacher ? 'Teachers assigned' : 'No teacher assignments yet — timetable may be empty';
+        label.innerHTML = '<input type="checkbox" checked value="'+cls+'" style="margin:0;cursor:pointer;width:13px;height:13px;accent-color:#065f46;">' + cls + (hasTeacher?'':' ⚠');
+        listEl.appendChild(label);
+      });
+    } catch(e) {
+      listEl.innerHTML = '<span style="color:#dc2626;font-size:0.85rem;">Could not load classes. Is the backend running?</span>';
+    }
+  }
+
+  function closeTimetableModal() {
+    document.getElementById('timetableModal').style.display = 'none';
+  }
+
+  async function runTimetableGeneration() {
+    const term = document.getElementById('ttTerm').value;
+    const year = document.getElementById('ttYear').value;
+    const periods = parseInt(document.getElementById('ttPeriods').value);
+    const errEl = document.getElementById('ttError');
+    errEl.style.display = 'none';
+
+    const selectedClasses = [...document.querySelectorAll('#ttClassList input[type=checkbox]:checked')].map(c=>c.value);
+    if (!selectedClasses.length) {
+      errEl.textContent = 'Please select at least one class.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    closeTimetableModal();
+    // Navigate to the full timetable generator with params
+    const params = new URLSearchParams({ term, year, periods, classes: selectedClasses.join(',') });
+    window.open('timetable-generator.html?' + params.toString(), '_blank');
+  }
+
+  window.addEventListener('click', function(e) {
+    const modal = document.getElementById('timetableModal');
+    if (e.target === modal) closeTimetableModal();
+  });
+  </script>
+  <script src="/static/js/reports.js"></script>
+</body>
+</html>

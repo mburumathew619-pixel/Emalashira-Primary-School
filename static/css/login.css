@@ -1,0 +1,462 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green-dark: #1a6b2a;
+  --green-mid: #228B22;
+  --green-light: #43e97b;
+  --green-pale: #e6f9ec;
+  --accent: #38f9d7;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  padding: 100px 16px 60px;
+}
+
+/* ── Background Slideshow ── */
+.bg-slideshow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.bg-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  animation: slideShow 48s infinite;
+}
+
+.bg-slide:nth-child(1) {
+    background-image: url('../images/library.jpeg');
+    animation-delay: 0s;
+}
+.bg-slide:nth-child(2) {
+    background-image: url('../images/Kids-answeringQs.jpg');
+    animation-delay: 8s;
+}
+.bg-slide:nth-child(3) {
+    background-image: url('../images/stationeries.jpeg');
+    animation-delay: 16s;
+}
+.bg-slide:nth-child(4) {
+    background-image: url('../images/kids-learning.avif');
+    animation-delay: 24s;
+}
+.bg-slide:nth-child(5) {
+    background-image: url('../images/teacher-with-learners.jpg');
+    animation-delay: 32s;
+}
+.bg-slide:nth-child(6) {
+    background-image: url('../images/learners.jpg');
+    animation-delay: 40s;
+}
+
+@keyframes slideShow {
+  0%   { opacity: 0; transform: scale(1.08); }
+  5%   { opacity: 1; transform: scale(1.05); }
+  15%  { opacity: 1; transform: scale(1.0); }
+  20%  { opacity: 0; transform: scale(1.0); }
+  100% { opacity: 0; }
+}
+
+.bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 40, 15, 0.72) 0%,
+    rgba(26, 107, 42, 0.55) 50%,
+    rgba(10, 40, 15, 0.72) 100%
+  );
+}
+
+/* ── Top banner ── */
+.school-banner {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(10, 40, 15, 0.65);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(67,233,123,0.18);
+}
+
+.school-badge {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green-light), var(--accent));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; font-weight: 900; color: #fff;
+  box-shadow: 0 0 12px rgba(67,233,123,0.4);
+}
+
+.school-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; font-weight: 700;
+  color: #fff; letter-spacing: 0.04em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.school-name span {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem; font-weight: 400;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+/* ── Slide dots ── */
+.slide-dots {
+  position: fixed;
+  bottom: 22px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex; gap: 8px;
+}
+
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  cursor: pointer;
+  transition: all 0.4s;
+}
+
+.dot.active {
+  background: var(--green-light);
+  width: 22px; border-radius: 4px;
+  box-shadow: 0 0 8px rgba(67,233,123,0.6);
+}
+
+/* ── Login card ── */
+.login-wrapper {
+  position: relative;
+  z-index: 5;
+  width: 420px;
+  max-width: 95vw;
+}
+
+.login-container {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: 44px 38px 36px;
+  border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+h2 {
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+  margin-bottom: 6px;
+  color: #fff;
+  font-size: 1.6rem; font-weight: 900;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+
+.subtitle {
+  text-align: center;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 26px;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(67,233,123,0.4), transparent);
+  margin-bottom: 26px;
+}
+
+.input-group { margin-bottom: 18px; }
+
+.input-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 7px;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.85rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: 'DM Sans', sans-serif;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.input-group input::placeholder { color: rgba(255,255,255,0.35); }
+
+.input-group input:focus {
+  border-color: var(--green-light);
+  outline: none;
+  background: rgba(67,233,123,0.07);
+}
+
+.login-button {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(90deg, var(--green-light) 0%, var(--accent) 100%);
+  color: #0a280f;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: opacity 0.2s, transform 0.15s;
+  box-shadow: 0 4px 20px rgba(67,233,123,0.35);
+}
+
+.login-button:hover { opacity: 0.9; transform: translateY(-1px); }
+.login-button:active { transform: translateY(0); }
+
+.forgot-password {
+  display: block;
+  text-align: center;
+  margin-top: 14px;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: color 0.2s;
+}
+
+.forgot-password:hover { color: var(--green-light); }
+
+.toggle-link {
+  color: var(--green-light);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.toggle-link:hover { text-decoration: underline; }
+
+.alt-action {
+  text-align: center;
+  margin-top: 15px;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.88rem;
+}
+
+.password-wrapper { position: relative; }
+
+.eye-icon {
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  width: 22px; height: 22px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.eye-icon:hover { opacity: 1; }
+
+.message {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 0.88rem;
+  min-height: 1.3em;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.error   { color: #ff6b6b; background: rgba(255,107,107,0.1); }
+.success { color: var(--green-light); background: rgba(67,233,123,0.1); }
+
+/* ──────────────────────────────────────────────────────────────
+   PASSWORD STRENGTH CHECKER STYLING
+─────────────────────────────────────────────────────────────── */
+
+.password-strength {
+  font-weight: 600;
+  text-align: center;
+  margin: 8px 0 4px;
+  min-height: 1.4em;
+}
+
+.strength-weak    { color: #ff6b6b; }
+.strength-medium  { color: #fbbf24; }
+.strength-strong  { color: var(--green-light); }
+.strength-verystrong { color: #059669; }
+
+.password-requirements {
+  list-style: none;
+  padding-left: 0;
+  margin: 12px 0;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.8);
+}
+
+.password-requirements li {
+  margin-bottom: 6px;
+  position: relative;
+  padding-left: 28px;
+}
+
+.password-requirements li::before {
+  content: "✗";
+  position: absolute;
+  left: 0;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.password-requirements li.good::before {
+  content: "✓";
+  color: var(--green-light);
+}
+
+.password-requirements li.good {
+  color: var(--green-light);
+}
+
+#password-suggestion {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  font-style: italic;
+  min-height: 1.3em;
+  margin-top: 8px;
+}
+/* ── Password Generator ─────────────────────────────────────── */
+.pw-suggest-wrap {
+  margin: 2px 0 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pw-suggest-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1.5px solid rgba(67,233,123,0.4);
+  color: var(--green-light);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  letter-spacing: 0.02em;
+}
+.pw-suggest-btn:hover {
+  background: rgba(67,233,123,0.1);
+  border-color: var(--green-light);
+  color: #fff;
+}
+.pw-suggest-btn svg { flex-shrink: 0; }
+
+.pw-generated-box {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(67,233,123,0.3);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  animation: fadeInBox 0.2s ease;
+}
+
+@keyframes fadeInBox {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pw-generated-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 8px;
+}
+
+.pw-generated-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pw-generated-row code {
+  flex: 1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--green-light);
+  letter-spacing: 0.06em;
+  background: rgba(67,233,123,0.07);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(67,233,123,0.2);
+  word-break: break-all;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.pw-generated-row code:hover {
+  background: rgba(67,233,123,0.14);
+}
+
+.pw-action-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.pw-action-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+.pw-action-btn:active { transform: translateY(0); }
+
+.pw-use {
+  background: linear-gradient(90deg, var(--green-light), var(--accent));
+  color: #0a280f;
+  font-size: 0.78rem;
+  padding: 6px 14px;
+}
+
+.pw-refresh {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+  padding: 6px 8px;
+  font-size: 0.8rem;
+}
+.pw-refresh:hover { background: rgba(255,255,255,0.18); color: #fff; }
+
+.pw-copied-msg {
+  margin-top: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--green-light);
+  text-align: center;
+  animation: fadeInBox 0.2s ease;
+}

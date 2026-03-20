@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EMALASHIRA PRIMARY SCHOOL - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/login.css">
+</head>
+<body>
+
+<div style="position: fixed; top: 20px; right: 20px; z-index: 100;">
+  <a href="index.html" style="color: white; text-decoration: none; font-weight: 600; background: rgba(0,0,0,0.4); padding: 10px 16px; border-radius: 8px;">
+    ← Back to Home
+  </a>
+</div>
+
+<!-- Background Slideshow -->
+<div class="bg-slideshow">
+  <div class="bg-slide"></div>
+  <div class="bg-slide"></div>
+  <div class="bg-slide"></div>
+  <div class="bg-slide"></div>
+  <div class="bg-slide"></div>
+  <div class="bg-slide"></div>
+</div>
+<div class="bg-overlay"></div>
+
+<!-- Top Banner -->
+<div class="school-banner">
+  <div class="school-badge">E</div>
+  <div class="school-name">
+    EMALASHIRA PRIMARY SCHOOL
+    <span>Nurturing Minds · Shaping Futures</span>
+  </div>
+</div>
+
+<!-- Slide Indicator Dots -->
+<div class="slide-dots">
+  <div class="dot active" data-index="0"></div>
+  <div class="dot" data-index="1"></div>
+  <div class="dot" data-index="2"></div>
+  <div class="dot" data-index="3"></div>
+  <div class="dot" data-index="4"></div>
+  <div class="dot" data-index="5"></div>
+</div>
+
+<!-- Login Card -->
+<div class="login-wrapper">
+  <div class="login-container">
+    <h2 id="formTitle">Welcome Back</h2>
+    <p class="subtitle">Portal</p>
+    <div class="divider"></div>
+
+    <!-- Login Form -->
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="your.name@emalashira.sc.ke" required autocomplete="email">
+      </div>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
+          <span id="togglePassword" class="eye-icon">
+            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+      <button type="submit" class="login-button">Log In →</button>
+      <a href="#" class="forgot-password">Forgot password?</a>
+      <div class="alt-action">
+        Don't have an account? <a href="#" id="showSignup" class="toggle-link">Sign up</a>
+      </div>
+      <div id="loginMessage" class="message"></div>
+    </form>
+
+    <!-- Signup Form -->
+    <form id="signupForm" style="display: none;">
+      <div class="input-group">
+        <label for="signupFullName">Full Name</label>
+        <input type="text" id="signupFullName" placeholder="Enter your full name" required>
+      </div>
+      <div class="input-group">
+        <label for="signupEmail">Email Address</label>
+        <input type="email" id="signupEmail" placeholder="your.name@emalashira.sc.ke" required autocomplete="email">
+      </div>
+      <div class="input-group">
+        <label for="signupPassword">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="signupPassword" placeholder="Enter your password" required autocomplete="new-password">
+          <span id="toggleSignupPassword" class="eye-icon">
+            <svg id="signupEyeIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- Password Generator -->
+      <div class="pw-suggest-wrap">
+        <button type="button" id="generatePasswordBtn" class="pw-suggest-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Suggest a Strong Password
+        </button>
+      </div>
+      <div id="pw-generated-box" class="pw-generated-box" style="display:none;">
+        <span class="pw-generated-label">Suggested password:</span>
+        <div class="pw-generated-row">
+          <code id="pw-generated-value"></code>
+          <button type="button" id="pw-use-btn" class="pw-action-btn pw-use">Use this</button>
+          <button type="button" id="pw-refresh-btn" class="pw-action-btn pw-refresh" title="Generate another">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+        </div>
+        <div id="pw-copied-msg" class="pw-copied-msg" style="display:none;">✓ Copied to clipboard!</div>
+      </div>
+
+      <!-- Password Strength Feedback -->
+      <div id="password-strength" class="password-strength"></div>
+      <ul id="password-requirements" class="password-requirements">
+        <li id="req-length">At least 10 characters</li>
+        <li id="req-upper">At least one uppercase letter</li>
+        <li id="req-lower">At least one lowercase letter</li>
+        <li id="req-number">At least one number</li>
+        <li id="req-special">At least one special character (!@#$%^&* etc.)</li>
+      </ul>
+      <div id="password-suggestion"></div>
+
+      <div class="input-group">
+        <label for="signupConfirmPassword">Confirm Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required autocomplete="new-password">
+          <span id="toggleSignupConfirmPassword" class="eye-icon">
+            <svg id="signupConfirmEyeIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <button type="submit" class="login-button">Create Account →</button>
+      <div class="alt-action" style="margin-top:16px;">
+        Already have an account? <a href="#" id="showLogin" class="toggle-link">Log in</a>
+      </div>
+      <div id="signupMessage" class="message"></div>
+    </form>
+  </div>
+</div>
+
+<script src="/static/js/login.js"></script>
+</body>
+</html>

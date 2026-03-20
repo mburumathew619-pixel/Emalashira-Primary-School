@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Students - EMALASHIRA Primary School</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/static/css/students.css">
+  <script src="/static/js/auth-check-clean.js"></script>
+  <script src="/static/js/students.js"></script>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>EMALASHIRA</h2>
+      <p>Primary School</p>
+    </div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+      <a href="dashboard-overview.html"><i class="fas fa-chart-line"></i> <span>Overview</span></a>
+      <a href="students.html" class="active"><i class="fas fa-user-graduate"></i> <span>Students</span></a>
+      <a href="teacher-records.html"><i class="fas fa-chalkboard-teacher"></i> <span>Teachers</span></a>
+      <a href="finance.html"><i class="fas fa-dollar-sign"></i> <span>Finance</span></a>
+      <a href="attendance.html"><i class="fas fa-calendar-check"></i> <span>Attendance</span></a>
+      <a href="grades.html"><i class="fas fa-clipboard-list"></i> <span>Grades</span></a>
+      <a href="announcements.html"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a>
+      <a href="#" class="logout-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <h1>Student Management</h1>
+      <div class="user-menu">
+        <button id="syncBtn" onclick="syncStudentsFromUsers()"
+          style="background:#065f46;color:#fff;border:none;padding:0.7rem 1.4rem;border-radius:8px;font-weight:600;cursor:pointer;margin-right:1rem;">
+          🔄 Sync from Users
+        </button>
+        <strong id="userNameDisplay">Loading...</strong>
+        <span id="roleBadge" class="role-badge"></span>
+        <i class="fas fa-user-circle"></i>
+        <a href="profile.html">Profile</a>
+        <a href="#" onclick="logout()" style="color:#c62828;">Logout</a>
+      </div>
+    </div>
+
+    <div id="syncNotification" style="display:none;background:#d1fae5;border:2px solid #059669;color:#065f46;padding:1rem;border-radius:8px;margin-bottom:20px;align-items:center;gap:10px;font-weight:500;">
+      <span id="syncMessage"></span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+        <div class="stat-info"><h3 id="totalStudents">0</h3><p>Total Students</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
+        <div class="stat-info"><h3 id="activeStudents">0</h3><p>Active Students</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-user-graduate"></i></div>
+        <div class="stat-info"><h3 id="newStudents">0</h3><p>New This Year</p></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fas fa-graduation-cap"></i></div>
+        <div class="stat-info"><h3 id="graduatingStudents">0</h3><p>Grade (Std 8)</p></div>
+      </div>
+    </div>
+
+    <div class="content-header">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search students by name, admission number...">
+      </div>
+      <button class="btn-add-student" onclick="openAddModal()">
+        <i class="fas fa-plus"></i> Add Student
+      </button>
+    </div>
+
+    <div class="table-container">
+      <div class="table-header">
+        <h2><i class="fas fa-list"></i> Student List</h2>
+      </div>
+      <div class="filter-controls">
+        <select id="gradeFilter" onchange="filterStudents()">
+          <option value="">All Grades</option>
+          <option value="Pre-Primary 1">Pre-Primary 1</option>
+          <option value="Pre-Primary 2">Pre-Primary 2</option>
+          <option value="Grade 1">Grade 1</option>
+          <option value="Grade 2">Grade 2</option>
+          <option value="Grade 3">Grade 3</option>
+          <option value="Grade 4">Grade 4</option>
+          <option value="Grade 5">Grade 5</option>
+          <option value="Grade 6">Grade 6</option>
+          <option value="Grade 7">Grade 7</option>
+          <option value="Grade 8">Grade 8</option>
+        </select>
+        <select id="statusFilter" onchange="filterStudents()">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <select id="genderFilter" onchange="filterStudents()">
+          <option value="">All Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <table id="studentsTable">
+        <thead>
+          <tr>
+            <th>Adm. No.</th><th>Name</th><th>Grade</th><th>Gender</th>
+            <th>Date of Birth</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="studentsTableBody">
+          <tr><td colspan="7" class="empty-state">
+            <i class="fas fa-spinner fa-spin"></i><p>Loading students...</p>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- ── Slide-in Drawer ─────────────────────────────────────── -->
+  <div id="studentDrawer" class="drawer-overlay" onclick="handleOverlayClick(event)">
+    <div class="drawer">
+      <div class="drawer-header">
+        <div>
+          <h2 id="drawerTitle">Add New Student</h2>
+          <p id="drawerSubtitle">Fill in the student details below</p>
+        </div>
+        <button class="drawer-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="drawer-body">
+        <form id="studentForm" onsubmit="saveStudent(event)">
+
+          <!-- Academic Info -->
+          <div class="drawer-section">
+            <div class="drawer-section-title">
+              <i class="fas fa-graduation-cap"></i> Academic Information
+            </div>
+            <div class="d-form-row">
+              <div class="d-form-group">
+                <label>Admission Number <span class="req">*</span></label>
+                <input type="text" id="admissionNumber" placeholder="e.g. ADM2024001" required>
+              </div>
+              <div class="d-form-group">
+                <label>Grade <span class="req">*</span></label>
+                <select id="grade" required>
+                  <option value="">Select Grade</option>
+                  <option value="Pre-Primary 1">Pre-Primary 1</option>
+                  <option value="Pre-Primary 2">Pre-Primary 2</option>                
+                  <option value="Grade 1">Grade 1</option>
+                  <option value="Grade 2">Grade 2</option>
+                  <option value="Grade 3">Grade 3</option>
+                  <option value="Grade 4">Grade 4</option>
+                  <option value="Grade 5">Grade 5</option>
+                  <option value="Grade 6">Grade 6</option>
+                  <option value="Grade 7">Grade 7</option>
+                  <option value="Grade 8">Grade 8</option>
+                  <option value="Grade 9">Grade 9</option>
+                </select>
+              </div>
+            </div>
+            <div class="d-form-group">
+              <label>Admission Date</label>
+              <input type="date" id="admissionDate">
+            </div>
+          </div>
+
+          <!-- Personal Info -->
+          <div class="drawer-section">
+            <div class="drawer-section-title">
+              <i class="fas fa-user"></i> Personal Information
+            </div>
+            <div class="d-form-row">
+              <div class="d-form-group">
+                <label>First Name <span class="req">*</span></label>
+                <input type="text" id="firstName" placeholder="First name" required>
+              </div>
+              <div class="d-form-group">
+                <label>Last Name <span class="req">*</span></label>
+                <input type="text" id="lastName" placeholder="Last name" required>
+              </div>
+            </div>
+            <div class="d-form-row">
+              <div class="d-form-group">
+                <label>Gender <span class="req">*</span></label>
+                <select id="gender" required>
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div class="d-form-group">
+                <label>Date of Birth</label>
+                <input type="date" id="dateOfBirth">
+              </div>
+            </div>
+            <div class="d-form-group">
+              <label>Address</label>
+              <textarea id="address" rows="2" placeholder="Home address (optional)"></textarea>
+            </div>
+          </div>
+
+          <!-- Guardian Info -->
+          <div class="drawer-section">
+            <div class="drawer-section-title">
+              <i class="fas fa-users"></i> Parent / Guardian
+            </div>
+            <div class="d-form-group">
+              <label>Guardian Full Name</label>
+              <input type="text" id="guardianName" placeholder="Parent or guardian name">
+            </div>
+            <div class="d-form-row">
+              <div class="d-form-group">
+                <label>Guardian Phone</label>
+                <input type="tel" id="guardianPhone" placeholder="+254...">
+              </div>
+              <div class="d-form-group">
+                <label>Guardian Email</label>
+                <input type="email" id="guardianEmail" placeholder="email@example.com">
+              </div>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="drawer-section">
+            <div class="drawer-section-title">
+              <i class="fas fa-toggle-on"></i> Account Status
+            </div>
+            <div class="d-form-group">
+              <label>Status <span class="req">*</span></label>
+              <select id="status" required>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <input type="hidden" id="studentId">
+        </form>
+      </div>
+
+      <div class="drawer-footer">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-save" onclick="document.getElementById('studentForm').requestSubmit()">
+          <i class="fas fa-save"></i> Save Student
+        </button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

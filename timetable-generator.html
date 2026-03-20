@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Class Timetables — EMALASHIRA Primary School</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f8fafc;
+      color: #1f2937;
+      min-height: 100vh;
+    }
+
+    /* ── Top Bar ── */
+    .topbar {
+      background: linear-gradient(90deg,#065f46,#0f766e);
+      color: #fff;
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.15);
+    }
+
+    .topbar-left { display:flex; align-items:center; gap:1rem; }
+    .topbar-left a {
+      color:rgba(255,255,255,.8);
+      text-decoration:none;
+      font-size:.88rem;
+      display:flex;
+      align-items:center;
+      gap:.4rem;
+      transition:color .2s;
+    }
+    .topbar-left a:hover { color:#fff; }
+    .topbar-title {
+      font-size:1.05rem;
+      font-weight:700;
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+    }
+    .topbar-meta {
+      font-size:.78rem;
+      opacity:.75;
+      background:rgba(255,255,255,.15);
+      padding:.25rem .75rem;
+      border-radius:20px;
+    }
+    .topbar-right { display:flex; align-items:center; gap:.75rem; }
+
+    .btn {
+      padding:.55rem 1.2rem;
+      border-radius:8px;
+      font-size:.88rem;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+      transition:all .2s;
+    }
+    .btn-white { background:#fff; color:#065f46; }
+    .btn-white:hover { background:#f0fdf4; }
+    .btn-ghost { background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.3); }
+    .btn-ghost:hover { background:rgba(255,255,255,.25); }
+    .btn-green { background:#065f46; color:#fff; }
+    .btn-green:hover { background:#047857; }
+    .btn-outline { background:transparent; color:#065f46; border:1.5px solid #065f46; }
+    .btn-outline:hover { background:#065f46; color:#fff; }
+    .btn-danger { background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; }
+    .btn-danger:hover { background:#dc2626; color:#fff; }
+
+    /* ── Controls bar ── */
+    .controls-bar {
+      background:#fff;
+      border-bottom:1px solid #e5e7eb;
+      padding:.85rem 2rem;
+      display:flex;
+      align-items:center;
+      gap:1rem;
+      flex-wrap:wrap;
+      box-shadow:0 1px 4px rgba(0,0,0,.05);
+    }
+
+    .ctrl-group { display:flex; flex-direction:column; gap:.3rem; min-width:140px; }
+    .ctrl-group label { font-size:.72rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:.04em; }
+    .ctrl-group select, .ctrl-group input {
+      padding:.5rem .8rem;
+      border:1.5px solid #e5e7eb;
+      border-radius:7px;
+      font-size:.88rem;
+      color:#1f2937;
+      background:#f9fafb;
+      transition:border-color .15s;
+    }
+    .ctrl-group select:focus, .ctrl-group input:focus {
+      outline:none;
+      border-color:#065f46;
+      background:#fff;
+    }
+
+    .ctrl-divider { width:1px; height:40px; background:#e5e7eb; align-self:center; }
+
+    .ctrl-periods { display:flex; align-items:center; gap:.75rem; }
+    .ctrl-periods input[type=range] { width:100px; accent-color:#065f46; }
+    .ctrl-periods span { font-size:.88rem; font-weight:700; color:#065f46; min-width:18px; }
+
+    .action-strip {
+      margin-left:auto;
+      display:flex;
+      align-items:center;
+      gap:.65rem;
+      flex-wrap:wrap;
+    }
+
+    /* ── Main content ── */
+    .page { padding:2rem; max-width:1600px; margin:0 auto; }
+
+    /* ── Loading/Empty states ── */
+    .state-box {
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 2px 12px rgba(0,0,0,.07);
+      padding:4rem 2rem;
+      text-align:center;
+      color:#9ca3af;
+    }
+    .state-box i { font-size:3rem; display:block; margin-bottom:1rem; }
+    .state-box h3 { font-size:1.1rem; color:#374151; margin-bottom:.5rem; }
+    .state-box p { font-size:.9rem; }
+
+    /* ── Term Header ── */
+    .term-header {
+      background:linear-gradient(135deg,#065f46,#0f766e);
+      color:#fff;
+      border-radius:14px;
+      padding:1.5rem 2rem;
+      margin-bottom:2rem;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:1rem;
+    }
+    .term-header h2 { font-size:1.4rem; font-weight:800; margin-bottom:.3rem; }
+    .term-header p { font-size:.88rem; opacity:.85; }
+    .term-badges { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .term-badge {
+      background:rgba(255,255,255,.18);
+      padding:.2rem .75rem;
+      border-radius:20px;
+      font-size:.78rem;
+      font-weight:600;
+    }
+
+    /* ── Class grid ── */
+    .classes-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(640px, 1fr));
+      gap:2rem;
+    }
+
+    /* ── Individual Timetable Card ── */
+    .tt-card {
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 2px 14px rgba(0,0,0,.08);
+      overflow:hidden;
+      break-inside:avoid;
+    }
+
+    .tt-card-header {
+      padding:1.1rem 1.4rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:.5rem;
+    }
+
+    .tt-class-name {
+      font-size:1.05rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .tt-teacher {
+      font-size:.78rem;
+      background:rgba(255,255,255,.2);
+      color:#fff;
+      padding:.2rem .7rem;
+      border-radius:20px;
+      font-weight:600;
+      display:flex;
+      align-items:center;
+      gap:.3rem;
+    }
+
+    .tt-meta {
+      font-size:.72rem;
+      opacity:.8;
+      color:#fff;
+    }
+
+    /* ── Grid table ── */
+    .tt-table-wrap { overflow-x:auto; }
+
+    .tt-table {
+      width:100%;
+      border-collapse:collapse;
+      font-size:.8rem;
+    }
+
+    .tt-table th {
+      padding:.55rem .6rem;
+      text-align:center;
+      font-size:.72rem;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      color:#6b7280;
+      background:#f9fafb;
+      border-bottom:2px solid #e5e7eb;
+      white-space:nowrap;
+    }
+
+    .tt-table th:first-child {
+      text-align:left;
+      padding-left:1rem;
+      background:#f0fdf4;
+      color:#065f46;
+    }
+
+    .tt-table td {
+      padding:.45rem .55rem;
+      border:1px solid #f3f4f6;
+      vertical-align:middle;
+      text-align:center;
+      font-size:.78rem;
+      color:#374151;
+    }
+
+    .tt-table td:first-child {
+      padding-left:1rem;
+      font-weight:700;
+      font-size:.75rem;
+      color:#6b7280;
+      text-align:left;
+      background:#fafafa;
+      white-space:nowrap;
+    }
+
+    .tt-table tr:last-child td { border-bottom:none; }
+    .tt-table tr:hover td { background:#f9fafb; }
+    .tt-table tr:hover td:first-child { background:#f0fdf4; }
+
+    /* ── Subject cells ── */
+    .subj-pill {
+      display:inline-block;
+      padding:.18rem .55rem;
+      border-radius:6px;
+      font-size:.75rem;
+      font-weight:600;
+      max-width:130px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .subj-empty {
+      color:#d1d5db;
+      font-size:.72rem;
+      font-style:italic;
+    }
+
+    .subj-break {
+      font-size:.72rem;
+      color:#9ca3af;
+      background:#f3f4f6;
+      padding:.18rem .55rem;
+      border-radius:6px;
+    }
+
+    /* Per-subject color coding (cycling) */
+    .sc-0  { background:#dbeafe; color:#1e40af; }
+    .sc-1  { background:#d1fae5; color:#065f46; }
+    .sc-2  { background:#fef3c7; color:#92400e; }
+    .sc-3  { background:#ede9fe; color:#5b21b6; }
+    .sc-4  { background:#fee2e2; color:#991b1b; }
+    .sc-5  { background:#fce7f3; color:#9d174d; }
+    .sc-6  { background:#e0f2fe; color:#0369a1; }
+    .sc-7  { background:#dcfce7; color:#166534; }
+    .sc-8  { background:#fff7ed; color:#c2410c; }
+    .sc-9  { background:#faf5ff; color:#7c3aed; }
+    .sc-10 { background:#f1f5f9; color:#334155; }
+    .sc-11 { background:#fefce8; color:#a16207; }
+
+    /* ── Break row ── */
+    .break-row td {
+      background:#f8fafc;
+      border-top:1px dashed #e5e7eb;
+      border-bottom:1px dashed #e5e7eb;
+    }
+
+    /* ── Stats strip ── */
+    .tt-stats {
+      display:flex;
+      gap:1.25rem;
+      padding:.7rem 1.4rem;
+      background:#f8fafc;
+      border-top:1px solid #e5e7eb;
+      flex-wrap:wrap;
+    }
+    .tt-stat { font-size:.75rem; color:#6b7280; }
+    .tt-stat strong { color:#1f2937; font-weight:700; }
+
+    /* ── Legend ── */
+    .legend {
+      margin-top:2rem;
+      background:#fff;
+      border-radius:12px;
+      padding:1.25rem 1.5rem;
+      box-shadow:0 2px 10px rgba(0,0,0,.06);
+    }
+    .legend h3 { font-size:.88rem; font-weight:700; color:#374151; margin-bottom:.85rem; }
+    .legend-grid { display:flex; flex-wrap:wrap; gap:.5rem; }
+    .legend-item {
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      font-size:.78rem;
+      font-weight:600;
+      padding:.2rem .7rem;
+      border-radius:999px;
+    }
+
+    /* ── Summary strip ── */
+    .summary-strip {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:1rem;
+      margin-bottom:2rem;
+    }
+    .summary-card {
+      background:#fff;
+      border-radius:10px;
+      padding:1.1rem 1.25rem;
+      box-shadow:0 1px 6px rgba(0,0,0,.07);
+      display:flex;
+      align-items:center;
+      gap:.85rem;
+    }
+    .summary-icon {
+      width:42px; height:42px;
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.1rem;
+      flex-shrink:0;
+    }
+    .summary-icon.green  { background:#d1fae5; color:#065f46; }
+    .summary-icon.blue   { background:#dbeafe; color:#1e40af; }
+    .summary-icon.purple { background:#ede9fe; color:#7c3aed; }
+    .summary-icon.amber  { background:#fef3c7; color:#92400e; }
+    .summary-val { font-size:1.5rem; font-weight:800; color:#1f2937; line-height:1; }
+    .summary-label { font-size:.78rem; color:#6b7280; margin-top:.2rem; }
+
+    /* ── Toast ── */
+    #toast {
+      position:fixed;
+      bottom:1.5rem;
+      right:1.5rem;
+      padding:.85rem 1.4rem;
+      border-radius:10px;
+      font-size:.9rem;
+      font-weight:600;
+      color:#fff;
+      z-index:9999;
+      opacity:0;
+      transition:opacity .35s;
+      pointer-events:none;
+    }
+
+    /* ── Print styles ── */
+    @media print {
+      .topbar, .controls-bar, .action-strip, .no-print { display:none !important; }
+      body { background:#fff; }
+      .page { padding:.5rem; }
+      .classes-grid { grid-template-columns:1fr 1fr; gap:1rem; }
+      .tt-card { box-shadow:none; border:1px solid #e5e7eb; }
+      .tt-card-header { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    }
+
+    @media (max-width:768px) {
+      .classes-grid { grid-template-columns:1fr; }
+      .topbar { padding:0 1rem; flex-wrap:wrap; height:auto; padding:.75rem 1rem; gap:.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar no-print">
+  <div class="topbar-left">
+    <a href="reports.html"><i class="fas fa-arrow-left"></i> Reports</a>
+    <div class="topbar-title"><i class="fas fa-calendar-week"></i> Class Timetables</div>
+    <span class="topbar-meta" id="topMeta">Not generated yet</span>
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-ghost" onclick="window.print()"><i class="fas fa-print"></i> Print All</button>
+    <button class="btn btn-ghost" onclick="exportAllCSV()"><i class="fas fa-download"></i> Export CSV</button>
+    <button class="btn btn-white" onclick="document.getElementById('generateBtn').click()"><i class="fas fa-magic"></i> Re-generate</button>
+  </div>
+</div>
+
+<!-- Controls Bar -->
+<div class="controls-bar no-print">
+  <div class="ctrl-group">
+    <label>Term</label>
+    <select id="ctrlTerm">
+      <option value="Term 1">Term 1</option>
+      <option value="Term 2">Term 2</option>
+      <option value="Term 3">Term 3</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label>Year</label>
+    <input type="number" id="ctrlYear" value="2026" min="2024" max="2030" style="width:90px;">
+  </div>
+  <div class="ctrl-divider"></div>
+  <div class="ctrl-group">
+    <label>Periods / Day</label>
+    <div class="ctrl-periods">
+      <input type="range" id="ctrlPeriods" min="6" max="10" value="8"
+        oninput="document.getElementById('ctrlPeriodsVal').textContent=this.value">
+      <span id="ctrlPeriodsVal">8</span>
+    </div>
+  </div>
+  <div class="ctrl-group">
+    <label>Break after period</label>
+    <input type="number" id="ctrlBreakAfter" value="4" min="2" max="7" style="width:70px;">
+  </div>
+  <div class="ctrl-divider"></div>
+  <div class="ctrl-group">
+    <label>Filter class</label>
+    <select id="ctrlClassFilter" onchange="renderPage()">
+      <option value="">All Classes</option>
+    </select>
+  </div>
+  <div class="action-strip">
+    <button id="generateBtn" class="btn btn-green" onclick="generateTimetables()">
+      <i class="fas fa-magic"></i> Generate Timetables
+    </button>
+  </div>
+</div>
+
+<!-- Main Page -->
+<div class="page">
+  <div id="pageContent">
+    <div class="state-box">
+      <i class="fas fa-calendar-week" style="color:#d1fae5;"></i>
+      <h3>No Timetables Generated Yet</h3>
+      <p>Select a term, adjust your settings, then click <strong>Generate Timetables</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+const API = 'http://localhost:5000';
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+
+// Subject → color class (stable, deterministic)
+const subjectColorMap = {};
+let subjectColorIdx = 0;
+function getSubjectColor(subject) {
+  if (!subjectColorMap[subject]) {
+    subjectColorMap[subject] = 'sc-' + (subjectColorIdx++ % 12);
+  }
+  return subjectColorMap[subject];
+}
+
+// Class sort order
+const CLASS_ORDER = {
+  Kindergarten:0,PlayGroup:0,
+  'PP1':1,'PP2':2,'Pre-Primary 1':1,'Pre-Primary 2':2,
+  'Grade 1':3,'Grade 2':4,'Grade 3':5,'Grade 4':6,
+  'Grade 5':7,'Grade 6':8,'Grade 7':9,'Grade 8':10,'Grade 9':11
+};
+function sortClasses(arr) {
+  return arr.slice().sort((a,b)=>(CLASS_ORDER[a]??50)-(CLASS_ORDER[b]??50));
+}
+
+// ── Toast ──────────────────────────────────────────────────────
+function showToast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  t.style.background = isError ? '#dc2626' : '#065f46';
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => { t.style.opacity = '0'; }, 3500);
+}
+
+// ── Global data ─────────────────────────────────────────────────
+let generatedTimetables = {};   // classname → { timetable, teacher, classTeacher, subjects }
+let allSubjects          = [];  // for legend
+
+// ═══════════════════════════════════════════════════════════════
+//  CORE: TIMETABLE GENERATION ALGORITHM
+//
+//  Inputs:
+//    classSubjectMap : { className → [{ subject, teacherId, teacherName }] }
+//    classTeacherMap : { className → teacherName }
+//    periodsPerDay   : int
+//    breakAfter      : int (period index after which break is inserted)
+//
+//  Rules:
+//    1. Each subject appears ≥1 per week; extra slots filled proportionally
+//    2. Same teacher never double-booked in the same period/day across classes
+//    3. Break row inserted after `breakAfter` period
+//    4. Subjects spread across days (not clustered)
+//    5. Free periods filled with "Free" if subjects run out
+// ═══════════════════════════════════════════════════════════════
+function buildTimetables(classSubjectMap, classTeacherMap, periodsPerDay, breakAfter) {
+  const timetables = {};
+
+  // Track teacher schedule globally: teacher → { "Mon-P1": true, ... }
+  const teacherSchedule = {};
+
+  function isTeacherFree(teacher, day, period) {
+    if (!teacher) return true;
+    const key = day + '-P' + period;
+    return !(teacherSchedule[teacher] && teacherSchedule[teacher][key]);
+  }
+  function bookTeacher(teacher, day, period) {
+    if (!teacher) return;
+    if (!teacherSchedule[teacher]) teacherSchedule[teacher] = {};
+    teacherSchedule[teacher][day + '-P' + period] = true;
+  }
+
+  // Process each class in sorted order
+  const classes = sortClasses(Object.keys(classSubjectMap));
+
+  classes.forEach(cls => {
+    const subjects = classSubjectMap[cls] || [];
+    if (!subjects.length) {
+      timetables[cls] = { grid: buildEmptyGrid(periodsPerDay), classTeacher: classTeacherMap[cls]||'Unassigned', subjects:[], periodsPerDay, breakAfter };
+      return;
+    }
+
+    // Build a slot pool: distribute subjects fairly across the week
+    // Target: at least 1 slot per subject, then fill remaining proportionally
+    const totalPeriods = DAYS.length * periodsPerDay;
+    const pool = buildSlotPool(subjects, totalPeriods);
+
+    // Shuffle pool for variety
+    shuffleArray(pool);
+
+    // Grid: grid[day][period] = { subject, teacher } | null
+    const grid = {};
+    DAYS.forEach(d => {
+      grid[d] = {};
+      for (let p = 1; p <= periodsPerDay; p++) grid[d][p] = null;
+    });
+
+    // Assign slots: iterate day-by-period in a spread pattern (diagonal)
+    // to avoid same subject appearing on the same day consecutively
+    const assignments = [];
+    let poolIdx = 0;
+
+    // Build all (day, period) slots in a spread order
+    const slots = buildSpreadSlots(periodsPerDay);
+
+    slots.forEach(([day, period]) => {
+      if (poolIdx >= pool.length) {
+        // No more subjects — leave as Free
+        return;
+      }
+
+      // Try to find a subject whose teacher is free at this slot
+      let assigned = false;
+      let tries = 0;
+      while (tries < pool.length - poolIdx) {
+        const candidate = pool[poolIdx];
+        if (isTeacherFree(candidate.teacherName, day, period)) {
+          grid[day][period] = candidate;
+          bookTeacher(candidate.teacherName, day, period);
+          poolIdx++;
+          assigned = true;
+          break;
+        }
+        // Rotate pool to try next subject
+        pool.push(pool.splice(poolIdx, 1)[0]);
+        tries++;
+      }
+
+      if (!assigned && poolIdx < pool.length) {
+        // Force-assign even with conflict (better a conflict than empty)
+        grid[day][period] = pool[poolIdx++];
+      }
+    });
+
+    timetables[cls] = {
+      grid,
+      classTeacher: classTeacherMap[cls] || 'Unassigned',
+      subjects,
+      periodsPerDay,
+      breakAfter
+    };
+  });
+
+  return timetables;
+}
+
+// Build a pool of subject slots fairly distributed
+function buildSlotPool(subjects, totalSlots) {
+  const pool = [];
+  const perSubject = Math.max(1, Math.floor(totalSlots / subjects.length));
+  const extra = totalSlots - perSubject * subjects.length;
+
+  subjects.forEach((s, i) => {
+    const count = perSubject + (i < extra ? 1 : 0);
+    for (let j = 0; j < count; j++) pool.push(s);
+  });
+
+  return pool;
+}
+
+// Build slots in a spread diagonal pattern so same subject
+// doesn't cluster on one day
+function buildSpreadSlots(periodsPerDay) {
+  const slots = [];
+  // Interleave: period 1 across all days, period 2 across all days, etc.
+  for (let p = 1; p <= periodsPerDay; p++) {
+    DAYS.forEach(d => slots.push([d, p]));
+  }
+  return slots;
+}
+
+function buildEmptyGrid(periodsPerDay) {
+  const grid = {};
+  DAYS.forEach(d => {
+    grid[d] = {};
+    for (let p = 1; p <= periodsPerDay; p++) grid[d][p] = null;
+  });
+  return grid;
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+// ── Fetch and generate ──────────────────────────────────────────
+async function generateTimetables() {
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating…';
+
+  // Reset color map
+  Object.keys(subjectColorMap).forEach(k => delete subjectColorMap[k]);
+  subjectColorIdx = 0;
+
+  const term        = document.getElementById('ctrlTerm').value;
+  const year        = document.getElementById('ctrlYear').value;
+  const periodsPerDay = parseInt(document.getElementById('ctrlPeriods').value);
+  const breakAfter  = parseInt(document.getElementById('ctrlBreakAfter').value);
+
+  try {
+    // Fetch all data in parallel
+    const [assignRes, ctRes, studRes] = await Promise.all([
+      fetch(`${API}/api/teacher-assignments/summary`),
+      fetch(`${API}/api/class-teacher-assignments`),
+      fetch(`${API}/api/students`)
+    ]);
+
+    const teachers     = assignRes.ok ? await assignRes.json() : [];
+    const classTeachers= ctRes.ok     ? await ctRes.json()     : [];
+    const students     = studRes.ok   ? await studRes.json()   : [];
+
+    // Build class-subject map from teacher assignments
+    const classSubjectMap = {};
+    teachers.forEach(t => {
+      (t.assignments || []).forEach(a => {
+        if (!classSubjectMap[a.class_name]) classSubjectMap[a.class_name] = [];
+        // Avoid exact duplicate (same subject + teacher in same class)
+        const exists = classSubjectMap[a.class_name].some(e => e.subject === a.subject && e.teacherName === t.fullName);
+        if (!exists) {
+          classSubjectMap[a.class_name].push({
+            subject:    a.subject,
+            teacherId:  t.id,
+            teacherName: t.fullName
+          });
+        }
+      });
+    });
+
+    // Add classes from students that have no assignments yet
+    const studentClasses = [...new Set(students.map(s => s.studentClass).filter(Boolean))];
+    studentClasses.forEach(cls => {
+      if (!classSubjectMap[cls]) classSubjectMap[cls] = [];
+    });
+
+    // Build class-teacher map
+    const ctMap = {};
+    classTeachers.forEach(ct => { ctMap[ct.class_name] = ct.teacher_name; });
+
+    // Generate!
+    generatedTimetables = buildTimetables(classSubjectMap, ctMap, periodsPerDay, breakAfter);
+
+    // Collect all subjects for legend
+    const subjectSet = new Set();
+    Object.values(generatedTimetables).forEach(tt => {
+      (tt.subjects || []).forEach(s => subjectSet.add(s.subject));
+    });
+    allSubjects = [...subjectSet].sort();
+    // Prime the color map in sorted order for consistency
+    allSubjects.forEach(s => getSubjectColor(s));
+
+    // Populate class filter
+    const classFilter = document.getElementById('ctrlClassFilter');
+    const currentFilter = classFilter.value;
+    classFilter.innerHTML = '<option value="">All Classes</option>';
+    sortClasses(Object.keys(generatedTimetables)).forEach(cls => {
+      const opt = document.createElement('option');
+      opt.value = cls; opt.textContent = cls;
+      if (cls === currentFilter) opt.selected = true;
+      classFilter.appendChild(opt);
+    });
+
+    // Update meta
+    const classCount = Object.keys(generatedTimetables).length;
+    document.getElementById('topMeta').textContent = `${term} ${year} · ${classCount} class${classCount!==1?'es':''}`;
+
+    renderPage(term, year, periodsPerDay, breakAfter);
+    showToast(`✅ Generated ${classCount} timetable${classCount!==1?'s':''} for ${term} ${year}`);
+
+  } catch(err) {
+    showToast('Failed to fetch data: ' + err.message, true);
+    document.getElementById('pageContent').innerHTML = `
+      <div class="state-box">
+        <i class="fas fa-exclamation-circle" style="color:#fca5a5;"></i>
+        <h3>Could not connect to server</h3>
+        <p>${err.message}<br><br>Make sure the backend is running at ${API}</p>
+      </div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-magic"></i> Generate Timetables';
+  }
+}
+
+// ── Render ──────────────────────────────────────────────────────
+function renderPage(term, year, periodsPerDay, breakAfter) {
+  if (!term) term = document.getElementById('ctrlTerm').value;
+  if (!year) year = document.getElementById('ctrlYear').value;
+  if (!periodsPerDay) periodsPerDay = parseInt(document.getElementById('ctrlPeriods').value);
+  if (!breakAfter) breakAfter = parseInt(document.getElementById('ctrlBreakAfter').value);
+
+  const classFilter = document.getElementById('ctrlClassFilter').value;
+  const content = document.getElementById('pageContent');
+
+  if (!Object.keys(generatedTimetables).length) return;
+
+  const filteredClasses = sortClasses(Object.keys(generatedTimetables))
+    .filter(cls => !classFilter || cls === classFilter);
+
+  if (!filteredClasses.length) {
+    content.innerHTML = '<div class="state-box"><i class="fas fa-search"></i><h3>No classes match the filter</h3></div>';
+    return;
+  }
+
+  // ── Summary strip ──
+  const totalClasses   = filteredClasses.length;
+  const withTeachers   = filteredClasses.filter(c => generatedTimetables[c].classTeacher !== 'Unassigned').length;
+  const withSubjects   = filteredClasses.filter(c => generatedTimetables[c].subjects.length > 0).length;
+  const totalSubjects  = allSubjects.length;
+
+  let html = `
+    <div class="summary-strip">
+      <div class="summary-card">
+        <div class="summary-icon green"><i class="fas fa-school"></i></div>
+        <div><div class="summary-val">${totalClasses}</div><div class="summary-label">Classes</div></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon blue"><i class="fas fa-chalkboard-teacher"></i></div>
+        <div><div class="summary-val">${withTeachers}</div><div class="summary-label">With Class Teacher</div></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon purple"><i class="fas fa-book-open"></i></div>
+        <div><div class="summary-val">${totalSubjects}</div><div class="summary-label">Unique Subjects</div></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon amber"><i class="fas fa-clock"></i></div>
+        <div><div class="summary-val">${periodsPerDay * 5}</div><div class="summary-label">Periods / Week</div></div>
+      </div>
+    </div>
+
+    <div class="term-header">
+      <div>
+        <h2><i class="fas fa-calendar-week" style="margin-right:.5rem;opacity:.8;"></i>${term} ${year} — Class Timetables</h2>
+        <p>EMALASHIRA Primary School &nbsp;·&nbsp; ${periodsPerDay} periods/day &nbsp;·&nbsp; Break after period ${breakAfter}</p>
+      </div>
+      <div class="term-badges">
+        <span class="term-badge"><i class="fas fa-users"></i> ${totalClasses} classes</span>
+        <span class="term-badge"><i class="fas fa-calendar-check"></i> ${DAYS.length} days/week</span>
+        <span class="term-badge"><i class="fas fa-clock"></i> ${periodsPerDay} periods/day</span>
+      </div>
+    </div>
+
+    <div class="classes-grid">
+  `;
+
+  filteredClasses.forEach(cls => {
+    html += renderTimetableCard(cls, generatedTimetables[cls], periodsPerDay, breakAfter);
+  });
+
+  html += `</div>`;
+
+  // ── Legend ──
+  if (allSubjects.length) {
+    html += `<div class="legend no-print">
+      <h3><i class="fas fa-palette" style="margin-right:.35rem;"></i> Subject Legend</h3>
+      <div class="legend-grid">`;
+    allSubjects.forEach(s => {
+      html += `<span class="legend-item ${getSubjectColor(s)}">${s}</span>`;
+    });
+    html += `</div></div>`;
+  }
+
+  content.innerHTML = html;
+}
+
+function renderTimetableCard(cls, tt, periodsPerDay, breakAfter) {
+  const { grid, classTeacher, subjects } = tt;
+  const subjectCount = subjects.length;
+  const hasTeacher = classTeacher && classTeacher !== 'Unassigned';
+
+  // Header background based on class level
+  const headerBg = getClassHeaderBg(cls);
+
+  let html = `
+    <div class="tt-card">
+      <div class="tt-card-header" style="background:${headerBg};">
+        <div>
+          <div class="tt-class-name">${cls}</div>
+          <div class="tt-meta">${subjectCount} subject${subjectCount!==1?'s':''} &nbsp;·&nbsp; ${periodsPerDay} periods/day</div>
+        </div>
+        <div class="tt-teacher">
+          <i class="fas fa-${hasTeacher?'star':'user-slash'}" style="font-size:.7rem;"></i>
+          ${classTeacher}
+        </div>
+      </div>
+      <div class="tt-table-wrap">
+        <table class="tt-table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              ${DAYS.map(d => `<th>${d.slice(0,3)}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+  `;
+
+  for (let p = 1; p <= periodsPerDay; p++) {
+    // Insert break row
+    if (p === breakAfter + 1) {
+      html += `<tr class="break-row"><td>Break</td>${DAYS.map(()=>`<td><span class="subj-break">☕ Break</span></td>`).join('')}</tr>`;
+    }
+
+    const timeLabel = getPeriodTime(p, breakAfter);
+    html += `<tr><td>P${p}<br><span style="font-size:.68rem;font-weight:400;color:#9ca3af;">${timeLabel}</span></td>`;
+    DAYS.forEach(day => {
+      const slot = grid[day] && grid[day][p];
+      if (slot) {
+        const colorCls = getSubjectColor(slot.subject);
+        const shortName = abbreviateSubject(slot.subject);
+        html += `<td>
+          <span class="subj-pill ${colorCls}" title="${slot.subject} — ${slot.teacherName||''}">
+            ${shortName}
+          </span>
+          ${slot.teacherName ? `<br><span style="font-size:.65rem;color:#9ca3af;">${slot.teacherName.split(' ')[0]}</span>` : ''}
+        </td>`;
+      } else {
+        html += `<td><span class="subj-empty">Free</span></td>`;
+      }
+    });
+    html += `</tr>`;
+  }
+
+  html += `</tbody></table></div>`;
+
+  // Stats strip
+  const filledSlots = DAYS.reduce((total, day) => {
+    return total + Object.values(grid[day]||{}).filter(s=>s!==null).length;
+  }, 0);
+  const totalSlots = periodsPerDay * DAYS.length;
+  const utilization = totalSlots > 0 ? Math.round(filledSlots / totalSlots * 100) : 0;
+
+  html += `
+    <div class="tt-stats">
+      <div class="tt-stat">Subjects: <strong>${subjectCount}</strong></div>
+      <div class="tt-stat">Slots filled: <strong>${filledSlots}/${totalSlots}</strong></div>
+      <div class="tt-stat">Utilization: <strong>${utilization}%</strong></div>
+      ${hasTeacher ? `<div class="tt-stat">Class teacher: <strong>${classTeacher}</strong></div>` : ''}
+      <div class="tt-stat no-print" style="margin-left:auto;">
+        <button onclick="printSingleClass('${cls}')" class="btn btn-outline" style="padding:.25rem .75rem;font-size:.75rem;">
+          <i class="fas fa-print"></i> Print
+        </button>
+        <button onclick="exportClassCSV('${cls}')" class="btn btn-outline" style="padding:.25rem .75rem;font-size:.75rem;margin-left:.4rem;">
+          <i class="fas fa-download"></i> CSV
+        </button>
+      </div>
+    </div>
+  </div>`;
+
+  return html;
+}
+
+// ── Helpers ──────────────────────────────────────────────────────
+function getClassHeaderBg(cls) {
+  const clsLower = cls.toLowerCase();
+  if (clsLower.includes('kindergarten') || clsLower.includes('playgroup')) return 'linear-gradient(90deg,#5b21b6,#7c3aed)';
+  if (clsLower.includes('pp') || clsLower.includes('pre-primary')) return 'linear-gradient(90deg,#be185d,#db2777)';
+  const grade = parseInt(cls.replace(/\D/g,''));
+  if (!isNaN(grade)) {
+    if (grade <= 3) return 'linear-gradient(90deg,#065f46,#0f766e)';
+    if (grade <= 6) return 'linear-gradient(90deg,#1e3a8a,#1e40af)';
+    return 'linear-gradient(90deg,#78350f,#92400e)';
+  }
+  return 'linear-gradient(90deg,#374151,#6b7280)';
+}
+
+function abbreviateSubject(subject) {
+  const abbr = {
+    'Language Activities':               'Language',
+    'Mathematics Activities':            'Maths',
+    'Environmental Activities':          'EVT',
+    'Psychomotor & Creative Activities': 'Psychomotor',
+    'Religious Education Activities':    'RE',
+    'English Activities':                'English',
+    'Kiswahili Activities':              'Kiswahili',
+    'Hygiene & Nutrition Activities':    'Hygiene',
+    'Movement & Creative Activities':    'Movement',
+    'Science & Technology':              'Sci&Tech',
+    'Home Science':                      'Home Sci',
+    'Creative Arts':                     'Creative',
+    'Social Studies':                    'Social St.',
+    'Religious Education':               'RE',
+    'Physical & Health Education':       'PE',
+    'Integrated Science':                'Int. Sci.',
+    'Business Studies':                  'Business',
+    'Pre-Technical & Pre-Career Education': 'Pre-Tech',
+    'Sports & Physical Education':       'Sports/PE',
+    'Life Skills Education':             'Life Skills',
+    'Health Education':                  'Health Ed',
+  };
+  return abbr[subject] || (subject.length > 12 ? subject.slice(0,11)+'…' : subject);
+}
+
+// Compute rough period time (assumes 8:00 start, 40 min periods, 30 min break)
+function getPeriodTime(period, breakAfter) {
+  const START_MINS = 8 * 60; // 08:00
+  const PERIOD_MINS = 40;
+  const BREAK_MINS = 30;
+  let offset = (period - 1) * PERIOD_MINS;
+  if (period > breakAfter) offset += BREAK_MINS;
+  const startMin = START_MINS + offset;
+  const endMin   = startMin + PERIOD_MINS;
+  return fmtTime(startMin) + '–' + fmtTime(endMin);
+}
+
+function fmtTime(mins) {
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${h}:${String(m).padStart(2,'0')}`;
+}
+
+// ── Export CSV ────────────────────────────────────────────────────
+function exportClassCSV(cls) {
+  const tt = generatedTimetables[cls];
+  if (!tt) return;
+
+  const { grid, classTeacher, periodsPerDay, breakAfter } = tt;
+  const term = document.getElementById('ctrlTerm').value;
+  const year = document.getElementById('ctrlYear').value;
+
+  const rows = [
+    [`Class: ${cls}`, '', '', '', '', ''],
+    [`Class Teacher: ${classTeacher}`, '', '', '', '', ''],
+    [`${term} ${year}`, '', '', '', '', ''],
+    [''],
+    ['Period', ...DAYS]
+  ];
+
+  for (let p = 1; p <= periodsPerDay; p++) {
+    if (p === breakAfter + 1) rows.push(['Break', ...DAYS.map(()=>'BREAK')]);
+    const row = ['Period ' + p];
+    DAYS.forEach(day => {
+      const slot = grid[day] && grid[day][p];
+      row.push(slot ? `${slot.subject} (${slot.teacherName||''})` : 'Free');
+    });
+    rows.push(row);
+  }
+
+  const csv = rows.map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  downloadFile(csv, `timetable-${cls.replace(/\s+/g,'-')}-${term}-${year}.csv`, 'text/csv');
+}
+
+function exportAllCSV() {
+  if (!Object.keys(generatedTimetables).length) { showToast('Generate timetables first.', true); return; }
+  const term = document.getElementById('ctrlTerm').value;
+  const year = document.getElementById('ctrlYear').value;
+  const periodsPerDay = parseInt(document.getElementById('ctrlPeriods').value);
+  const breakAfter    = parseInt(document.getElementById('ctrlBreakAfter').value);
+
+  const allRows = [];
+  sortClasses(Object.keys(generatedTimetables)).forEach(cls => {
+    const tt = generatedTimetables[cls];
+    const { grid, classTeacher } = tt;
+    allRows.push([`CLASS: ${cls}`,'','','','','']);
+    allRows.push([`Class Teacher: ${classTeacher}`,'','','','','']);
+    allRows.push(['Period', ...DAYS]);
+    for (let p = 1; p <= periodsPerDay; p++) {
+      if (p === breakAfter + 1) allRows.push(['Break',...DAYS.map(()=>'BREAK')]);
+      const row = ['Period ' + p];
+      DAYS.forEach(day => {
+        const slot = grid[day] && grid[day][p];
+        row.push(slot ? `${slot.subject} (${slot.teacherName||''})` : 'Free');
+      });
+      allRows.push(row);
+    }
+    allRows.push(['']);
+  });
+
+  const csv = allRows.map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  downloadFile(csv, `all-timetables-${term}-${year}.csv`, 'text/csv');
+  showToast('All timetables exported as CSV');
+}
+
+function downloadFile(content, filename, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: filename });
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function printSingleClass(cls) {
+  // Temporarily hide all other cards
+  const cards = document.querySelectorAll('.tt-card');
+  const classNames = sortClasses(Object.keys(generatedTimetables));
+  const idx = classNames.indexOf(cls);
+  cards.forEach((card, i) => {
+    if (i !== idx) card.style.display = 'none';
+  });
+  window.print();
+  cards.forEach(card => card.style.display = '');
+}
+
+// ── Read URL params on load ───────────────────────────────────────
+window.addEventListener('load', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('term'))    document.getElementById('ctrlTerm').value    = params.get('term');
+  if (params.has('year'))    document.getElementById('ctrlYear').value    = params.get('year');
+  if (params.has('periods')) {
+    const p = params.get('periods');
+    document.getElementById('ctrlPeriods').value    = p;
+    document.getElementById('ctrlPeriodsVal').textContent = p;
+  }
+
+  // Auto-generate if params were passed
+  if (params.has('term') || params.has('classes')) {
+    generateTimetables();
+  }
+});
+</script>
+</body>
+</html>

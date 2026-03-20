@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Portal - EMALASHIRA Primary School</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/static/css/role.css"/>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">
+    <div class="nav-badge">E</div>
+    <div><h1>EMALASHIRA</h1><p>Teacher Portal</p></div>
+  </div>
+  <div class="topnav-user">
+    <span id="userName">Loading...</span>
+    <span class="role-tag teacher">Teacher</span>
+    <a href="teacher-profile.html"><i class="fas fa-user"></i> Profile</a>
+    <a href="#" class="logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+</nav>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('grades',this)"><i class="fas fa-pen"></i> Enter Grades</button>
+  <button class="tab-btn" onclick="switchTab('attendance',this)"><i class="fas fa-clipboard-check"></i> Record Attendance</button>
+  <button class="tab-btn" onclick="switchTab('students',this)"><i class="fas fa-users"></i> Student Profiles</button>
+  <button class="tab-btn" onclick="switchTab('reports',this)"><i class="fas fa-chart-bar"></i> Progress Reports</button>
+</div>
+
+<div class="page">
+  <div class="welcome-banner teacher-banner">
+    <div><h2>Welcome, <span id="welcomeName">Teacher</span>!</h2><p>Manage grades, attendance and generate academic progress reports.</p></div>
+    <i class="fas fa-chalkboard-teacher banner-icon"></i>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-users"></i></div><div class="stat-info"><h3 id="statStudents">0</h3><p>My Students</p></div></div>
+    <div class="stat-card"><div class="stat-icon green"><i class="fas fa-clipboard-list"></i></div><div class="stat-info"><h3 id="statGradesPosted">0</h3><p>Grades Posted</p></div></div>
+    <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h3 id="statAttToday">—</h3><p>Attendance Today</p></div></div>
+    <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3 id="statClassAvg">—</h3><p>Class Average</p></div></div>
+  </div>
+
+  <!-- ENTER GRADES -->
+  <div id="tab-grades" class="tab-content active">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-pen"></i> Enter / Update Grades</div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group"><label>Class</label><select id="gradeClass" onchange="loadClassStudents()"><option value="">Select Class</option><option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option><option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option></select></div>
+          <div class="form-group"><label>Subject</label><select id="gradeSubject"><option value="">Select Subject</option><optgroup label="── Pre-Primary ──"><option>Language Activities</option><option>Mathematics Activities</option><option>Environmental Activities</option><option>Psychomotor &amp; Creative Activities</option><option>Religious Education Activities</option></optgroup><optgroup label="── Lower Primary (Gr 1–3) ──"><option>English Activities</option><option>Kiswahili Activities</option><option>Mathematics Activities</option><option>Environmental Activities</option><option>Hygiene &amp; Nutrition Activities</option><option>Movement &amp; Creative Activities</option><option>Religious Education Activities</option></optgroup><optgroup label="── Upper Primary (Gr 4–6) ──"><option>English</option><option>Kiswahili</option><option>Mathematics</option><option>Science &amp; Technology</option><option>Agriculture</option><option>Home Science</option><option>Creative Arts</option><option>Social Studies</option><option>Religious Education</option><option>Physical &amp; Health Education</option></optgroup><optgroup label="── Junior Secondary (Gr 7–9) ──"><option>English</option><option>Kiswahili</option><option>Mathematics</option><option>Integrated Science</option><option>Social Studies</option><option>Business Studies</option><option>Agriculture</option><option>Pre-Technical &amp; Pre-Career Education</option><option>Religious Education</option><option>Sports &amp; Physical Education</option><option>Life Skills Education</option><option>Health Education</option></optgroup></select></div>
+          <div class="form-group"><label>Term</label><select id="gradeTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div>
+          <div class="form-group"><label>Exam Type</label><select id="gradeExamType"><option>End of Term</option><option>Mid Term</option><option>CAT</option><option>Assignment</option></select></div>
+        </div>
+        <div id="gradeStudentsList" class="grade-entry-table" style="display:none;">
+          <table>
+            <thead><tr><th>Admission No.</th><th>Student Name</th><th>Score (0–100)</th><th>Grade</th><th>Remarks</th></tr></thead>
+            <tbody id="gradeEntryBody"></tbody>
+          </table>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="submitGrades()"><i class="fas fa-save"></i> Save All Grades</button>
+          </div>
+        </div>
+        <div id="gradePrompt" class="empty-prompt"><i class="fas fa-arrow-up"></i><p>Select a class and subject above to load students</p></div>
+        <div id="gradeSuccess" class="success-msg" style="display:none;"><i class="fas fa-check-circle"></i> Grades saved successfully!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECORD ATTENDANCE -->
+  <div id="tab-attendance" class="tab-content">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-clipboard-check"></i> Record Attendance</div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group"><label>Class</label><select id="attClass" onchange="loadAttendanceStudents()"><option value="">Select Class</option><option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option><option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option></select></div>
+          <div class="form-group"><label>Date</label><input type="date" id="attDate" value=""></div>
+        </div>
+        <div id="attStudentsList" style="display:none;">
+          <table>
+            <thead><tr><th>Admission No.</th><th>Student Name</th><th>Status</th><th>Remarks</th></tr></thead>
+            <tbody id="attEntryBody"></tbody>
+          </table>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="submitAttendance()"><i class="fas fa-save"></i> Save Attendance</button>
+          </div>
+        </div>
+        <div id="attPrompt" class="empty-prompt"><i class="fas fa-arrow-up"></i><p>Select a class above to load students</p></div>
+        <div id="attSuccess" class="success-msg" style="display:none;"><i class="fas fa-check-circle"></i> Attendance recorded successfully!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT PROFILES -->
+  <div id="tab-students" class="tab-content">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-users"></i> Student Profiles</div>
+      <div class="card-body">
+        <div class="search-row">
+          <input type="text" id="studentSearch" placeholder="Search by name or admission number..." oninput="filterStudentProfiles()">
+          <select id="studentClassFilter" onchange="filterStudentProfiles()"><option value="">All Classes</option><option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option><option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option></select>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Admission No.</th><th>Name</th><th>Class</th><th>Gender</th><th>Guardian</th><th>Contact</th><th>Status</th></tr></thead>
+          <tbody id="studentsProfileBody"><tr><td colspan="7" class="empty-cell">Loading students...</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS REPORTS -->
+  <div id="tab-reports" class="tab-content">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-chart-bar"></i> Academic Progress Reports</div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group"><label>Class</label><select id="reportClass" onchange="generateReport()"><option value="">Select Class</option><option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option><option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option></select></div>
+          <div class="form-group"><label>Term</label><select id="reportTerm" onchange="generateReport()"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div>
+        </div>
+        <div id="reportContent" style="display:none;">
+          <div class="report-summary" id="reportSummary"></div>
+          <div class="table-wrap">
+            <table><thead id="reportThead"><tr><th>Student</th><th>—</th><th>Average</th><th>Grade</th><th>Position</th></tr></thead>
+            <tbody id="reportBody"></tbody></table>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-secondary" onclick="exportReportCSV()"><i class="fas fa-download"></i> Export CSV</button>
+          </div>
+        </div>
+        <div id="reportPrompt" class="empty-prompt"><i class="fas fa-arrow-up"></i><p>Select a class to generate the progress report</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/teacher-dashboard.js"></script>
+</body>
+</html>

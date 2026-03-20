@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Users - Emalashira Primary School</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/static/css/manage-users.css" />
+  <style>
+    /* User Role Summary Cards */
+    .user-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 1.75rem;
+    }
+    .user-stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 0.85rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: transform 0.18s, box-shadow 0.18s;
+      border: 2px solid transparent;
+      position: relative;
+      user-select: none;
+    }
+    .user-stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.13); }
+    .user-stat-card.active-filter { border-color: #065f46; background: #f0fdf4; }
+    .stat-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; flex-shrink: 0;
+    }
+    .admin-icon      { background: #fee2e2; color: #dc2626; }
+    .teacher-icon    { background: #dbeafe; color: #2563eb; }
+    .parent-icon     { background: #fef3c7; color: #d97706; }
+    .accountant-icon { background: #d1fae5; color: #059669; }
+    .student-icon    { background: #e9d5ff; color: #9333ea; }
+    .pending-icon    { background: #ffedd5; color: #ea580c; }
+    .total-icon      { background: #e0f2fe; color: #0284c7; }
+    .stat-info { display: flex; flex-direction: column; }
+    .stat-count { font-size: 1.3rem; font-weight: 800; color: #111827; line-height: 1; }
+    .stat-label { font-size: 0.65rem; color: #6b7280; font-weight: 600; margin-top: 0.15rem; text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pending-card.has-pending { border-color: #ea580c; animation: pendingPulse 2s ease-in-out infinite; }
+    @keyframes pendingPulse {
+      0%, 100% { box-shadow: 0 2px 8px rgba(234,88,12,0.15); }
+      50%       { box-shadow: 0 2px 20px rgba(234,88,12,0.40); }
+    }
+    .pending-alert-badge {
+      position: absolute; top: -6px; right: -6px;
+      background: #ea580c; color: white; font-size: 0.7rem; font-weight: 800;
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>EMALASHIRA</h2>
+      <p>Primary School</p>
+    </div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+      <a href="manage-users.html" class="active"><i class="fas fa-users"></i> <span>Manage Users</span></a>
+      <a href="roles-permissions.html"><i class="fas fa-user-shield"></i> <span>Roles & Permissions</span></a>
+      <a href="backup-restore.html"><i class="fas fa-database"></i> <span>Backup & Restore</span></a>
+      <a href="reports.html"><i class="fas fa-chart-bar"></i> <span>Reports</span></a>
+      <a href="settings.html"><i class="fas fa-cog"></i> <span>Settings</span></a>
+      <a href="#" class="logout-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <h1>Manage Users</h1>
+
+    <!-- Role Summary Cards -->
+    <div class="user-stats-grid">
+      <div class="user-stat-card" onclick="filterByRole('Admin')" title="Show only Admins">
+        <div class="stat-icon admin-icon"><i class="fas fa-user-shield"></i></div>
+        <div class="stat-info">
+          <div class="stat-count" id="count-admin">0</div>
+          <div class="stat-label">Admins</div>
+        </div>
+      </div>
+      <div class="user-stat-card" onclick="filterByRole('Teacher')" title="Show only Teachers">
+        <div class="stat-icon teacher-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+        <div class="stat-info">
+          <div class="stat-count" id="count-teacher">0</div>
+          <div class="stat-label">Teachers</div>
+        </div>
+      </div>
+      <div class="user-stat-card" onclick="filterByRole('Parent')" title="Show only Parents">
+        <div class="stat-icon parent-icon"><i class="fas fa-users"></i></div>
+        <div class="stat-info">
+          <div class="stat-count" id="count-parent">0</div>
+          <div class="stat-label">Parents</div>
+        </div>
+      </div>
+      <div class="user-stat-card" onclick="filterByRole('Accountant')" title="Show only Accountants">
+        <div class="stat-icon accountant-icon"><i class="fas fa-calculator"></i></div>
+        <div class="stat-info">
+          <div class="stat-count" id="count-accountant">0</div>
+          <div class="stat-label">Accountants</div>
+        </div>
+      </div>
+      <div class="user-stat-card" onclick="filterByRole('Student')" title="Show only Students">
+        <div class="stat-icon student-icon"><i class="fas fa-user-graduate"></i></div>
+        <div class="stat-info">
+          <div class="stat-count" id="count-student">0</div>
+          <div class="stat-label">Students</div>
+        </div>
+      </div>
+      <div class="user-stat-card pending-card" onclick="filterByRole('Pending')" title="Awaiting approval">
+        <div class="stat-icon pending-icon"><i class="fas fa-clock"></i></div>
+        <div class="stat-info">
+          <div class="stat-count" id="count-pending">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div id="pending-badge" class="pending-alert-badge" style="display:none;"></div>
+      </div>
+      <div class="user-stat-card total-card" onclick="filterByRole('')" title="Show all users">
+        <div class="stat-icon total-icon"><i class="fas fa-users-cog"></i></div>
+        <div class="stat-info">
+          <div class="stat-count" id="count-total">0</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search by name or email..." oninput="searchUsers()">
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <button class="btn btn-sync" onclick="syncAllData()">
+          <i class="fas fa-sync-alt"></i> Sync Data
+        </button>
+        <button class="btn btn-primary" id="createUserBtn">
+          <i class="fas fa-plus"></i> Create New User
+        </button>
+      </div>
+    </div>
+
+    <table id="usersTable">
+      <thead>
+        <tr>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Role</th>
+          <th>Children</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersTableBody"></tbody>
+    </table>
+  </main>
+
+  <!-- Create / Edit User Modal -->
+  <div id="userModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Create New User</h2>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      <form id="userForm">
+        <!-- Hidden fields for edit tracking -->
+        <input type="hidden" id="editUserId">
+        <input type="hidden" id="editUserEmail">
+
+        <div class="form-group">
+          <label for="fullName">Full Name *</label>
+          <input type="text" id="fullName" required>
+        </div>
+
+        <div class="form-group" id="emailGroup">
+          <label for="email">Email *</label>
+          <input type="email" id="email" required>
+        </div>
+
+        <div class="form-group" id="passwordGroup">
+          <label for="password">Password *</label>
+          <input type="password" id="password" minlength="6">
+        </div>
+
+        <div class="form-group" id="phoneGroup">
+          <label for="phone">Phone Number *</label>
+          <input type="tel" id="phone" required>
+        </div>
+
+        <div class="form-group">
+          <label for="dob">Date of Birth</label>
+          <input type="date" id="dob">
+        </div>
+
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender">
+            <option value="">Select...</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="address">Address</label>
+          <input type="text" id="address">
+        </div>
+
+        <div class="form-group">
+          <label for="role">Assign Role *</label>
+          <select id="role" required onchange="showRoleInfo()">
+            <option value="">Select Role...</option>
+            <option value="Admin">Admin</option>
+            <option value="Teacher">Teacher</option>
+            <option value="Parent">Parent</option>
+            <option value="Accountant">Accountant</option>
+            <option value="Student">Student</option>
+          </select>
+          <div id="roleInfo" class="role-info" style="display: none;">
+            <span id="roleInfoText"></span>
+          </div>
+        </div>
+
+        <!-- Student-specific fields -->
+        <div id="studentFields" class="student-fields">
+          <h3><i class="fas fa-user-graduate"></i> Student Information</h3>
+          
+          <div class="form-group">
+            <label for="studentClass">Class *</label>
+            <select id="studentClass">
+              <option value="">Select Class...</option>
+              <option value="PlayGroup">Kindergarten</option>
+              <option value="Pre-Primary 1">Pre-Primary 1</option>
+              <option value="Pre-Primary 2">Pre-Primary 2</option>
+              <option value="Grade 1">Grade 1</option>
+              <option value="Grade 2">Grade 2</option>
+              <option value="Grade 3">Grade 3</option>
+              <option value="Grade 4">Grade 4</option>
+              <option value="Grade 5">Grade 5</option>
+              <option value="Grade 6">Grade 6</option>
+              <option value="Grade 7">Grade 7</option>
+              <option value="Grade 8">Grade 8</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="admissionNumber">Admission Number *</label>
+            <input type="text" id="admissionNumber" placeholder="e.g., ADM2024001">
+          </div>
+
+          <div class="form-group">
+            <label for="parentName">Parent/Guardian Name</label>
+            <input type="text" id="parentName" placeholder="Full name of parent or guardian">
+          </div>
+
+          <div class="form-group">
+            <label for="parentPhone">Parent/Guardian Phone</label>
+            <input type="tel" id="parentPhone" placeholder="Contact number">
+          </div>
+
+          <div class="form-group">
+            <label for="admissionDate">Admission Date</label>
+            <input type="date" id="admissionDate">
+          </div>
+        </div>
+
+        <!-- Parent-specific fields -->
+        <div id="parentFields" class="parent-fields">
+          <h3><i class="fas fa-users"></i> Children Information</h3>
+
+          <div id="childrenContainer">
+            <!-- Child cards added dynamically -->
+          </div>
+
+          <div id="noChildrenHint" class="no-children-hint" style="display:none;">
+            <i class="fas fa-child"></i> No children added yet. Click below to add a child.
+          </div>
+
+          <button type="button" class="add-child-btn" onclick="addChildField()">
+            <i class="fas fa-plus-circle"></i> Add Child
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Account Status</label>
+          <select id="status">
+            <option value="active">Active</option>
+            <option value="disabled">Disabled</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Children Modal -->
+  <div id="childrenModal" class="modal children-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="childrenModalTitle">Parent's Children</h2>
+        <button class="close-btn" onclick="closeChildrenModal()">×</button>
+      </div>
+      <div id="childrenList" class="children-list">
+        <!-- Children displayed here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset Password Modal -->
+  <div id="resetPasswordModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:480px;">
+      <div class="modal-header">
+        <h2><i class="fas fa-key" style="color:#065f46;margin-right:8px;"></i>Reset Password</h2>
+        <button class="close-btn" onclick="closeResetModal()">×</button>
+      </div>
+      <div style="padding:1.5rem;">
+        <p id="resetEmailLabel" style="color:#6b7280;font-size:0.9rem;margin-bottom:1.25rem;">
+          <i class="fas fa-user-circle"></i> <span id="resetEmailText"></span>
+        </p>
+
+        <!-- New Password -->
+        <div class="form-group">
+          <label>New Password *</label>
+          <div style="position:relative;">
+            <input type="password" id="resetNewPassword" placeholder="Create a strong password"
+              style="width:100%;padding:10px 42px 10px 12px;border:2px solid #d1d5db;border-radius:8px;font-size:14px;">
+            <span id="toggleResetPw" onclick="toggleResetEye('resetNewPassword','eyeReset')"
+              style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#6b7280;font-size:15px;">
+              <i id="eyeReset" class="fas fa-eye"></i>
+            </span>
+          </div>
+
+          <!-- Suggest button -->
+          <div style="margin-top:7px;">
+            <button type="button" id="resetSuggestBtn"
+              style="background:#f0fdf4;color:#065f46;border:1.5px solid #6ee7b7;border-radius:7px;
+                     padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+              <i class="fas fa-bolt"></i> Suggest a Strong Password
+            </button>
+          </div>
+
+          <!-- Generated box -->
+          <div id="resetGenBox" style="display:none;margin-top:8px;background:#f0fdf4;border:1.5px solid #6ee7b7;border-radius:8px;padding:10px 13px;">
+            <span style="font-size:11px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:6px;">Suggested password:</span>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <code id="resetGenValue"
+                style="font-size:13px;font-weight:700;color:#065f46;background:#dcfce7;padding:4px 10px;border-radius:5px;cursor:pointer;flex:1;word-break:break-all;"></code>
+              <button type="button" id="resetUseBtn"
+                style="background:#065f46;color:white;border:none;border-radius:6px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">Use this</button>
+              <button type="button" id="resetRefreshBtn"
+                style="background:#e5e7eb;color:#374151;border:none;border-radius:6px;padding:5px 9px;font-size:12px;cursor:pointer;">
+                <i class="fas fa-sync-alt"></i>
+              </button>
+            </div>
+            <div id="resetCopiedMsg" style="display:none;font-size:12px;color:#059669;font-weight:600;margin-top:5px;"></div>
+          </div>
+
+          <!-- Strength bar -->
+          <div id="resetStrengthBar" style="display:none;height:6px;background:#e5e7eb;border-radius:99px;margin-top:8px;overflow:hidden;">
+            <div id="resetStrengthFill" style="height:100%;border-radius:99px;width:0%;transition:width .3s,background .3s;"></div>
+          </div>
+          <div id="resetStrengthLabel" style="font-size:12px;font-weight:600;margin-top:4px;min-height:16px;"></div>
+
+          <!-- Requirements -->
+          <ul id="resetPwReqs" style="display:none;list-style:none;margin-top:8px;padding:10px 14px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;">
+            <li id="rreq-length"  style="font-size:12.5px;color:#9ca3af;padding:3px 0;display:flex;align-items:center;gap:7px;"><i class="fas fa-circle" style="font-size:7px;"></i> At least 10 characters</li>
+            <li id="rreq-upper"   style="font-size:12.5px;color:#9ca3af;padding:3px 0;display:flex;align-items:center;gap:7px;"><i class="fas fa-circle" style="font-size:7px;"></i> At least one uppercase letter</li>
+            <li id="rreq-lower"   style="font-size:12.5px;color:#9ca3af;padding:3px 0;display:flex;align-items:center;gap:7px;"><i class="fas fa-circle" style="font-size:7px;"></i> At least one lowercase letter</li>
+            <li id="rreq-number"  style="font-size:12.5px;color:#9ca3af;padding:3px 0;display:flex;align-items:center;gap:7px;"><i class="fas fa-circle" style="font-size:7px;"></i> At least one number</li>
+            <li id="rreq-special" style="font-size:12.5px;color:#9ca3af;padding:3px 0;display:flex;align-items:center;gap:7px;"><i class="fas fa-circle" style="font-size:7px;"></i> At least one special character</li>
+          </ul>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label>Confirm Password *</label>
+          <div style="position:relative;">
+            <input type="password" id="resetConfirmPassword" placeholder="Re-enter new password"
+              style="width:100%;padding:10px 42px 10px 12px;border:2px solid #d1d5db;border-radius:8px;font-size:14px;">
+            <span onclick="toggleResetEye('resetConfirmPassword','eyeResetConfirm')"
+              style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#6b7280;font-size:15px;">
+              <i id="eyeResetConfirm" class="fas fa-eye"></i>
+            </span>
+          </div>
+          <div id="resetMatchMsg" style="display:none;font-size:12px;color:#dc2626;margin-top:5px;display:flex;align-items:center;gap:5px;">
+            <i class="fas fa-exclamation-circle"></i> Passwords do not match.
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:1.25rem;">
+          <button type="button" onclick="closeResetModal()"
+            style="flex:1;padding:11px;background:#f3f4f6;color:#374151;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">
+            Cancel
+          </button>
+          <button type="button" onclick="submitResetPassword()"
+            style="flex:1;padding:11px;background:#065f46;color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">
+            <i class="fas fa-save"></i> Reset Password
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/manage-users.js"></script>
+</body>
+</html>

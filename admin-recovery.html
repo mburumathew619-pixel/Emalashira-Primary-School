@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Account Recovery - EMALASHIRA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/static/css/admin-recovery.css">
+</head>
+<body>
+  <div class="recovery-container">
+    <div class="header">
+      <div class="icon">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <h1>Admin Recovery</h1>
+      <p>EMALASHIRA Primary School</p>
+    </div>
+
+    <div class="alert">
+      <strong>⚠️ Admin Account Deleted</strong>
+      This tool will recreate the administrator account with full system access.
+    </div>
+
+    <div id="successMessage" class="success-message">
+      <i class="fas fa-check-circle"></i>
+      <strong>Admin Account Created Successfully!</strong>
+      <p style="margin-top: 10px;">You can now login with your new credentials.</p>
+    </div>
+
+    <div id="loadingMessage" class="loading">
+      <div class="spinner"></div>
+      <p>Creating admin account...</p>
+    </div>
+
+    <div id="recoveryForm">
+      <div class="info-box">
+        <strong>📋 School Email Required</strong>
+        Only <strong>@emalashira.sc.ke</strong> email addresses are accepted.<br>
+        e.g. firstname.lastname@emalashira.sc.ke
+      </div>
+
+      <form id="adminForm">
+        <div class="form-group">
+          <label for="fullName">Full Name *</label>
+          <input type="text" id="fullName" placeholder="e.g. Mathew Mburu Kamau" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">School Email Address *</label>
+          <input type="email" id="email" placeholder="yourname@emalashira.sc.ke" required>
+          <div id="emailError" class="field-error" style="display:none;">
+            <i class="fas fa-exclamation-circle"></i> Only @emalashira.sc.ke email addresses are allowed.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" placeholder="Create a strong password" required>
+            <span class="eye-toggle" id="togglePassword" title="Show/hide password">
+              <i class="fas fa-eye" id="eyeIcon"></i>
+            </span>
+          </div>
+
+          <!-- Suggest password button -->
+          <div class="pw-suggest-wrap">
+            <button type="button" id="generatePasswordBtn" class="pw-suggest-btn">
+              <i class="fas fa-bolt"></i> Suggest a Strong Password
+            </button>
+          </div>
+
+          <!-- Generated password box -->
+          <div id="pw-generated-box" class="pw-generated-box" style="display:none;">
+            <span class="pw-generated-label">Suggested password:</span>
+            <div class="pw-generated-row">
+              <code id="pw-generated-value"></code>
+              <button type="button" id="pw-use-btn" class="pw-action-btn pw-use">Use this</button>
+              <button type="button" id="pw-refresh-btn" class="pw-action-btn pw-refresh" title="Generate another">
+                <i class="fas fa-sync-alt"></i>
+              </button>
+            </div>
+            <div id="pw-copied-msg" class="pw-copied-msg" style="display:none;"></div>
+          </div>
+
+          <!-- Strength meter -->
+          <div id="strengthBar" class="strength-bar-wrap" style="display:none;">
+            <div id="strengthFill" class="strength-fill"></div>
+          </div>
+          <div id="strengthLabel" class="strength-label"></div>
+          <!-- Requirements checklist -->
+          <ul class="pw-requirements" id="pwRequirements">
+            <li id="req-length"><i class="fas fa-circle"></i> At least 10 characters</li>
+            <li id="req-upper"><i class="fas fa-circle"></i> At least one uppercase letter (A–Z)</li>
+            <li id="req-lower"><i class="fas fa-circle"></i> At least one lowercase letter (a–z)</li>
+            <li id="req-number"><i class="fas fa-circle"></i> At least one number (0–9)</li>
+            <li id="req-special"><i class="fas fa-circle"></i> At least one special character (!@#$%^&*)</li>
+          </ul>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password *</label>
+          <div class="password-wrapper">
+            <input type="password" id="confirmPassword" placeholder="Re-enter password" required>
+            <span class="eye-toggle" id="toggleConfirm" title="Show/hide password">
+              <i class="fas fa-eye" id="eyeIconConfirm"></i>
+            </span>
+          </div>
+          <div id="matchMsg" class="field-error" style="display:none;">
+            <i class="fas fa-exclamation-circle"></i> Passwords do not match.
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" onclick="window.location.href='login.html'">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">
+            <i class="fas fa-save"></i> Create Admin
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/admin-recovery.js"></script>
+</body>
+</html>

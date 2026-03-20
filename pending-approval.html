@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Pending Approval - Emalashira Primary School</title>
+  <link rel="stylesheet" href="/static/css/pending-approval.css">
+</head>
+<body>
+  <div class="pending-box">
+    <div class="icon">⏳</div>
+    <h1>Account Pending Approval</h1>
+    <p>Thank you for signing up!<br><br>
+       Your account is awaiting approval from the school administrator.<br><br>
+       You will be notified once your access is approved.</p>
+    <br>
+    <button onclick="checkAndRedirect()" class="login-button">Check Status</button>
+    &nbsp;
+    <button onclick="window.location.href='login.html'" class="login-button" style="background:#64748b;">
+      Back to Login
+    </button>
+    <div id="statusMsg"></div>
+  </div>
+
+  <script src="/static/js/pending-approval.js"></script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Finance Portal - EMALASHIRA Primary School</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/static/css/role.css"/>
+  <style>
+    .card-header.fin { background:linear-gradient(90deg,#92400e,#b45309); }
+    .fin-overlay {
+      visibility:hidden;opacity:0;pointer-events:none;
+      position:fixed;inset:0;background:rgba(0,0,0,0.5);
+      z-index:9999;display:flex;align-items:center;justify-content:center;
+      transition:opacity .25s,visibility .25s;
+    }
+    .fin-overlay.open{visibility:visible;opacity:1;pointer-events:all;}
+    .fin-modal{
+      background:#fff;border-radius:16px;width:95%;max-width:520px;
+      box-shadow:0 20px 60px rgba(0,0,0,0.25);overflow:hidden;
+      transform:translateY(20px);transition:transform .25s;
+    }
+    .fin-overlay.open .fin-modal{transform:translateY(0);}
+    .fin-modal-header{
+      background:linear-gradient(135deg,#92400e,#b45309);color:#fff;
+      padding:1.25rem 1.75rem;display:flex;align-items:center;justify-content:space-between;
+    }
+    .fin-modal-header h2{font-size:1.05rem;margin:0;display:flex;align-items:center;gap:8px;}
+    .fin-modal-header p{font-size:.77rem;opacity:.8;margin:3px 0 0;}
+    .fin-modal-close{background:rgba(255,255,255,0.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .fin-modal-close:hover{background:rgba(255,255,255,0.3);}
+    .fin-modal-body{padding:1.5rem 1.75rem;}
+    .fin-modal-footer{padding:.9rem 1.75rem;border-top:1px solid #e5e7eb;background:#fafafa;display:flex;gap:.75rem;justify-content:flex-end;}
+    .fin-form-group{margin-bottom:.9rem;}
+    .fin-form-group label{display:block;font-size:.8rem;font-weight:600;color:#374151;margin-bottom:4px;}
+    .fin-form-group label .req{color:#dc2626;}
+    .fin-form-group input,.fin-form-group select,.fin-form-group textarea{
+      width:100%;padding:.55rem .85rem;border:1.5px solid #e5e7eb;
+      border-radius:8px;font-size:.88rem;font-family:inherit;color:#1f2937;
+      transition:border-color .15s,box-shadow .15s;
+    }
+    .fin-form-group input:focus,.fin-form-group select:focus,.fin-form-group textarea:focus{
+      outline:none;border-color:#b45309;box-shadow:0 0 0 3px rgba(180,83,9,.1);
+    }
+    .fin-form-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;}
+    .fin-error{background:#fee2e2;color:#991b1b;border-radius:8px;padding:.65rem 1rem;font-size:.85rem;margin-top:.7rem;}
+    .fin-success{background:#d1fae5;color:#065f46;border-radius:8px;padding:.7rem 1rem;font-size:.88rem;font-weight:600;margin-top:.7rem;}
+    .btn-fin-cancel{background:#f3f4f6;color:#374151;border:1px solid #d1d5db;padding:.55rem 1.2rem;border-radius:7px;font-size:.88rem;font-weight:600;cursor:pointer;}
+    .btn-fin-cancel:hover{background:#e5e7eb;}
+    .btn-fin-save{background:#b45309;color:#fff;border:none;padding:.55rem 1.4rem;border-radius:7px;font-size:.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
+    .btn-fin-save:hover{background:#92400e;}
+    .btn-fin-save:disabled{background:#9ca3af;cursor:not-allowed;}
+    .tbl-act{display:flex;gap:.4rem;}
+    .tbl-btn{border:none;border-radius:6px;padding:.32rem .7rem;cursor:pointer;font-size:.78rem;font-weight:600;transition:all .15s;}
+    .tbl-btn.green{background:#d1fae5;color:#065f46;}
+    .tbl-btn.green:hover{background:#a7f3d0;}
+    .tbl-btn.amber{background:#fef3c7;color:#92400e;}
+    .tbl-btn.amber:hover{background:#fde68a;}
+    .tbl-btn.red{background:#fee2e2;color:#991b1b;}
+    .tbl-btn.red:hover{background:#fecaca;}
+    .sp{display:inline-block;padding:.2rem .7rem;border-radius:20px;font-size:.75rem;font-weight:700;}
+    .sp-paid{background:#d1fae5;color:#065f46;}
+    .sp-partial{background:#fef3c7;color:#92400e;}
+    .sp-pending{background:#fee2e2;color:#991b1b;}
+    .sp-none{background:#f3f4f6;color:#6b7280;}
+    .filter-bar{display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center;}
+    .filter-bar input{flex:1;min-width:180px;padding:.6rem 1rem;border:1px solid #d1d5db;border-radius:8px;font-size:.9rem;}
+    .filter-bar select{padding:.6rem 1rem;border:1px solid #d1d5db;border-radius:8px;font-size:.9rem;background:#fff;}
+    .filter-bar input:focus,.filter-bar select:focus{outline:none;border-color:#b45309;}
+    /* student autocomplete dropdown */
+    .ac-dropdown{position:absolute;background:#fff;border:1.5px solid #e5e7eb;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:100;width:100%;max-height:220px;overflow-y:auto;margin-top:2px;}
+    .ac-item{padding:.6rem 1rem;cursor:pointer;font-size:.88rem;color:#1f2937;border-bottom:1px solid #f3f4f6;}
+    .ac-item:hover{background:#fef3c7;}
+    .ac-item:last-child{border-bottom:none;}
+    .ac-wrap{position:relative;}
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">
+    <div class="nav-badge">E</div>
+    <div><h1>EMALASHIRA</h1><p>Finance Portal</p></div>
+  </div>
+  <div class="topnav-user">
+    <span id="profileName">Loading...</span>
+    <span class="role-tag finance">Accountant</span>
+    <a href="finance-profile.html"><i class="fas fa-user"></i> Profile</a>
+    <a href="#" class="logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+</nav>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('overview',this)"><i class="fas fa-tachometer-alt"></i> Overview</button>
+  <button class="tab-btn" onclick="switchTab('payments',this)"><i class="fas fa-money-bill-wave"></i> All Payments</button>
+  <button class="tab-btn" onclick="switchTab('structure',this)"><i class="fas fa-sliders-h"></i> Fee Structure</button>
+  <button class="tab-btn" onclick="switchTab('arrears',this)"><i class="fas fa-exclamation-triangle"></i> Arrears</button>
+</div>
+
+<div class="page">
+  <div class="welcome-banner finance-banner">
+    <div>
+      <h2>Welcome, <span id="welcomeName">Accountant</span>!</h2>
+      <p>Manage fee payments, set fee structures, and track outstanding balances.</p>
+    </div>
+    <i class="fas fa-coins banner-icon"></i>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-icon green"><i class="fas fa-money-bill-wave"></i></div><div class="stat-info"><h3 id="statCollected">KSh 0</h3><p>Total Collected</p></div></div>
+    <div class="stat-card"><div class="stat-icon red"><i class="fas fa-exclamation-circle"></i></div><div class="stat-info"><h3 id="statArrears">KSh 0</h3><p>Total Arrears</p></div></div>
+    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-user-check"></i></div><div class="stat-info"><h3 id="statFullyPaid">0</h3><p>Fully Paid</p></div></div>
+    <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-users"></i></div><div class="stat-info"><h3 id="statTotal">0</h3><p>Total Students</p></div></div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div id="tab-overview" class="tab-content active">
+    <div class="card">
+      <div class="card-header fin">
+        <span><i class="fas fa-list"></i> Student Fee Overview</span>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+          <button class="btn-header" id="syncStudentsBtn" onclick="syncAndReload()" style="background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.4);" title="Pull latest students from user accounts into finance view">
+            <i class="fas fa-sync-alt"></i> Sync Students
+          </button>
+          <button class="btn-header" onclick="openRecordPayModal()"><i class="fas fa-plus"></i> Record Payment</button>
+          <button class="btn-header" onclick="openSetFeeModal()"><i class="fas fa-sliders-h"></i> Set Fee</button>
+          <button class="btn-header" onclick="exportOverviewCSV()"><i class="fas fa-download"></i> Export</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="filter-bar">
+          <input type="text" id="overviewSearch" placeholder="Search student or admission no..." oninput="renderOverview()">
+          <select id="overviewStatus" onchange="renderOverview()">
+            <option value="">All Status</option>
+            <option value="Paid">Paid</option>
+            <option value="Partial">Partial</option>
+            <option value="Pending">Pending</option>
+            <option value="No Structure">No Structure</option>
+          </select>
+          <select id="overviewClass" onchange="renderOverview()">
+            <option value="">All Classes</option>
+            <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
+            <option>Grade 4</option><option>Grade 5</option><option>Grade 6</option>
+            <option>Grade 7</option><option>Grade 8</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Adm. No.</th><th>Student</th><th>Class</th><th>Total Fee</th><th>Paid</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="overviewBody"><tr><td colspan="8" class="empty-cell"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALL PAYMENTS -->
+  <div id="tab-payments" class="tab-content">
+    <div class="card">
+      <div class="card-header fin">
+        <span><i class="fas fa-receipt"></i> All Payment Transactions</span>
+        <div style="display:flex;gap:.5rem;">
+          <button class="btn-header" onclick="openRecordPayModal()"><i class="fas fa-plus"></i> Record Payment</button>
+          <button class="btn-header" onclick="exportPaymentsCSV()"><i class="fas fa-download"></i> Export CSV</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="filter-bar">
+          <input type="text" id="paySearch" placeholder="Search student, reference..." oninput="renderPayments()">
+          <select id="payTermFilter" onchange="renderPayments()">
+            <option value="">All Terms</option>
+            <option>Term 1</option><option>Term 2</option><option>Term 3</option>
+          </select>
+          <select id="payMethodFilter" onchange="renderPayments()">
+            <option value="">All Methods</option>
+            <option>M-Pesa</option><option>Cash</option><option>Bank Transfer</option><option>Cheque</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Adm. No.</th><th>Student</th><th>Class</th><th>Amount</th><th>Method</th><th>Reference</th><th>Term</th><th>Action</th></tr></thead>
+            <tbody id="paymentsBody"><tr><td colspan="9" class="empty-cell"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEE STRUCTURE -->
+  <div id="tab-structure" class="tab-content">
+    <div class="card">
+      <div class="card-header fin">
+        <span><i class="fas fa-sliders-h"></i> Fee Structure</span>
+        <button class="btn-header" onclick="openSetFeeModal()"><i class="fas fa-plus"></i> Set / Update Fee</button>
+      </div>
+      <div class="card-body">
+        <p style="font-size:.88rem;color:#6b7280;margin-bottom:1rem;">Set the total expected fee per student per term. This drives the balance shown to parents.</p>
+        <div class="filter-bar">
+          <input type="text" id="structureSearch" placeholder="Search student..." oninput="renderStructure()">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Adm. No.</th><th>Class</th><th>Term</th><th>Year</th><th>Total Fee</th><th>Actions</th></tr></thead>
+            <tbody id="structureBody"><tr><td colspan="7" class="empty-cell"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARREARS -->
+  <div id="tab-arrears" class="tab-content">
+    <div class="card">
+      <div class="card-header fin">
+        <span><i class="fas fa-exclamation-triangle"></i> Outstanding Arrears</span>
+        <button class="btn-header" onclick="exportArrearsCSV()"><i class="fas fa-download"></i> Export CSV</button>
+      </div>
+      <div class="card-body">
+        <div class="filter-bar">
+          <input type="text" id="arrearsSearch" placeholder="Search student..." oninput="renderArrears()">
+          <select id="arrearsClass" onchange="renderArrears()">
+            <option value="">All Classes</option>
+            <option>Playgroup</option><option>Pre-Primary 1</option><option>Pre-Primary 2</option>
+            <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
+            <option>Grade 4</option><option>Grade 5</option><option>Grade 6</option>
+            <option>Grade 7</option><option>Grade 8</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Adm. No.</th><th>Class</th><th>Total Fee</th><th>Paid</th><th>Balance</th><th>Action</th></tr></thead>
+            <tbody id="arrearsBody"><tr><td colspan="7" class="empty-cell"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ RECORD PAYMENT MODAL ══ -->
+<div id="recordPayModal" class="fin-overlay" onclick="handleFinOverlay(event,'recordPayModal')">
+  <div class="fin-modal">
+    <div class="fin-modal-header">
+      <div><h2><i class="fas fa-money-bill-wave"></i> Record Fee Payment</h2><p>Log a payment made by a parent/guardian</p></div>
+      <button class="fin-modal-close" onclick="closeModal('recordPayModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="fin-modal-body">
+      <div class="fin-form-group">
+        <label>Student <span class="req">*</span></label>
+        <div class="ac-wrap">
+          <input type="text" id="rpStudentSearch" placeholder="Type student name or admission no..." oninput="acSearch('rp')" autocomplete="off">
+          <div id="rpDropdown" class="ac-dropdown" style="display:none;"></div>
+        </div>
+        <input type="hidden" id="rpStudentId">
+        <div id="rpStudentInfo" style="display:none;margin-top:6px;padding:6px 10px;background:#f0fdf4;border-radius:7px;font-size:.83rem;color:#065f46;font-weight:600;"></div>
+      </div>
+      <div class="fin-form-row">
+        <div class="fin-form-group">
+          <label>Amount (KSh) <span class="req">*</span></label>
+          <input type="number" id="rpAmount" min="1" placeholder="e.g. 5000">
+        </div>
+        <div class="fin-form-group">
+          <label>Payment Method</label>
+          <select id="rpMethod">
+            <option>M-Pesa</option><option>Cash</option>
+            <option>Bank Transfer</option><option>Cheque</option>
+          </select>
+        </div>
+      </div>
+      <div class="fin-form-row">
+        <div class="fin-form-group">
+          <label>Term</label>
+          <select id="rpTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select>
+        </div>
+        <div class="fin-form-group">
+          <label>Reference No. (optional)</label>
+          <input type="text" id="rpRef" placeholder="e.g. MPESA code">
+        </div>
+      </div>
+      <div class="fin-form-group">
+        <label>Notes (optional)</label>
+        <textarea id="rpNotes" rows="2" placeholder="Any additional notes..."></textarea>
+      </div>
+      <div id="rpError"   class="fin-error"   style="display:none;"></div>
+      <div id="rpSuccess" class="fin-success"  style="display:none;"></div>
+    </div>
+    <div class="fin-modal-footer">
+      <button class="btn-fin-cancel" onclick="closeModal('recordPayModal')">Cancel</button>
+      <button class="btn-fin-save" id="rpSubmitBtn" onclick="submitRecordPayment()">
+        <i class="fas fa-save"></i> Record Payment
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ SET FEE STRUCTURE MODAL ══ -->
+<div id="setFeeModal" class="fin-overlay" onclick="handleFinOverlay(event,'setFeeModal')">
+  <div class="fin-modal">
+    <div class="fin-modal-header">
+      <div><h2><i class="fas fa-sliders-h"></i> Set Fee Structure</h2><p>Define the expected total fee for a student, class, or all</p></div>
+      <button class="fin-modal-close" onclick="closeModal('setFeeModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="fin-modal-body">
+      <div class="fin-form-group">
+        <label>Apply To</label>
+        <select id="sfScope" onchange="toggleSfScope()">
+          <option value="single">One Student</option>
+          <option value="class">Entire Class</option>
+          <option value="all">All Students</option>
+        </select>
+      </div>
+      <div id="sfStudentRow" class="fin-form-group">
+        <label>Student <span class="req">*</span></label>
+        <div class="ac-wrap">
+          <input type="text" id="sfStudentSearch" placeholder="Type student name or admission no..." oninput="acSearch('sf')" autocomplete="off">
+          <div id="sfDropdown" class="ac-dropdown" style="display:none;"></div>
+        </div>
+        <input type="hidden" id="sfStudentId">
+        <div id="sfStudentInfo" style="display:none;margin-top:6px;padding:6px 10px;background:#fef3c7;border-radius:7px;font-size:.83rem;color:#92400e;font-weight:600;"></div>
+      </div>
+      <div id="sfClassRow" class="fin-form-group" style="display:none;">
+        <label>Class <span class="req">*</span></label>
+        <select id="sfClass">
+          <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
+          <option>Grade 4</option><option>Grade 5</option><option>Grade 6</option>
+          <option>Grade 7</option><option>Grade 8</option>
+        </select>
+      </div>
+      <div class="fin-form-row">
+        <div class="fin-form-group">
+          <label>Total Fee (KSh) <span class="req">*</span></label>
+          <input type="number" id="sfAmount" min="0" placeholder="e.g. 12500">
+        </div>
+        <div class="fin-form-group">
+          <label>Term <span class="req">*</span></label>
+          <select id="sfTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select>
+        </div>
+      </div>
+      <div class="fin-form-group">
+        <label>Year</label>
+        <input type="number" id="sfYear" min="2020" max="2030">
+      </div>
+      <div id="sfError"   class="fin-error"   style="display:none;"></div>
+      <div id="sfSuccess" class="fin-success"  style="display:none;"></div>
+    </div>
+    <div class="fin-modal-footer">
+      <button class="btn-fin-cancel" onclick="closeModal('setFeeModal')">Cancel</button>
+      <button class="btn-fin-save" id="sfSubmitBtn" onclick="submitSetFee()">
+        <i class="fas fa-save"></i> Save Fee Structure
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/finance-dashboard.js"></script>
+</body>
+</html>

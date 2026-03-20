@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Overview - EMALASHIRA Primary School</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <link rel="stylesheet" href="/static/css/dashboard-overview.css"/>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>EMALASHIRA</h2>
+      <p>Primary School</p>
+    </div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+      <a href="dashboard-overview.html" class="active"><i class="fas fa-chart-line"></i> <span>Overview</span></a>
+      <a href="students.html"><i class="fas fa-user-graduate"></i> <span>Students</span></a>
+      <a href="teacher-records.html"><i class="fas fa-chalkboard-teacher"></i> <span>Teachers</span></a>
+      <a href="finance.html"><i class="fas fa-dollar-sign"></i> <span>Finance</span></a>
+      <a href="attendance.html"><i class="fas fa-calendar-check"></i> <span>Attendance</span></a>
+      <a href="grades.html"><i class="fas fa-clipboard-list"></i> <span>Grades</span></a>
+      <a href="announcements.html"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a>
+      <a href="#" class="logout-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <h1><i class="fas fa-chart-line"></i> Dashboard Overview</h1>
+      <div class="user-menu">
+        <button id="syncBtn" onclick="loadDashboard()" title="Refresh data from database" style="background:#065f46;color:#fff;border:none;padding:7px 16px;border-radius:7px;font-size:.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-right:10px;">
+          <i id="syncIcon" class="fas fa-sync-alt"></i>
+          <span id="syncText">Refresh Data</span>
+        </button>
+        <span id="lastSync" style="font-size:.75rem;color:#6b7280;margin-right:10px;"></span>
+        <strong id="userNameDisplay">Loading...</strong>
+        <span id="roleBadge" class="role-badge"></span>
+        <i class="fas fa-user-circle"></i>
+        <a href="profile.html">Profile</a>
+        <a href="#" onclick="logout()" style="color:#c62828;">Logout</a>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card" style="--accent-color: #1e40af;">
+        <div class="stat-icon blue">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="totalStudents">—</h3>
+          <p>Total Students</p>
+          <div class="stat-trend up">
+            <i class="fas fa-users"></i> <span id="studentsSubtext">loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card" style="--accent-color: #059669;">
+        <div class="stat-icon green">
+          <i class="fas fa-chalkboard-teacher"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="totalTeachers">—</h3>
+          <p>Teaching Staff</p>
+          <div class="stat-trend up">
+            <i class="fas fa-users"></i> <span id="teachersSubtext">loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card" style="--accent-color: #7c3aed;">
+        <div class="stat-icon purple">
+          <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="attendanceRate">—</h3>
+          <p>Attendance Today</p>
+          <div class="stat-trend up">
+            <i class="fas fa-calendar-check"></i> <span id="attendanceSubtext">loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card" style="--accent-color: #c2410c;">
+        <div class="stat-icon orange">
+          <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="totalRevenue">—</h3>
+          <p>Total Revenue (Term)</p>
+          <div class="stat-trend up">
+            <i class="fas fa-chart-line"></i> <span id="revenueSubtext">loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card" style="--accent-color: #dc2626;">
+        <div class="stat-icon red">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="pendingFees">—</h3>
+          <p>Outstanding Fees</p>
+          <div class="stat-trend down">
+            <i class="fas fa-exclamation-triangle"></i> <span id="feesSubtext">loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card" style="--accent-color: #4338ca;">
+        <div class="stat-icon indigo">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="activeClasses">—</h3>
+          <p>Active Classes</p>
+          <div class="stat-trend">
+            <i class="fas fa-layer-group"></i> grades with students
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card" style="margin-bottom: 1.5rem;">
+      <div class="card-header">
+        <span><i class="fas fa-bolt"></i> Quick Actions</span>
+      </div>
+      <div class="card-body">
+        <div class="quick-actions">
+          <a href="attendance.html" class="action-btn">
+            <i class="fas fa-clipboard-check"></i>
+            <span>Mark Attendance</span>
+          </a>
+          <a href="finance.html" class="action-btn">
+            <i class="fas fa-money-bill-wave"></i>
+            <span>Record Payment</span>
+          </a>
+          <a href="students.html" class="action-btn">
+            <i class="fas fa-user-plus"></i>
+            <span>Add New Student</span>
+          </a>
+          <a href="reports.html" class="action-btn">
+            <i class="fas fa-file-alt"></i>
+            <span>Generate Report</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts and Activity -->
+    <div class="content-grid">
+      <!-- Student Enrollment Chart (Line Chart) -->
+      <div class="card">
+        <div class="card-header">
+          <span><i class="fas fa-chart-line"></i> Student Enrollment Trend</span>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="enrollmentChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="card-header">
+          <span><i class="fas fa-history"></i> Recent Activity</span>
+        </div>
+        <div class="card-body" style="padding: 0;">
+          <div class="activity-list" id="activityList">
+            <div style="padding:2rem;text-align:center;color:#9ca3af;">
+              <i class="fas fa-spinner fa-spin" style="font-size:1.4rem;display:block;margin-bottom:.5rem;"></i>
+              Loading recent activity...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fee Collection and Grade Distribution -->
+    <div class="content-grid">
+      <!-- Fee Collection Chart (Pie) -->
+      <div class="card">
+        <div class="card-header">
+          <span><i class="fas fa-chart-pie"></i> Fee Collection Status</span>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="feeChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grade Distribution Chart (Bar) -->
+      <div class="card">
+        <div class="card-header">
+          <span><i class="fas fa-chart-bar"></i> Students by Grade</span>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="gradeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alerts and Events -->
+    <div class="content-grid">
+      <!-- Alerts -->
+      <div class="card">
+        <div class="card-header">
+          <span><i class="fas fa-bell"></i> Alerts & Notifications</span>
+        </div>
+        <div class="card-body">
+          <div class="alert-list" id="alertList">
+            <div style="padding:2rem;text-align:center;color:#9ca3af;">
+              <i class="fas fa-spinner fa-spin" style="font-size:1.4rem;display:block;margin-bottom:.5rem;"></i>
+              Loading alerts...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Events -->
+      <div class="card">
+        <div class="card-header">
+          <span><i class="fas fa-calendar"></i> Upcoming Events</span>
+        </div>
+        <div class="card-body">
+          <div class="event-list" id="eventList">
+            <div style="padding:2rem;text-align:center;color:#9ca3af;">
+              <i class="fas fa-spinner fa-spin" style="font-size:1.4rem;display:block;margin-bottom:.5rem;"></i>
+              Loading announcements...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance Trend -->
+    <div class="card full-width">
+      <div class="card-header">
+        <span><i class="fas fa-chart-area"></i> Weekly Attendance Trend</span>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="attendanceChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </main>
+  <script src="/static/js/dashboard-overview.js" defer></script>
+</body>
+</html>

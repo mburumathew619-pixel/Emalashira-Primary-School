@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Parent Portal - EMALASHIRA Primary School</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="stylesheet" href="/static/css/role.css"/>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">
+    <div class="nav-badge">E</div>
+    <div><h1>EMALASHIRA</h1><p>Parent Portal</p></div>
+  </div>
+  <div class="topnav-user">
+    <span id="userName">Loading...</span>
+    <span class="role-tag">Parent</span>
+    <a href="parent-profile.html"><i class="fas fa-user"></i> Profile</a>
+
+    <a href="#" class="logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+</nav>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('grades',this)"><i class="fas fa-clipboard-list"></i> Grades</button>
+  <button class="tab-btn" onclick="switchTab('attendance',this)"><i class="fas fa-calendar-check"></i> Attendance</button>
+  <button class="tab-btn" onclick="switchTab('fees',this)"><i class="fas fa-money-bill-wave"></i> Fee Payments</button>
+  <button class="tab-btn" onclick="switchTab('announcements',this);loadAnnouncements()"><i class="fas fa-bullhorn"></i> Announcements</button>
+</div>
+
+<div class="page">
+  <div class="welcome-banner">
+    <div><h2>Welcome, <span id="welcomeName">Parent</span>!</h2><p>Monitor your child's academic progress, attendance and fee status.</p></div>
+    <i class="fas fa-graduation-cap banner-icon"></i>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-child"></i></div><div class="stat-info"><h3 id="statChildren">0</h3><p>Children Enrolled</p></div></div>
+    <div class="stat-card"><div class="stat-icon green"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3 id="statAvgGrade">—</h3><p>Average Grade</p></div></div>
+    <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h3 id="statAttendance">—</h3><p>Attendance Rate</p></div></div>
+    <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-exclamation-circle"></i></div><div class="stat-info"><h3 id="statBalance">—</h3><p>Fee Balance</p></div></div>
+  </div>
+
+  <!-- GRADES -->
+  <div id="tab-grades" class="tab-content active">
+    <div class="child-selector" id="gradesChildSelector"></div>
+
+    <!-- Position & Class summary banner -->
+    <div id="gradesSummaryBanner" style="display:none;
+         background:#fff; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.07);
+         padding:1rem 1.5rem; margin-bottom:1rem;
+         display:none; flex-wrap:wrap; gap:1rem; align-items:center;">
+
+      <!-- Class -->
+      <div style="display:flex;align-items:center;gap:0.65rem;flex:1;min-width:160px;">
+        <div style="width:42px;height:42px;border-radius:10px;background:#dbeafe;
+                    display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-school" style="color:#1e40af;font-size:1.1rem;"></i>
+        </div>
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;">Class</div>
+          <div style="font-size:1.05rem;font-weight:700;color:#1f2937;" id="summaryClass">—</div>
+        </div>
+      </div>
+
+      <div style="width:1px;height:40px;background:#e5e7eb;flex-shrink:0;"></div>
+
+      <!-- Position -->
+      <div style="display:flex;align-items:center;gap:0.65rem;flex:1;min-width:160px;">
+        <div style="width:42px;height:42px;border-radius:10px;background:#fef3c7;
+                    display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-trophy" style="color:#d97706;font-size:1.1rem;"></i>
+        </div>
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;">Class Position</div>
+          <div style="font-size:1.05rem;font-weight:700;color:#1f2937;" id="summaryPosition">—</div>
+        </div>
+      </div>
+
+      <div style="width:1px;height:40px;background:#e5e7eb;flex-shrink:0;"></div>
+
+      <!-- Average -->
+      <div style="display:flex;align-items:center;gap:0.65rem;flex:1;min-width:160px;">
+        <div style="width:42px;height:42px;border-radius:10px;background:#d1fae5;
+                    display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-chart-bar" style="color:#065f46;font-size:1.1rem;"></i>
+        </div>
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;">Class Average</div>
+          <div style="font-size:1.05rem;font-weight:700;color:#1f2937;" id="summaryClassAvg">—</div>
+        </div>
+      </div>
+
+      <div style="width:1px;height:40px;background:#e5e7eb;flex-shrink:0;"></div>
+
+      <!-- Students in class -->
+      <div style="display:flex;align-items:center;gap:0.65rem;flex:1;min-width:160px;">
+        <div style="width:42px;height:42px;border-radius:10px;background:#ede9fe;
+                    display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-users" style="color:#5b21b6;font-size:1.1rem;"></i>
+        </div>
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;">Students in Class</div>
+          <div style="font-size:1.05rem;font-weight:700;color:#1f2937;" id="summaryClassSize">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="fas fa-clipboard-list"></i> Academic Grades</div>
+      <div class="card-body table-wrap">
+        <table><thead><tr><th>Subject</th><th>Score</th><th>Grade</th><th>Performance</th><th>Term</th><th>Exam Type</th><th>Teacher</th><th>Date</th></tr></thead>
+        <tbody id="gradesBody"><tr><td colspan="8" class="empty-cell">Loading...</td></tr></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATTENDANCE -->
+  <div id="tab-attendance" class="tab-content">
+    <div class="child-selector" id="attendanceChildSelector"></div>
+    <div class="card">
+      <div class="card-header"><i class="fas fa-calendar-check"></i> Attendance Records</div>
+      <div class="card-body table-wrap">
+        <table><thead><tr><th>Date</th><th>Day</th><th>Status</th><th>Remarks</th></tr></thead>
+        <tbody id="attendanceBody"><tr><td colspan="4" class="empty-cell">Loading...</td></tr></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEES -->
+  <div id="tab-fees" class="tab-content">
+    <div class="child-selector" id="feesChildSelector"></div>
+    <div class="fee-summary">
+      <div class="fee-box total"><div class="amount" id="feeTotalAmt">KSh 340K</div><label>Total Fee</label></div>
+      <div class="fee-box paid"><div class="amount" id="feePaidAmt">KSh 210K</div><label>Amount Paid</label></div>
+      <div class="fee-box balance"><div class="amount" id="feeBalanceAmt">KSh 130K</div><label>Balance</label></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><i class="fas fa-receipt"></i> Payment History</div>
+      <div class="card-body table-wrap">
+        <table><thead><tr><th>Date</th><th>Term</th><th>Amount</th><th>Method</th><th>Reference</th><th>Status</th></tr></thead>
+        <tbody id="feesBody"><tr><td colspan="6" class="empty-cell">Loading...</td></tr></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANNOUNCEMENTS -->
+  <div id="tab-announcements" class="tab-content">
+    <div class="card">
+      <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <span><i class="fas fa-bullhorn"></i> School Announcements</span>
+        <span id="annCount" style="font-size:0.78rem;font-weight:600;background:rgba(255,255,255,0.18);padding:3px 12px;border-radius:20px;"></span>
+      </div>
+      <div class="card-body" id="announcementsContainer" style="padding:1.25rem 1.5rem;background:#f8fafc;">
+        <div style="text-align:center;padding:2rem;color:#9ca3af;">Loading announcements...</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/static/js/parent-dashboard.js"></script>
+</body>
+</html>

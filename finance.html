@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Finance - EMALASHIRA Primary School</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  
+  <!-- Chart.js v4 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <link rel="stylesheet" href="/static/css/finance.css">
+  <style>
+    .btn-sync {
+      background: #0369a1;
+      color: #fff;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      border-radius: 7px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+    .btn-sync:hover:not(:disabled) { background: #0284c7; }
+    .btn-sync:active:not(:disabled) { transform: scale(0.97); }
+    .btn-sync:disabled { opacity: 0.6; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>EMALASHIRA</h2>
+      <p>Primary School</p>
+    </div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+      <a href="dashboard-overview.html"><i class="fas fa-chart-line"></i> <span>Overview</span></a>
+      <a href="students.html"><i class="fas fa-user-graduate"></i> <span>Students</span></a>
+      <a href="teacher-records.html"><i class="fas fa-chalkboard-teacher"></i> <span>Teachers</span></a>
+      <a href="finance.html" class="active"><i class="fas fa-dollar-sign"></i> <span>Finance</span></a>
+      <a href="attendance.html"><i class="fas fa-calendar-check"></i> <span>Attendance</span></a>
+      <a href="grades.html"><i class="fas fa-clipboard-list"></i> <span>Grades</span></a>
+      <a href="announcements.html"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a>
+      <a href="#" class="logout-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <h1>Finance Management</h1>
+      <div class="user-menu">
+        <strong id="userNameDisplay">Loading...</strong>
+        <span id="roleBadge" class="role-badge"></span>
+        <i class="fas fa-user-circle"></i>
+        <a href="profile.html">Profile</a>
+        <a href="#" onclick="logout()" style="color:#c62828;">Logout</a>
+      </div>
+    </div>
+
+    <div class="finance-header">
+      <div class="section-title">
+        <i class="fas fa-chart-line"></i> Financial Overview
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="createInvoice()">
+          <i class="fas fa-file-invoice"></i> Create Invoice
+        </button>
+        <button class="btn btn-outline" onclick="exportReport()">
+          <i class="fas fa-download"></i> Export Report
+        </button>
+        <button id="syncDbBtn" class="btn btn-sync" onclick="syncFromDatabase()" title="Pull live data from the database">
+          <i id="syncIcon" class="fas fa-sync-alt"></i>
+          <span id="syncText">Sync from DB</span>
+        </button>
+      </div>
+      <div style="font-size:0.78rem;color:#6b7280;margin-top:0.4rem;text-align:right;">
+        <i class="fas fa-clock" style="margin-right:4px;"></i><span id="lastSyncTime">Not yet synced</span>
+      </div>
+    </div>
+
+    <!-- Financial Summary Cards -->
+    <div class="finance-summary">
+      <div class="summary-card income">
+        <div class="card-header">
+          <div class="card-title">Total Income</div>
+          <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
+        </div>
+        <div class="card-value" id="cardTotalIncome">—</div>
+        <div class="card-change positive"><i class="fas fa-arrow-up"></i> <span id="cardIncomeChange">syncing...</span></div>
+      </div>
+      <div class="summary-card expenses">
+        <div class="card-header">
+          <div class="card-title">Total Expenses</div>
+          <div class="card-icon"><i class="fas fa-shopping-cart"></i></div>
+        </div>
+        <div class="card-value" id="cardTotalExpenses">—</div>
+        <div class="card-change negative"><i class="fas fa-exclamation-triangle"></i> <span id="cardExpensesChange">syncing...</span></div>
+      </div>
+      <div class="summary-card profit">
+        <div class="card-header">
+          <div class="card-title">Net Profit</div>
+          <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+        </div>
+        <div class="card-value" id="cardNetProfit">—</div>
+        <div class="card-change positive"><i class="fas fa-users"></i> <span id="cardProfitChange">syncing...</span></div>
+      </div>
+      <div class="summary-card pending">
+        <div class="card-header">
+          <div class="card-title">Pending Fees</div>
+          <div class="card-icon"><i class="fas fa-clock"></i></div>
+        </div>
+        <div class="card-value" id="cardPendingFees">—</div>
+        <div class="card-change negative"><i class="fas fa-clock"></i> <span id="cardPendingChange">syncing...</span></div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      <div class="chart-container">
+        <div class="section-title">
+          <i class="fas fa-chart-bar"></i> Financial Trends (2026)
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="financialChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-container">
+        <div class="section-title">
+          <i class="fas fa-chart-pie"></i> Expense Breakdown
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="expenseChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-title">
+      <i class="fas fa-bolt"></i> Quick Actions
+    </div>
+    <div class="quick-actions">
+      <div class="action-card" onclick="createInvoice()">
+        <div class="action-icon"><i class="fas fa-file-invoice"></i></div>
+        <div class="action-title">Create Invoice</div>
+        <div class="action-desc">Generate student fee invoices</div>
+      </div>
+      <div class="action-card" onclick="logExpense()">
+        <div class="action-icon"><i class="fas fa-receipt"></i></div>
+        <div class="action-title">Log Expense</div>
+        <div class="action-desc">Record school expenses</div>
+      </div>
+      <div class="action-card" onclick="generateReport()">
+        <div class="action-icon"><i class="fas fa-chart-bar"></i></div>
+        <div class="action-title">Generate Report</div>
+        <div class="action-desc">Create financial reports</div>
+      </div>
+      <div class="action-card" onclick="viewTax()">
+        <div class="action-icon"><i class="fas fa-calculator"></i></div>
+        <div class="action-title">Tax Calculator</div>
+        <div class="action-desc">Calculate tax liabilities</div>
+      </div>
+      <div class="action-card" onclick="setBudget()">
+        <div class="action-icon"><i class="fas fa-bullseye"></i></div>
+        <div class="action-title">Set Budget</div>
+        <div class="action-desc">Create department budgets</div>
+      </div>
+      <div class="action-card" onclick="connectGateway()">
+        <div class="action-icon"><i class="fas fa-credit-card"></i></div>
+        <div class="action-title">Payment Gateway</div>
+        <div class="action-desc">Configure payment methods</div>
+      </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="section-title">
+      <i class="fas fa-exchange-alt"></i> Recent Transactions
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('all',this)">All Transactions</div>
+      <div class="tab" onclick="switchTab('fees',this)">Fee Payments</div>
+      <div class="tab" onclick="switchTab('expenses',this)">Expenses</div>
+      <div class="tab" onclick="switchTab('pending',this)">Pending</div>
+      <div class="tab" onclick="switchTab('overdue',this)">Overdue</div>
+    </div>
+    <div class="table-container">
+      <table id="transactionsTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Student/Supplier</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Feb 6, 2026</td>
+            <td>Term 1 Tuition Fee - Grade 8</td>
+            <td>Brian Omondi</td>
+            <td>Fee Payment</td>
+            <td>Ksh 15,000</td>
+            <td><span class="status status-paid">Paid</span></td>
+            <td><button class="btn btn-outline btn-sm" onclick="viewReceipt('001')">View</button></td>
+          </tr>
+          <tr>
+            <td>Feb 5, 2026</td>
+            <td>Stationery Supplies</td>
+            <td>Bookstore Ltd</td>
+            <td>Expense</td>
+            <td>Ksh 42,800</td>
+            <td><span class="status status-paid">Paid</span></td>
+            <td><button class="btn btn-outline btn-sm" onclick="viewReceipt('002')">View</button></td>
+          </tr>
+          <tr>
+            <td>Feb 4, 2026</td>
+            <td>Term 1 Tuition Fee - Grade 6</td>
+            <td>Sarah Mwangi</td>
+            <td>Fee Payment</td>
+            <td>Ksh 12,000</td>
+            <td><span class="status status-pending">Pending</span></td>
+            <td><button class="btn btn-outline btn-sm" onclick="sendReminder('003')">Remind</button></td>
+          </tr>
+          <tr>
+            <td>Feb 3, 2026</td>
+            <td>Teacher Salaries - January</td>
+            <td>Staff Payments</td>
+            <td>Salary</td>
+            <td>Ksh 850,000</td>
+            <td><span class="status status-paid">Paid</span></td>
+            <td><button class="btn btn-outline btn-sm" onclick="viewReceipt('004')">View</button></td>
+          </tr>
+          <tr>
+            <td>Jan 30, 2026</td>
+            <td>Term 1 Tuition Fee - Grade 7</td>
+            <td>Kevin Otieno</td>
+            <td>Fee Payment</td>
+            <td>Ksh 13,500</td>
+            <td><span class="status status-overdue">Overdue</span></td>
+            <td><button class="btn btn-primary btn-sm" onclick="collectPayment('005')">Collect</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Payment Integrations – RESTORED -->
+    <div class="section-title">
+      <i class="fas fa-plug"></i> Payment Integrations
+    </div>
+    <div class="integrations">
+      <div class="integration-card">
+        <div class="integration-header">
+          <div>
+            <div class="card-title">M-Pesa</div>
+            <div class="card-value" id="intMpesa">—</div>
+          </div>
+          <div class="integration-icon stripe">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+        </div>
+        <div class="card-change positive">
+          <i class="fas fa-check-circle"></i> Active
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-top: 1rem; width: 100%;">Manage</button>
+      </div>
+      <div class="integration-card">
+        <div class="integration-header">
+          <div>
+            <div class="card-title">Bank Transfer</div>
+            <div class="card-value" id="intBank">—</div>
+          </div>
+          <div class="integration-icon bank">
+            <i class="fas fa-university"></i>
+          </div>
+        </div>
+        <div class="card-change positive">
+          <i class="fas fa-check-circle"></i> Active
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-top: 1rem; width: 100%;">Manage</button>
+      </div>
+      <div class="integration-card">
+        <div class="integration-header">
+          <div>
+            <div class="card-title">Cash Payments</div>
+            <div class="card-value" id="intCash">—</div>
+          </div>
+          <div class="integration-icon paypal">
+            <i class="fas fa-money-bill-wave"></i>
+          </div>
+        </div>
+        <div class="card-change">
+          <i class="fas fa-exclamation-circle"></i> Requires Receipts
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-top: 1rem; width: 100%;">Manage</button>
+      </div>
+    </div>
+  </main>
+  <script src="/static/js/finance.js" defer></script>
+</body>
+</html>

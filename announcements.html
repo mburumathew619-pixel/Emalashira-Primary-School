@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Announcements - EMALASHIRA</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/static/css/role.css"/>
+  <style>
+    body { background: #f8fafc; }
+    .page-wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; flex-wrap:wrap; gap:1rem; }
+    .page-header h1 { font-size:1.45rem; font-weight:800; color:#065f46; display:flex; align-items:center; gap:.6rem; }
+    #ann-count-badge { font-size:.82rem; font-weight:600; color:#6b7280; background:#f3f4f6; border-radius:20px; padding:3px 12px; }
+    .form-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.07); overflow:hidden; margin-bottom:2rem; }
+    .form-card-header { background:linear-gradient(90deg,#065f46,#0f766e); color:#fff; padding:1rem 1.5rem; display:flex; align-items:center; gap:.5rem; }
+    .form-card-header h2 { font-size:1rem; font-weight:700; margin:0; display:flex; align-items:center; gap:.5rem; }
+    .form-card-body { padding:1.5rem; }
+    .fg { margin-bottom:1.1rem; }
+    .fg label { display:block; font-size:.82rem; font-weight:700; color:#374151; margin-bottom:5px; text-transform:uppercase; letter-spacing:.03em; }
+    .fg input, .fg textarea, .fg select { width:100%; padding:.65rem .9rem; border:1.5px solid #e5e7eb; border-radius:8px; font-size:.92rem; font-family:inherit; color:#1f2937; transition:border-color .15s,box-shadow .15s; background:#f9fafb; }
+    .fg textarea { min-height:110px; resize:vertical; }
+    .fg input:focus, .fg textarea:focus, .fg select:focus { outline:none; border-color:#065f46; background:#fff; box-shadow:0 0 0 3px rgba(6,95,70,.1); }
+    .fg-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .publish-btn { background:linear-gradient(135deg,#065f46,#0f766e); color:#fff; border:none; padding:.7rem 1.8rem; border-radius:8px; font-size:.95rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:.5rem; transition:opacity .2s; }
+    .publish-btn:hover { opacity:.9; }
+    .publish-btn:disabled { opacity:.55; cursor:not-allowed; }
+    .cancel-edit-btn { background:#f3f4f6; color:#374151; border:1px solid #d1d5db; padding:.7rem 1.2rem; border-radius:8px; font-size:.9rem; font-weight:600; cursor:pointer; margin-left:.5rem; }
+    .cancel-edit-btn:hover { background:#e5e7eb; }
+    .form-actions { display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; }
+    .list-card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.07); overflow:hidden; }
+    .list-card-header { background:linear-gradient(90deg,#065f46,#0f766e); color:#fff; padding:1rem 1.5rem; display:flex; align-items:center; gap:.5rem; font-size:1rem; font-weight:700; }
+    .list-card-body { padding:1.25rem 1.5rem; }
+    .announcement-item { border:1px solid #e5e7eb; border-radius:11px; padding:1.2rem 1.35rem; margin-bottom:1rem; border-left:4px solid #065f46; transition:box-shadow .2s; }
+    .announcement-item:last-child { margin-bottom:0; }
+    .announcement-item:hover { box-shadow:0 4px 16px rgba(0,0,0,.09); }
+    .ann-item-header { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:.5rem; }
+    .announcement-title { font-size:1rem; font-weight:700; color:#1f2937; margin:0; }
+    .pri-badge { font-size:.72rem; font-weight:700; padding:3px 11px; border-radius:20px; white-space:nowrap; }
+    .pri-normal { background:#d1fae5; color:#065f46; }
+    .pri-high   { background:#fee2e2; color:#991b1b; }
+    .pri-urgent { background:#ede9fe; color:#5b21b6; }
+    .meta { font-size:.8rem; color:#9ca3af; margin-bottom:.65rem; }
+    .meta i { margin-right:3px; }
+    .content { font-size:.9rem; color:#4b5563; line-height:1.7; margin-bottom:.9rem; }
+    .actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .btn-small { padding:.35rem .85rem; border-radius:6px; font-size:.8rem; font-weight:600; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:4px; transition:opacity .15s; }
+    .btn-small:hover { opacity:.82; }
+    .btn-edit   { background:#dbeafe; color:#1e40af; }
+    .btn-delete { background:#fee2e2; color:#991b1b; }
+    @media (max-width:580px) { .fg-row { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">
+    <div class="nav-badge">E</div>
+    <div><h1>EMALASHIRA</h1><p>Announcements</p></div>
+  </div>
+  <div class="topnav-user">
+    <a href="dashboard.html"><i class="fas fa-arrow-left"></i> Dashboard</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <h1><i class="bi bi-megaphone-fill"></i> Manage Announcements</h1>
+    <span id="ann-count-badge">Loading...</span>
+  </div>
+
+  <div class="form-card" id="announcement-form">
+    <div class="form-card-header">
+      <h2><i class="bi bi-plus-circle"></i> <span id="form-title">Create New Announcement</span></h2>
+    </div>
+    <div class="form-card-body">
+      <div class="fg">
+        <label for="title">Title <span style="color:#dc2626;">*</span></label>
+        <input type="text" id="title" placeholder="e.g. School Closure Notice, Exam Timetable Released..."/>
+      </div>
+      <div class="fg">
+        <label for="content">Message <span style="color:#dc2626;">*</span></label>
+        <textarea id="content" placeholder="Write the full announcement here..."></textarea>
+      </div>
+      <div class="fg-row">
+        <div class="fg">
+          <label for="audience">Audience</label>
+          <select id="audience">
+            <option value="all">Everyone (All Parents, Teachers &amp; Students)</option>
+            <option value="Parents">Parents Only</option>
+            <option value="Teachers">Teachers Only</option>
+            <option value="Students">Students Only</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label for="priority">Priority</label>
+          <select id="priority">
+            <option value="normal">&#x1F7E2; Normal</option>
+            <option value="high">&#x1F534; High</option>
+            <option value="urgent">&#x1F7E3; Urgent</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button id="publish-btn" class="publish-btn" onclick="saveAnnouncement()">
+          <i class="bi bi-send"></i> Publish Announcement
+        </button>
+        <button class="cancel-edit-btn" onclick="resetForm()" id="cancel-edit-btn" style="display:none;">
+          Cancel Edit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="list-card">
+    <div class="list-card-header">
+      <i class="bi bi-list-ul"></i> Posted Announcements
+    </div>
+    <div class="list-card-body" id="active-list">
+      <div style="text-align:center;padding:2rem;color:#9ca3af;">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/announcements.js"></script>
+
+<!--
+  ═══════════════════════════════════════════════════════════════
+  PARENT DASHBOARD — Announcement Section
+  ═══════════════════════════════════════════════════════════════
+  1. Replace your current announcement rendering code with:
+
+     announcements.forEach(ann => {
+       container.appendChild(renderAnnouncementCard(ann));
+     });
+
+     (renderAnnouncementCard is exported from announcements.js)
+
+  2. Replace your current "School Announcements" section HTML with:
+
+  <div class="ann-section">
+    <div class="ann-section-header">
+      <span><i class="bi bi-megaphone-fill"></i> School Announcements</span>
+      <span id="ann-count-label" class="ann-count-label"></span>
+    </div>
+    <div id="parent-ann-list" class="ann-list-body">
+      <div class="ann-loading">Loading announcements...</div>
+    </div>
+  </div>
+
+  3. Add these styles to your parent dashboard CSS:
+
+  .ann-section { border-radius:14px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,.08); margin-top:1.5rem; }
+  .ann-section-header { background:linear-gradient(90deg,#1e293b,#334155); color:#fff; padding:1rem 1.5rem; display:flex; justify-content:space-between; align-items:center; font-size:1rem; font-weight:700; }
+  .ann-count-label { font-size:0.78rem; font-weight:600; background:rgba(255,255,255,0.15); padding:3px 12px; border-radius:20px; }
+  .ann-list-body { background:#f8fafc; padding:1.25rem 1.5rem; }
+  .ann-loading { text-align:center; padding:2rem; color:#9ca3af; font-size:0.9rem; }
+  ═══════════════════════════════════════════════════════════════
+-->
+
+</body>
+</html>

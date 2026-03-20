@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMALASHIRA Primary School - Attendance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="/static/css/attendance.css">
+    <style>
+      /* ── Class group sections ── */
+      .att-class-group        { background:#fff; border-radius:14px;
+                                box-shadow:0 2px 12px rgba(0,0,0,.07);
+                                overflow:hidden; margin-bottom:1.5rem; }
+      .att-class-header       { background:linear-gradient(90deg,#065f46,#0f766e);
+                                color:#fff; padding:.85rem 1.4rem;
+                                display:flex; align-items:center; justify-content:space-between;
+                                cursor:pointer; user-select:none; flex-wrap:wrap; gap:.5rem; }
+      .att-class-header:hover { filter:brightness(1.08); }
+      .att-class-title        { font-size:.98rem; font-weight:700;
+                                display:flex; align-items:center; gap:.5rem; flex:1; }
+      .att-class-badges       { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
+      .att-cbadge             { background:rgba(255,255,255,.18); padding:.18rem .65rem;
+                                border-radius:20px; font-size:.76rem; font-weight:600; }
+      .att-cbadge.red         { background:rgba(239,68,68,.25); }
+      .att-cbadge.yellow      { background:rgba(234,179,8,.25); }
+      .att-toggle-icon        { transition:transform .2s; flex-shrink:0; }
+      .att-class-body         { overflow-x:auto; }
+      .att-class-body.hidden  { display:none; }
+
+      /* ── Per-class stats bar ── */
+      .att-class-statsbar     { display:flex; gap:1.25rem; flex-wrap:wrap;
+                                padding:.65rem 1.4rem; background:#f8fafc;
+                                border-bottom:1px solid #e5e7eb; font-size:.81rem; color:#6b7280; }
+      .att-class-statsbar strong { color:#1f2937; }
+
+      /* ── Table styling ── */
+      .att-inner-table        { width:100%; border-collapse:collapse; font-size:.86rem; }
+      .att-inner-table th     { background:#f0fdf4; color:#065f46; font-weight:700;
+                                padding:.5rem .9rem; border-bottom:2px solid #d1fae5;
+                                white-space:nowrap; text-align:left; }
+      .att-inner-table td     { padding:.5rem .9rem; border-bottom:1px solid #f3f4f6;
+                                vertical-align:middle; }
+      .att-inner-table tr:last-child td { border-bottom:none; }
+      .att-inner-table tr:hover td      { background:#f9fafb; }
+
+      /* ── Empty state ── */
+      .att-empty-group { text-align:center; color:#9ca3af; padding:1.5rem;
+                         font-style:italic; font-size:.88rem; }
+
+      /* ── Export per class ── */
+      .att-cls-export { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3);
+                        color:#fff; padding:.28rem .75rem; border-radius:6px; font-size:.75rem;
+                        font-weight:600; cursor:pointer; }
+      .att-cls-export:hover { background:rgba(255,255,255,.25); }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>EMALASHIRA</h2>
+            <p>Primary School</p>
+        </div>
+        <div class="sidebar-menu">
+            <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+            <a href="dashboard-overview.html"><i class="fas fa-chart-line"></i> <span>Overview</span></a>
+            <a href="students.html"><i class="fas fa-user-graduate"></i> <span>Students</span></a>
+            <a href="teacher-records.html"><i class="fas fa-chalkboard-teacher"></i> <span>Teachers</span></a>
+            <a href="finance.html"><i class="fas fa-dollar-sign"></i> <span>Finance</span></a>
+            <a href="attendance.html" class="active"><i class="fas fa-calendar-check"></i> <span>Attendance</span></a>
+            <a href="grades.html"><i class="fas fa-clipboard-list"></i> <span>Grades</span></a>
+            <a href="announcements.html"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a>
+            <a href="#" class="logout-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+    </div>
+  </aside>
+
+    <!-- Main Content -->
+<div class="main-content">
+    <div class="header">
+        <h2><i class="fas fa-calendar-check"></i> Attendance</h2>
+        <div class="admin-info">
+            <div class="admin-avatar" id="adminAvatar">AD</div>
+            <div>
+                <div class="admin-name" id="adminName">Loading...</div>
+                <div class="admin-role" id="adminRole">...</div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="filter-group">
+                <label for="date-select"><i class="far fa-calendar-alt"></i> Select Date</label>
+                <input type="date" id="date-select" value="">
+            </div>
+            <div class="filter-group">
+                <label for="class-select"><i class="fas fa-school"></i> Filter by Class</label>
+                <select id="class-select"><option value="">All Classes</option></select>
+            </div>
+            <div class="filter-group">
+                <label for="teacher-select"><i class="fas fa-chalkboard-teacher"></i> Filter by Teacher</label>
+                <select id="teacher-select"><option value="">All Teachers</option></select>
+            </div>
+            <div class="filter-group">
+                <button class="btn btn-primary" id="apply-filters"><i class="fas fa-filter"></i> Apply Filters</button>
+                <button class="btn btn-secondary" id="export-btn" style="margin-top: 10px;"><i class="fas fa-download"></i> Export Report</button>
+            </div>
+            <div class="filter-group">
+                <button class="btn btn-primary" id="mark-btn" style="background:#065f46;">
+                    <i class="fas fa-clipboard-check"></i> Mark Attendance
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon icon-present">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="present-count">—</h3>
+                    <p>Students Present</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-absent">
+                    <i class="fas fa-user-times"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="absent-count">—</h3>
+                    <p>Students Absent</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#fef3c7;color:#92400e;">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="late-count">—</h3>
+                    <p>Late Arrivals</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#f3f4f6;color:#4b5563;">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="excused-count">—</h3>
+                    <p>Excused</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-total">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="total-students">—</h3>
+                    <p>Total Enrolled</p>
+                    <small id="records-marked" style="color:#9ca3af;font-size:.75rem;"></small>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-classes">
+                    <i class="fas fa-chalkboard"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="total-classes">—</h3>
+                    <p>Classes Marked</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#d1fae5;color:#065f46;">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="attendance-rate">—</h3>
+                    <p>Attendance Rate</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Class-Grouped Attendance Tables -->
+        <div class="attendance-table-container">
+            <div class="table-header">
+                <h3><i class="fas fa-table header-icon"></i> Detailed Attendance Records</h3>
+                <div class="table-actions">
+                    <button class="btn btn-secondary" id="print-btn"><i class="fas fa-print"></i> Print</button>
+                    <button class="btn btn-primary" id="refresh-btn"><i class="fas fa-sync-alt"></i> Refresh</button>
+                </div>
+            </div>
+            <!-- One section per class rendered here by JS -->
+            <div id="att-class-container"></div>
+        </div>
+
+        <!-- Class Summary -->
+        <div class="class-summary">
+            <h3><i class="fas fa-chart-pie header-icon"></i> Class-wise Attendance Summary</h3>
+            <div class="class-grid" id="class-summary-grid">
+                <!-- Class summary cards will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Mark Attendance Modal -->
+    <div id="markModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+        z-index:1000;align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:14px;width:min(680px,95vw);max-height:88vh;
+            display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden;">
+
+            <!-- Modal header -->
+            <div style="background:#065f46;color:#fff;padding:1.1rem 1.5rem;
+                display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <h3 style="margin:0;font-size:1.05rem;">
+                        <i class="fas fa-clipboard-check"></i> Mark Attendance
+                    </h3>
+                    <div style="font-size:.8rem;opacity:.8;margin-top:2px;">
+                        Date: <strong id="markDate"></strong>
+                    </div>
+                </div>
+                <button id="closeMarkModal" style="background:rgba(255,255,255,.2);border:none;
+                    color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1rem;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Teacher + class row -->
+            <div style="padding:.75rem 1.5rem;background:#f9fafb;border-bottom:1px solid #e5e7eb;
+                display:flex;gap:1rem;flex-wrap:wrap;">
+                <div style="flex:1;min-width:160px;">
+                    <label style="font-size:.78rem;color:#6b7280;font-weight:600;">CLASS</label>
+                    <input id="markClass" type="text" readonly
+                        style="width:100%;padding:.4rem .6rem;border-radius:6px;
+                        border:1px solid #d1d5db;font-size:.9rem;background:#f3f4f6;">
+                </div>
+                <div style="flex:2;min-width:200px;">
+                    <label style="font-size:.78rem;color:#6b7280;font-weight:600;">TEACHER NAME</label>
+                    <input id="markTeacher" type="text" placeholder="Enter teacher name"
+                        style="width:100%;padding:.4rem .6rem;border-radius:6px;
+                        border:1px solid #d1d5db;font-size:.9rem;">
+                </div>
+            </div>
+
+            <!-- Column labels -->
+            <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:.5rem;
+                padding:.5rem 1.5rem;background:#f3f4f6;font-size:.75rem;
+                color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.5px;">
+                <div>Student</div><div>Status</div><div>Remarks</div>
+            </div>
+
+            <!-- Student list -->
+            <div id="markStudentList" style="overflow-y:auto;flex:1;padding:0 1.5rem;">
+                <p style="color:#9ca3af;padding:1rem;text-align:center;">Loading students...</p>
+            </div>
+
+            <!-- Footer -->
+            <div style="padding:1rem 1.5rem;border-top:1px solid #e5e7eb;
+                display:flex;justify-content:flex-end;gap:.75rem;background:#fafafa;">
+                <button id="cancelMarkBtn" style="padding:.55rem 1.25rem;border-radius:8px;
+                    border:1px solid #d1d5db;background:#fff;cursor:pointer;font-size:.9rem;">
+                    Cancel
+                </button>
+                <button id="submitMarkBtn" style="padding:.55rem 1.5rem;border-radius:8px;
+                    border:none;background:#065f46;color:#fff;font-weight:600;cursor:pointer;font-size:.9rem;">
+                    <i class="fas fa-save"></i> Save Attendance
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/attendance.js"></script>
+</body>
+</html>

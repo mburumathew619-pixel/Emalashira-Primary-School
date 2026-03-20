@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile - Emalashira Primary School</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/static/css/profile.css" />
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>My Profile</h1>
+      <a href="finance-dashboard.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Finance Dashboard
+      </a>
+    </div>
+
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="profile-header-info">
+          <h2 id="profileName">Loading...</h2>
+          <p>Accountant's Profile</p>
+        </div>
+      </div>
+
+      <div class="profile-details">
+        <div class="detail-row">
+          <div class="detail-label">Full Name</div>
+          <div class="detail-value" id="profileFullName">-</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Email Address</div>
+          <div class="detail-value" id="profileEmail">-</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Phone Number</div>
+          <div class="detail-value" id="profilePhone">-</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Date of Birth</div>
+          <div class="detail-value" id="profileDOB">-</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Gender</div>
+          <div class="detail-value" id="profileGender">-</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Address</div>
+          <div class="detail-value" id="profileAddress">-</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Account Created</div>
+          <div class="detail-value" id="profileCreated">-</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Last Login</div>
+          <div class="detail-value">Recent session</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-outline" id="editProfileBtn">Edit Profile</button>
+        <button class="btn btn-primary" id="changePasswordBtn">Change Password</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Profile</h2>
+        <button class="close-btn" onclick="closeEditModal()">×</button>
+      </div>
+      <form id="editProfileForm">
+        <div class="form-group">
+          <label for="editFullName">Full Name</label>
+          <input type="text" id="editFullName" required>
+        </div>
+        <div class="form-group">
+          <label for="editPhone">Phone Number</label>
+          <input type="tel" id="editPhone" placeholder="e.g. +2547xxxxxxxx">
+        </div>
+        <div class="form-group">
+          <label for="editDOB">Date of Birth</label>
+          <input type="date" id="editDOB">
+        </div>
+        <div class="form-group">
+          <label for="editGender">Gender</label>
+          <select id="editGender">
+            <option value="">Select...</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editAddress">Address</label>
+          <input type="text" id="editAddress" placeholder="e.g. Ruiru, Kiambu County">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="passwordModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Change Password</h2>
+        <button class="close-btn" onclick="closePasswordModal()">×</button>
+      </div>
+      <form id="changePasswordForm">
+        <div class="form-group">
+          <label for="currentPassword">Current Password</label>
+          <input type="password" id="currentPassword" required autocomplete="current-password">
+        </div>
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <input type="password" id="newPassword" required minlength="6" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm New Password</label>
+          <input type="password" id="confirmPassword" required autocomplete="new-password">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closePasswordModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/auth-check-clean.js"></script>
+<script src="/static/js/profile.js"></script>
+</body>
+</html>
