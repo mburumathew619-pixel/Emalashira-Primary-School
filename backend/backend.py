@@ -333,8 +333,8 @@ def init_db():
             permissions TEXT, users_count INTEGER DEFAULT 0, created_at TEXT NOT NULL
         )
     """)
-    cursor.execute("SELECT COUNT(*) FROM roles")
-    if cursor.fetchone()[0] == 0:
+    cursor.execute("SELECT COUNT(*) as cnt FROM roles")
+    if (cursor.fetchone() or {}).get("cnt", 0) == 0:
         for name, desc, perms in [
             ('Admin',      'Full system access',                        get_default_admin_permissions()),
             ('Teacher',    'Access to teaching modules',                get_default_teacher_permissions()),
@@ -640,18 +640,18 @@ def get_user_counts():
         cursor = conn.cursor()
         counts = { 'Admin':0, 'Teacher':0, 'Parent':0, 'Accountant':0 }
         for role, tbl in ROLE_TABLE.items():
-            cursor.execute(f"SELECT COUNT(*) FROM {tbl}")
-            counts[role.lower()] = cursor.fetchone()[0]
+            cursor.execute(f"SELECT COUNT(*) as cnt FROM {tbl}")
+            row = cursor.fetchone(); counts[role.lower()] = row["cnt"] if row else 0
         # Pending users (self-registered, no role yet)
         try:
-            cursor.execute("SELECT COUNT(*) FROM pending_users")
-            counts['Pending'] = cursor.fetchone()[0]
+            cursor.execute("SELECT COUNT(*) as cnt FROM pending_users")
+            row = cursor.fetchone(); counts['Pending'] = row["cnt"] if row else 0
         except:
             counts['Pending'] = 0
         # Students
         try:
-            cursor.execute("SELECT COUNT(*) FROM students")
-            counts['Student'] = cursor.fetchone()[0]
+            cursor.execute("SELECT COUNT(*) as cnt FROM students")
+            row = cursor.fetchone(); counts['Student'] = row["cnt"] if row else 0
         except:
             counts['Student'] = 0
         conn.close()
