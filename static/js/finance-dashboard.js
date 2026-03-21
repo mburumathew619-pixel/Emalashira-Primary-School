@@ -1,4 +1,4 @@
-const API = 'https://emalashira-primary-school.onrender.com';
+const API = "https://emalashira-primary-school.onrender.com";
 let currentUser = null;
 let allStudents  = [];   // from /api/fees/all  → {id, fullName, admissionNumber, studentClass, totalFee, paid, balance, status, term}
 let allPayments  = [];   // from /api/fees/payments/all
