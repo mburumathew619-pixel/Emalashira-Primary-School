@@ -1,26 +1,24 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import bcrypt
-import sqlite3
 import uuid
 import os
 import json
 from datetime import datetime
 import traceback
+import libsql_experimental as libsql
 
 # ───────────────────────────────────────────────
 # Create Flask app
 # ───────────────────────────────────────────────
-# backend.py lives in <project_root>/backend/
-# templates/ and static/ live in <project_root>/
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-app = Flask(__name__,
-            template_folder=os.path.join(BASE_DIR, 'templates'),
-            static_folder=os.path.join(BASE_DIR, 'static'),
-            static_url_path='/static')
+app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
 CORS(app, origins=["http://localhost:5500", "http://127.0.0.1:5500", "*"])
 
-DB_PATH = "system.db"
+# ───────────────────────────────────────────────
+# Turso Database Configuration
+# ───────────────────────────────────────────────
+TURSO_URL   = os.environ.get("TURSO_DATABASE_URL", "")
+TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN", "")
 
 # School email domain configuration
 SCHOOL_EMAIL_DOMAINS = ['emalashira.sc.ke', 'emalashira.ac.ke', 'emalashira.school.ke']
@@ -59,16 +57,8 @@ def get_default_accountant_permissions():
     return perms
 
 def get_db_connection():
-    """
-    Returns a SQLite connection.
-    - WAL mode is set ONCE during init_db(), NOT repeated here (avoids lock storms on every request).
-    - busy_timeout tells SQLite to retry automatically instead of instantly raising OperationalError.
-    """
-    conn = sqlite3.connect(DB_PATH, timeout=30, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA busy_timeout = 30000")  # retry up to 30 s before raising
-    conn.execute("PRAGMA synchronous  = NORMAL") # safe with WAL, faster than FULL
-    conn.execute("PRAGMA cache_size   = -8000")  # 8 MB page cache
+    """Returns a Turso/libsql connection."""
+    conn = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
     return conn
 
 
@@ -140,10 +130,7 @@ def init_db():
     # The -shm and -wal files are normal WAL artefacts; they merge back into
     # system.db automatically on a clean shutdown.  If they are left over from
     # a previous crash they are safe to delete while the server is stopped.
-    conn   = sqlite3.connect(DB_PATH, timeout=30)
-    conn.execute("PRAGMA journal_mode = WAL")      # write-ahead log — allows concurrent reads
-    conn.execute("PRAGMA busy_timeout = 30000")
-    conn.execute("PRAGMA synchronous  = NORMAL")
+    conn   = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
     cursor = conn.cursor()
 
     # ── admins ──
@@ -284,12 +271,6 @@ def init_db():
 
 
     # ── teacher_assignments ──
-    # Drop and recreate if old schema had teacher_name NOT NULL (migration fix)
-    cursor.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='teacher_assignments'")
-    ta_schema = cursor.fetchone()
-    if ta_schema and 'teacher_name' in str(ta_schema[0]):
-        cursor.execute("DROP TABLE teacher_assignments")
-        print("[DB] Dropped old teacher_assignments table (schema migration)")
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS teacher_assignments (
             id TEXT PRIMARY KEY,
@@ -324,11 +305,6 @@ def init_db():
             status TEXT DEFAULT 'pending', last_login TEXT, createdAt TEXT NOT NULL
         )
     """)
-
-    # ── One-time migration from legacy users table ──
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
-    if cursor.fetchone():
-        _migrate_users_table(cursor)
 
     conn.commit()
     conn.close()
@@ -392,71 +368,6 @@ init_db()
 @app.route('/')
 def home():
     return render_template('index.html')
-
-@app.route('/login.html')
-@app.route('/login')
-def login_page():
-    return render_template('login.html')
-
-@app.route('/dashboard.html')
-@app.route('/dashboard')
-def dashboard_page():
-    return render_template('dashboard.html')
-
-@app.route('/manage-users.html')
-@app.route('/manage-users')
-def manage_users_page():
-    return render_template('manage-users.html')
-
-@app.route('/roles-permissions.html')
-@app.route('/roles-permissions')
-def roles_permissions_page():
-    return render_template('roles-permissions.html')
-
-@app.route('/settings.html')
-@app.route('/settings')
-def settings_page():
-    return render_template('settings.html')
-
-@app.route('/backup-restore.html')
-@app.route('/backup-restore')
-def backup_restore_page():
-    return render_template('backup-restore.html')
-
-@app.route('/reports.html')
-@app.route('/reports')
-def reports_page():
-    return render_template('reports.html')
-
-@app.route('/students.html')
-@app.route('/students-page')
-def students_page():
-    return render_template('students.html')
-
-@app.route('/teacher-records.html')
-@app.route('/teacher-records')
-def teacher_records_page():
-    return render_template('teacher-records.html')
-
-@app.route('/finance.html')
-@app.route('/finance')
-def finance_page():
-    return render_template('finance.html')
-
-@app.route('/grades.html')
-@app.route('/grades-page')
-def grades_page():
-    return render_template('grades.html')
-
-@app.route('/attendance.html')
-@app.route('/attendance-page')
-def attendance_page():
-    return render_template('attendance.html')
-
-@app.route('/announcements.html')
-@app.route('/announcements-page')
-def announcements_page():
-    return render_template('announcements.html')
 
 
 @app.route('/api/signup', methods=['POST'])
@@ -1208,8 +1119,7 @@ def change_password():
         if len(new_password) < 6:
             return jsonify({"message": "New password must be at least 6 characters"}), 400
 
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
+        conn = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
         cur = conn.cursor()
 
         # Find the user
