@@ -1,4 +1,4 @@
-const API = 'http://localhost:5000';
+const API = 'https://emalashira-primary-school.onrender.com';
 let allTeachers      = [];
 let currentUser      = null;
 let classTeacherMap  = {};  // class_name → { id, teacher_id, teacher_name }
