@@ -1,4 +1,4 @@
-const API = 'http://localhost:5000';
+const API = 'https://emalashira-primary-school.onrender.com';
 
 let allRecords  = [];   // raw attendance records from DB
 let allStudents = [];   // all students (for enrolled counts)
