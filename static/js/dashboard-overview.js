@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://emalashira-primary-school.onrender.com';
 
 // ── Cached chart instances ──────────────────────────────────
 let _enrollChart = null;
