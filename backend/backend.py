@@ -516,6 +516,21 @@ def announcements_page():
 def profile_page():
     return render_template('profile.html')
 
+@app.route('/teacher-dashboard.html')
+@app.route('/teacher-dashboard')
+def teacher_dashboard_page():
+    return render_template('teacher-dashboard.html')
+
+@app.route('/finance-dashboard.html')
+@app.route('/finance-dashboard')
+def finance_dashboard_page():
+    return render_template('finance-dashboard.html')
+
+@app.route('/parent-dashboard.html')
+@app.route('/parent-dashboard')
+def parent_dashboard_page():
+    return render_template('parent-dashboard.html')
+
 @app.route('/api/signup', methods=['POST'])
 def signup():
     try:
