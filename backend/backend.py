@@ -2478,6 +2478,24 @@ def dashboard():
         traceback.print_exc()
         return jsonify({'message': 'Server error'}), 500
 
+@app.route('/api/classes', methods=['GET'])
+def get_classes():
+    try:
+        conn   = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT DISTINCT studentClass 
+            FROM students 
+            WHERE studentClass IS NOT NULL AND studentClass != ''
+            ORDER BY studentClass ASC
+        """)
+        classes = [row['studentClass'] for row in cursor.fetchall()]
+        conn.close()
+        return jsonify(classes)
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'message': 'Server error'}), 500
+
 
 @app.route('/health', methods=['GET'])
 def health():
