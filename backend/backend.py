@@ -4,6 +4,7 @@ import bcrypt
 import uuid
 import os
 import json
+import logging
 from datetime import datetime
 import traceback
 
@@ -15,7 +16,45 @@ app = Flask(__name__,
             template_folder=os.path.join(BASE_DIR, 'templates'),
             static_folder=os.path.join(BASE_DIR, 'static'),
             static_url_path='/static')
-CORS(app, origins=["http://localhost:5500", "http://127.0.0.1:5500", "*"])
+
+# ── Determine allowed origins from env (never allow * in production) ──
+_RAW_ORIGINS = os.environ.get(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5500,http://127.0.0.1:5500,http://localhost:5000"
+)
+ALLOWED_ORIGINS = [o.strip() for o in _RAW_ORIGINS.split(",") if o.strip()]
+
+CORS(app, origins=ALLOWED_ORIGINS, supports_credentials=False)
+
+# ── Security headers on every response ───────────────────────────────
+@app.after_request
+def add_security_headers(response):
+    response.headers["X-Content-Type-Options"]        = "nosniff"
+    response.headers["X-Frame-Options"]               = "DENY"
+    response.headers["X-XSS-Protection"]              = "1; mode=block"
+    response.headers["Referrer-Policy"]               = "strict-origin-when-cross-origin"
+    response.headers["Cache-Control"]                 = "no-store"
+    response.headers["Pragma"]                        = "no-cache"
+    # Remove headers that reveal server internals
+    response.headers.pop("Server", None)
+    response.headers.pop("X-Powered-By", None)
+    return response
+
+# ── Disable Flask debug/werkzeug stack traces in responses ───────────
+log = logging.getLogger("werkzeug")
+log.setLevel(logging.ERROR)
+
+# ── Helper: strip sensitive fields before returning user data ─────────
+_SENSITIVE_FIELDS = {"password", "password_hash"}
+
+def sanitize_user(user: dict) -> dict:
+    """Remove password and any internal fields before sending to client."""
+    if not user:
+        return {}
+    return {k: v for k, v in user.items() if k not in _SENSITIVE_FIELDS}
+
+def sanitize_users(users: list) -> list:
+    return [sanitize_user(u) for u in users]
 
 # ───────────────────────────────────────────────
 # Turso Database Configuration
@@ -725,7 +764,7 @@ def get_users():
                 all_users.append(u)
         conn.close()
         all_users.sort(key=lambda x: x.get('createdAt') or '', reverse=True)
-        return jsonify(all_users)
+        return jsonify(sanitize_users(all_users))
     except Exception as e:
         traceback.print_exc()
         return jsonify({'message': 'Server error'}), 500
@@ -740,7 +779,7 @@ def get_user(user_id):
         conn.close()
         if not user:
             return jsonify({'message': 'User not found'}), 404
-        return jsonify(user)
+        return jsonify(sanitize_user(user))
     except Exception as e:
         traceback.print_exc()
         return jsonify({'message': 'Server error'}), 500
@@ -914,7 +953,7 @@ def bulk_create_users():
 
     except Exception as e:
         traceback.print_exc()
-        return jsonify({'message': 'Server error: ' + str(e)}), 500
+        return jsonify({'message': 'Server error'}), 500
 
 
 @app.route('/api/users/<user_id>', methods=['PUT'])
@@ -1054,7 +1093,7 @@ def get_user_by_email():
         conn.close()
         if not user:
             return jsonify({'message': 'User not found'}), 404
-        return jsonify(user)
+        return jsonify(sanitize_user(user))
     except Exception as e:
         traceback.print_exc()
         return jsonify({'message': 'Server error'}), 500
