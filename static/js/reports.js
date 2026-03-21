@@ -3,7 +3,7 @@
  * Full generate + preview + schedule + custom report builder
  */
 
-const API = 'http://localhost:5000';
+const API = 'https://emalashira-primary-school.onrender.com';
 let _currentReportData  = null;  // holds last generated report for download
 let _currentReportTitle = '';
 let _scheduledReports   = JSON.parse(localStorage.getItem('scheduledReports') || '[]');
