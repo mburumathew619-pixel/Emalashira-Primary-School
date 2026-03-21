@@ -6,19 +6,97 @@ import os
 import json
 from datetime import datetime
 import traceback
-import libsql_experimental as libsql
 
 # ───────────────────────────────────────────────
 # Create Flask app
 # ───────────────────────────────────────────────
-app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/static')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+app = Flask(__name__,
+            template_folder=os.path.join(BASE_DIR, 'templates'),
+            static_folder=os.path.join(BASE_DIR, 'static'),
+            static_url_path='/static')
 CORS(app, origins=["http://localhost:5500", "http://127.0.0.1:5500", "*"])
+
 
 # ───────────────────────────────────────────────
 # Turso Database Configuration
 # ───────────────────────────────────────────────
 TURSO_URL   = os.environ.get("TURSO_DATABASE_URL", "")
 TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN", "")
+
+import requests as _http
+
+def _turso_exec(sql, params=None):
+    url     = TURSO_URL.replace("libsql://", "https://") + "/v2/pipeline"
+    headers = {"Authorization": f"Bearer {TURSO_TOKEN}", "Content-Type": "application/json"}
+    stmt    = {"type": "execute", "stmt": {"sql": sql}}
+    if params:
+        stmt["stmt"]["args"] = [_enc(p) for p in params]
+    body = {"requests": [stmt, {"type": "close"}]}
+    r    = _http.post(url, headers=headers, json=body, timeout=30)
+    r.raise_for_status()
+    res = r.json()["results"][0]
+    if res["type"] == "error":
+        raise Exception(res["error"]["message"])
+    cols = [c["name"] for c in res["response"]["result"]["cols"]]
+    return [{cols[i]: _dec(v) for i, v in enumerate(row)}
+            for row in res["response"]["result"]["rows"]]
+
+def _turso_batch(stmts):
+    url     = TURSO_URL.replace("libsql://", "https://") + "/v2/pipeline"
+    headers = {"Authorization": f"Bearer {TURSO_TOKEN}", "Content-Type": "application/json"}
+    reqs    = []
+    for sql, params in stmts:
+        s = {"type": "execute", "stmt": {"sql": sql}}
+        if params:
+            s["stmt"]["args"] = [_enc(p) for p in params]
+        reqs.append(s)
+    reqs.append({"type": "close"})
+    r = _http.post(url, headers=headers, json={"requests": reqs}, timeout=30)
+    r.raise_for_status()
+
+def _enc(v):
+    if v is None:             return {"type": "null"}
+    if isinstance(v, bool):   return {"type": "integer", "value": str(int(v))}
+    if isinstance(v, int):    return {"type": "integer", "value": str(v)}
+    if isinstance(v, float):  return {"type": "float",   "value": str(v)}
+    return {"type": "text", "value": str(v)}
+
+def _dec(v):
+    if v["type"] == "null":    return None
+    if v["type"] == "integer": return int(v["value"])
+    if v["type"] == "float":   return float(v["value"])
+    return v["value"]
+
+class TursoConn:
+    def __init__(self): self._q = []
+    def cursor(self):   return TursoCur(self)
+    def commit(self):
+        if self._q: _turso_batch(self._q); self._q = []
+    def rollback(self): self._q = []
+    def close(self):
+        if self._q:
+            try: _turso_batch(self._q)
+            except: pass
+            self._q = []
+
+class TursoCur:
+    def __init__(self, c): self._c = c; self._rows = []; self._i = 0; self.rowcount = 0; self.lastrowid = None
+    def execute(self, sql, params=None):
+        if sql.strip().upper().startswith("SELECT"):
+            self._rows = _turso_exec(sql, params); self._i = 0; self.rowcount = len(self._rows)
+        else:
+            self._c._q.append((sql, params or []))
+            try:    _turso_exec(sql, params); self.rowcount = 1
+            except: self.rowcount = 0
+        return self
+    def fetchone(self):
+        if self._rows and self._i < len(self._rows):
+            r = self._rows[self._i]; self._i += 1; return r
+        return None
+    def fetchall(self):
+        r = self._rows[self._i:]; self._i = len(self._rows); return r
+
 
 # School email domain configuration
 SCHOOL_EMAIL_DOMAINS = ['emalashira.sc.ke', 'emalashira.ac.ke', 'emalashira.school.ke']
@@ -57,9 +135,8 @@ def get_default_accountant_permissions():
     return perms
 
 def get_db_connection():
-    """Returns a Turso/libsql connection."""
-    conn = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
-    return conn
+    """Returns a Turso connection."""
+    return TursoConn()
 
 
 from contextlib import contextmanager
@@ -130,7 +207,7 @@ def init_db():
     # The -shm and -wal files are normal WAL artefacts; they merge back into
     # system.db automatically on a clean shutdown.  If they are left over from
     # a previous crash they are safe to delete while the server is stopped.
-    conn   = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
+    conn   = TursoConn()
     cursor = conn.cursor()
 
     # ── admins ──
@@ -368,6 +445,71 @@ init_db()
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/login.html')
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
+
+@app.route('/dashboard.html')
+@app.route('/dashboard')
+def dashboard_page():
+    return render_template('dashboard.html')
+
+@app.route('/manage-users.html')
+@app.route('/manage-users')
+def manage_users_page():
+    return render_template('manage-users.html')
+
+@app.route('/roles-permissions.html')
+@app.route('/roles-permissions')
+def roles_permissions_page():
+    return render_template('roles-permissions.html')
+
+@app.route('/settings.html')
+@app.route('/settings')
+def settings_page():
+    return render_template('settings.html')
+
+@app.route('/backup-restore.html')
+@app.route('/backup-restore')
+def backup_restore_page():
+    return render_template('backup-restore.html')
+
+@app.route('/reports.html')
+@app.route('/reports')
+def reports_page():
+    return render_template('reports.html')
+
+@app.route('/students.html')
+@app.route('/students-page')
+def students_page():
+    return render_template('students.html')
+
+@app.route('/teacher-records.html')
+@app.route('/teacher-records')
+def teacher_records_page():
+    return render_template('teacher-records.html')
+
+@app.route('/finance.html')
+@app.route('/finance')
+def finance_page():
+    return render_template('finance.html')
+
+@app.route('/grades.html')
+@app.route('/grades-page')
+def grades_page():
+    return render_template('grades.html')
+
+@app.route('/attendance.html')
+@app.route('/attendance-page')
+def attendance_page():
+    return render_template('attendance.html')
+
+@app.route('/announcements.html')
+@app.route('/announcements-page')
+def announcements_page():
+    return render_template('announcements.html')
 
 
 @app.route('/api/signup', methods=['POST'])
@@ -1119,7 +1261,7 @@ def change_password():
         if len(new_password) < 6:
             return jsonify({"message": "New password must be at least 6 characters"}), 400
 
-        conn = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
+        conn = TursoConn()
         cur = conn.cursor()
 
         # Find the user
