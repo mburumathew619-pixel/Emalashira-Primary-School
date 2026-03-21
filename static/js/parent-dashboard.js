@@ -1,4 +1,4 @@
-const API = "http://localhost:5000";
+const API = "https://emalashira-primary-school.onrender.com";
 let currentUser = null, children = [];
 
 // ── Auth ──────────────────────────────────────────────────────
