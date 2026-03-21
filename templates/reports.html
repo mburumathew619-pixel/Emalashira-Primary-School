@@ -836,8 +836,8 @@
     listEl.innerHTML = '<span style="color:#9ca3af;font-size:0.85rem;font-style:italic;">Loading…</span>';
     try {
       const [studRes, assignRes] = await Promise.all([
-        fetch('http://localhost:5000/api/students'),
-        fetch('http://localhost:5000/api/teacher-assignments/summary')
+        fetch('https://emalashira-primary-school.onrender.com/api/students'),
+        fetch('https://emalashira-primary-school.onrender.com/api/teacher-assignments/summary')
       ]);
       const students = studRes.ok ? await studRes.json() : [];
       const teachers = assignRes.ok ? await assignRes.json() : [];
