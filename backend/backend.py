@@ -17,18 +17,17 @@ app = Flask(__name__,
             static_url_path='/static')
 CORS(app, origins=["http://localhost:5500", "http://127.0.0.1:5500", "*"])
 
-
 # ───────────────────────────────────────────────
 # Turso Database Configuration
 # ───────────────────────────────────────────────
-TURSO_URL   = os.environ.get("TURSO_DATABASE_URL", "")
-TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN", "")
+TURSO_URL   = os.environ.get("TURSO_DATABASE_URL", "").strip()
+TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN",   "").strip()
 
 import requests as _http
 
 def _turso_exec(sql, params=None):
     url     = TURSO_URL.replace("libsql://", "https://") + "/v2/pipeline"
-    headers = {"Authorization": f"Bearer {TURSO_TOKEN}", "Content-Type": "application/json"}
+    headers = {"Authorization": "Bearer " + TURSO_TOKEN, "Content-Type": "application/json"}
     stmt    = {"type": "execute", "stmt": {"sql": sql}}
     if params:
         stmt["stmt"]["args"] = [_enc(p) for p in params]
@@ -44,7 +43,7 @@ def _turso_exec(sql, params=None):
 
 def _turso_batch(stmts):
     url     = TURSO_URL.replace("libsql://", "https://") + "/v2/pipeline"
-    headers = {"Authorization": f"Bearer {TURSO_TOKEN}", "Content-Type": "application/json"}
+    headers = {"Authorization": "Bearer " + TURSO_TOKEN, "Content-Type": "application/json"}
     reqs    = []
     for sql, params in stmts:
         s = {"type": "execute", "stmt": {"sql": sql}}
@@ -56,10 +55,10 @@ def _turso_batch(stmts):
     r.raise_for_status()
 
 def _enc(v):
-    if v is None:             return {"type": "null"}
-    if isinstance(v, bool):   return {"type": "integer", "value": str(int(v))}
-    if isinstance(v, int):    return {"type": "integer", "value": str(v)}
-    if isinstance(v, float):  return {"type": "float",   "value": str(v)}
+    if v is None:            return {"type": "null"}
+    if isinstance(v, bool):  return {"type": "integer", "value": str(int(v))}
+    if isinstance(v, int):   return {"type": "integer", "value": str(v)}
+    if isinstance(v, float): return {"type": "float",   "value": str(v)}
     return {"type": "text", "value": str(v)}
 
 def _dec(v):
@@ -81,7 +80,9 @@ class TursoConn:
             self._q = []
 
 class TursoCur:
-    def __init__(self, c): self._c = c; self._rows = []; self._i = 0; self.rowcount = 0; self.lastrowid = None
+    def __init__(self, c):
+        self._c = c; self._rows = []; self._i = 0
+        self.rowcount = 0; self.lastrowid = None
     def execute(self, sql, params=None):
         if sql.strip().upper().startswith("SELECT"):
             self._rows = _turso_exec(sql, params); self._i = 0; self.rowcount = len(self._rows)
@@ -96,7 +97,6 @@ class TursoCur:
         return None
     def fetchall(self):
         r = self._rows[self._i:]; self._i = len(self._rows); return r
-
 
 # School email domain configuration
 SCHOOL_EMAIL_DOMAINS = ['emalashira.sc.ke', 'emalashira.ac.ke', 'emalashira.school.ke']
