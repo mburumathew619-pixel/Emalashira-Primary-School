@@ -511,6 +511,10 @@ def attendance_page():
 def announcements_page():
     return render_template('announcements.html')
 
+@app.route('/profile.html')
+@app.route('/profile')
+def profile_page():
+    return render_template('profile.html')
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
