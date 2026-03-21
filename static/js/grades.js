@@ -1,4 +1,4 @@
-const API = 'https://emalashira-primary-school.onrender.com';
+const API = "https://emalashira-primary-school.onrender.com";
 let allGrades      = [];
 let allStudents    = [];
 let filtered       = [];
