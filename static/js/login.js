@@ -1,5 +1,5 @@
 const USE_BACKEND  = true;
-const API_BASE_URL = "https://emalashira-primary-school.onrender.com"
+const API_BASE_URL = "https://emalashira-primary-school.onrender.com";
 
 // School email domain configuration
 const SCHOOL_EMAIL_DOMAINS = ['emalashira.sc.ke', 'emalashira.ac.ke', 'emalashira.school.ke'];
