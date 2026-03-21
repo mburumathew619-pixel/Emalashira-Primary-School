@@ -6,7 +6,7 @@
  *         grades, attendance, announcements, teacher assignments
  */
 
-const API = 'http://localhost:5000';
+const API = 'https://emalashira-primary-school.onrender.com';
 
 // ── In-session backup history ──────────────────────────────────
 const sessionHistory = [];
