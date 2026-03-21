@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // ── Same flag as index.html ──
 const USE_BACKEND  = true;
-const API_BASE_URL = "http://emalashira-primary-school.onrender.com";
+const API_BASE_URL = "https://emalashira-primary-school.onrender.com";
 
 // Card definitions
 const cardDefinitions = {
