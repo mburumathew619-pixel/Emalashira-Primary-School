@@ -19,7 +19,7 @@
   }
 })();
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://emalashira-primary-school.onrender.com";
 
     // Load profile from backend
     window.addEventListener('load', async () => {
