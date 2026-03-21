@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://emalashira-primary-school.onrender.com";
+const API_BASE_URL = "https://emalashira-primary-school.onrender.com";
 let allUsers   = [];
 let isDeleting = false;
 
