@@ -516,6 +516,11 @@ def announcements_page():
 def profile_page():
     return render_template('profile.html')
 
+@app.route('/dashboard-overview.html')
+@app.route('/dashboard-overview')
+def dashboard_overview_page():
+    return render_template('dashboard-overview.html')
+
 @app.route('/teacher-dashboard.html')
 @app.route('/teacher-dashboard')
 def teacher_dashboard_page():
