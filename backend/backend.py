@@ -466,16 +466,6 @@ def settings_page():
 @app.route('/dashboard')
 def dashboard_page(): return render_template('dashboard.html')
 
-@app.route('/settings.html')
-@app.route('/settings')
-def settings_page():
-    return render_template('settings.html')
-
-@app.route('/dashboard.html')
-@app.route('/dashboard')
-def dashboard_page():
-    return render_template('dashboard.html')
-
 @app.route('/manage-users.html')
 @app.route('/manage-users')
 def manage_users_page():
@@ -555,6 +545,31 @@ def parent_dashboard_page():
 @app.route('/timetable-generator')
 def timetable_generator_page():
     return render_template('timetable-generator.html')
+
+@app.route('/admin-recovery.html')
+@app.route('/admin-recovery')
+def admin_recovery_page():
+    return render_template('admin-recovery.html')
+
+@app.route('/finance-profile.html')
+@app.route('/finance-profile')
+def finance_profile_page():
+    return render_template('finance-profile.html')
+
+@app.route('/parent-profile.html')
+@app.route('/parent-profile')
+def parent_profile_page():
+    return render_template('parent-profile.html')
+
+@app.route('/pending-approval.html')
+@app.route('/pending-approval')
+def pending_approval_page():
+    return render_template('pending-approval.html')
+
+@app.route('/teacher-profile.html')
+@app.route('/teacher-profile')
+def teacher_profile_page():
+    return render_template('teacher-profile.html')
 
 # (other page routes unchanged — omit for brevity)
 
