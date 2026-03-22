@@ -577,9 +577,9 @@ def parent_dashboard_page():
 
 @app.route('/timetable-generator.html')
 @app.route('/timetable-generator')
-def timetable-generator-page():
-     return render_template('timetable-generator.html')
-
+def timetable_generator_page(): 
+    return render_template('timetable-generator.html')
+            
 @app.route('/api/signup', methods=['POST'])
 def signup():
     try:
