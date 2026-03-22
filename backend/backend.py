@@ -457,6 +457,11 @@ def home(): return render_template('index.html')
 @app.route('/login')
 def login_page(): return render_template('login.html')
 
+@app.route('/settings.html')
+@app.route('/settings')
+def settings_page():
+    return render_template('settings.html')
+
 @app.route('/dashboard.html')
 @app.route('/dashboard')
 def dashboard_page(): return render_template('dashboard.html')
